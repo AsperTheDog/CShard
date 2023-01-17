@@ -18,6 +18,25 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\input\InputManager.cpp" />
+    <ClCompile Include="src\elements\GameObject.cpp" />
+    <ClCompile Include="src\elements\Camera.cpp" />
+    <ClCompile Include="src\ide\ImGuiManager.cpp" />
+    <ClCompile Include="src\graphics\GFramework.cpp" />
+    <ClCompile Include="src\graphics\opengl\OGLFramework.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\graphics\vulkan\VKFramework.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\input\InputManager.hpp" />
+    <ClInclude Include="src\elements\GameObject.hpp" />
+    <ClInclude Include="src\elements\Camera.hpp" />
+    <ClInclude Include="src\ide\ImGuiManager.hpp" />
+    <ClInclude Include="src\graphics\GFramework.hpp" />
+    <ClInclude Include="src\graphics\opengl\OGLFramework.hpp" />
+    <ClInclude Include="src\graphics\vulkan\VKFramework.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -114,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)CShard/src;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -132,7 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)CShard/src;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,9 +163,6 @@
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\Release\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
