@@ -19,23 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\device\window\SDLFramework.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
     <ClCompile Include="src\elements\GameObject.cpp" />
     <ClCompile Include="src\elements\Camera.cpp" />
     <ClCompile Include="src\ide\ImGuiManager.cpp" />
-    <ClCompile Include="src\graphics\GFramework.cpp" />
-    <ClCompile Include="src\graphics\opengl\OGLFramework.cpp" />
+    <ClCompile Include="src\device\graphics\GFramework.cpp" />
+    <ClCompile Include="src\device\graphics\opengl\OGLFramework.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\graphics\vulkan\VKFramework.cpp" />
+    <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\device\window\SDLFramework.hpp" />
+    <ClInclude Include="src\Engine.hpp" />
     <ClInclude Include="src\input\InputManager.hpp" />
     <ClInclude Include="src\elements\GameObject.hpp" />
     <ClInclude Include="src\elements\Camera.hpp" />
     <ClInclude Include="src\ide\ImGuiManager.hpp" />
-    <ClInclude Include="src\graphics\GFramework.hpp" />
-    <ClInclude Include="src\graphics\opengl\OGLFramework.hpp" />
-    <ClInclude Include="src\graphics\vulkan\VKFramework.hpp" />
+    <ClInclude Include="src\device\graphics\GFramework.hpp" />
+    <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
+    <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

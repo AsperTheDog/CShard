@@ -1,7 +1,10 @@
 #pragma once
-#include "../GFramework.hpp"
+#include "device/graphics/GFramework.hpp"
+#include "device/window/SDLFramework.hpp"
 
-#include <SDL.h>
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <SDL_opengl.h>
 
 #define GLMAYOR 4
 #define GLMINOR 5
@@ -15,7 +18,5 @@ public:
 	void destroyImGui() override;
 
 private:
-	SDL_WindowFlags window_flags{};
-	SDL_Window* window = nullptr;
 	SDL_GLContext gl_context = nullptr;
 };

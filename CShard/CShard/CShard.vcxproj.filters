@@ -18,13 +18,13 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\GFramework.cpp">
+    <ClCompile Include="src\device\graphics\GFramework.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\opengl\OGLFramework.cpp">
+    <ClCompile Include="src\device\graphics\opengl\OGLFramework.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VKFramework.cpp">
+    <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ide\ImGuiManager.cpp">
@@ -39,15 +39,21 @@
     <ClCompile Include="src\input\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\window\SDLFramework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\graphics\GFramework.hpp">
+    <ClInclude Include="src\device\graphics\GFramework.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\opengl\OGLFramework.hpp">
+    <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VKFramework.hpp">
+    <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ide\ImGuiManager.hpp">
@@ -60,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\input\InputManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\window\SDLFramework.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

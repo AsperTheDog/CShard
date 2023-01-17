@@ -1,5 +1,5 @@
 #include "ImGuiManager.hpp"
-#include "graphics/GFramework.hpp"
+#include "device/graphics/GFramework.hpp"
 
 #include "imgui.h"
 

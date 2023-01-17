@@ -9,10 +9,9 @@ enum GLibraries
 class GFramework
 {
 public:
-	virtual ~GFramework();
-
 	static void create(GLibraries lib);
 	static GFramework* getInstance();
+	static void deleteInstance();
 
 	virtual void init() = 0;
 	virtual void loadImGuiBackends() = 0;

@@ -2,11 +2,6 @@
 #include "opengl/OGLFramework.hpp"
 #include "vulkan/VKFramework.hpp"
 
-GFramework::~GFramework()
-{
-	delete GFramework::instance;
-}
-
 void GFramework::create(GLibraries lib)
 {
 	switch(lib)
@@ -23,4 +18,9 @@ void GFramework::create(GLibraries lib)
 GFramework* GFramework::getInstance()
 {
 	return GFramework::instance;
+}
+
+void GFramework::deleteInstance()
+{
+	delete instance;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "../GFramework.hpp"
+#include "device/graphics/GFramework.hpp"
 
 class VKFramework final : public GFramework
 {
