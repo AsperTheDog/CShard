@@ -1,94 +1,147 @@
 #include "OGLFramework.hpp"
 
+
+#if defined(_WIN32)
+	#include <Windows.h>
+#endif
+
 #include <stdexcept>
 #include <string>
-#include <iostream>
 
-#include "backends/imgui_impl_sdl.h"
-#include "backends/imgui_impl_opengl3.h"
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <sstream>
 
-void __stdcall openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+#include "../../../ide/imGuiBackends/imGuiBackendsLoader.hpp"
+
+/*
+ * This debug callback function was made using the labhelper.cpp file as template
+ * The file's origin is the following course:
+ *  - Name: TDA362 / DIT224 Computer graphics 2022
+ *  - Lecturer: Ulf Assarsson
+ */
+namespace
 {
-	std::cout << "---------------------opengl-callback-start------------" << std::endl;
-	std::cout << "message: " << message << std::endl;
-	std::cout << "source: ";
-	switch (source)
+#if defined(_WIN32)
+#define CALLBACK_ CALLBACK
+#else
+#define CALLBACK_
+#endif
+	
+	GLvoid CALLBACK_ openGLDebugCallback(GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity,
+		GLsizei, GLchar const* aMessage, GLvoid*)
 	{
-	case GL_DEBUG_SOURCE_API:
-		std::cout << "API";
-		break;
-	case GL_DEBUG_SOURCE_APPLICATION:
-		std::cout << "APPLICATION";
-		break;
-	case GL_DEBUG_SOURCE_OTHER:
-		std::cout << "OTHER";
-		break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER:
-		std::cout << "SHADER COMPILER";
-		break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY:
-		std::cout << "THIRD PARTY";
-		break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-		std::cout << "WINDOW SYSTEM";
-		break;
-	}
-	std::cout << std::endl;
+		const char* srcStr = nullptr;
+		switch(aSource)
+		{
+		case GL_DEBUG_SOURCE_API:
+			srcStr = "API";
+			break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+			srcStr = "WINDOW_SYSTEM";
+			break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER:
+			srcStr = "SHADER_COMPILER";
+			break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY:
+			srcStr = "THIRD_PARTY";
+			break;
+		case GL_DEBUG_SOURCE_APPLICATION:
+			srcStr = "APPLICATION";
+			break;
+		case GL_DEBUG_SOURCE_OTHER:
+			srcStr = "OTHER";
+			break;
+		default:
+			srcStr = "UNKNOWN";
+			break;
+		}
+		
+		const char* typeStr = nullptr;
+		switch(aType)
+		{
+		case GL_DEBUG_TYPE_ERROR:
+			typeStr = "ERROR";
+			break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			typeStr = "DEPRECATED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			typeStr = "UNDEFINED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_PORTABILITY:
+			typeStr = "PORTABILITY";
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			typeStr = "PERFORMANCE";
+			break;
+		case GL_DEBUG_TYPE_OTHER:
+			typeStr = "OTHER";
+			break;
+		default:
+			typeStr = "UNKNOWN";
+			break;
+		}
+		
+		const char* sevStr = nullptr;
+		switch(aSeverity)
+		{
+		case GL_DEBUG_SEVERITY_HIGH:
+			sevStr = "HIGH";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			sevStr = "MEDIUM";
+			break;
+		case GL_DEBUG_SEVERITY_LOW:
+			sevStr = "LOW";
+			break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+			sevStr = "NOTIFICATION";
+			break;
+		default:
+			sevStr = "UNKNOWN";
+		}
+		
+		if(aSeverity != GL_DEBUG_SEVERITY_NOTIFICATION)
+		{
+			std::stringstream szs;
+			szs << "\n"
+			    << "--\n"
+			    << "-- GL DEBUG MESSAGE:\n"
+			    << "--   severity = '" << sevStr << "'\n"
+			    << "--   type     = '" << typeStr << "'\n"
+			    << "--   source   = '" << srcStr << "'\n"
+			    << "--   id       = " << std::hex << aId << "\n"
+			    << "-- message:\n"
+			    << aMessage << "\n"
+			    << "--\n"
+			    << "\n";
 
-	std::cout << "type: ";
-	switch (type) {
-	case GL_DEBUG_TYPE_ERROR:
-		std::cout << "ERROR";
-		break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-		std::cout << "DEPRECATED_BEHAVIOR";
-		break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-		std::cout << "UNDEFINED_BEHAVIOR";
-		break;
-	case GL_DEBUG_TYPE_PORTABILITY:
-		std::cout << "PORTABILITY";
-		break;
-	case GL_DEBUG_TYPE_PERFORMANCE:
-		std::cout << "PERFORMANCE";
-		break;
-	case GL_DEBUG_TYPE_OTHER:
-		std::cout << "OTHER";
-		break;
+			fprintf(stderr, "%s", szs.str().c_str());
+			fflush(stderr);
+#if defined(_WIN32)
+			OutputDebugStringA(szs.str().c_str());
+#endif
+		}
+		
+		if(aSeverity == GL_DEBUG_SEVERITY_HIGH)
+		{
+#if defined(_WIN32)
+			if(IsDebuggerPresent())
+				__debugbreak();
+#else
+			raise(SIGTRAP);
+#endif
+		}
 	}
-	std::cout << std::endl;
-
-	std::cout << "id: " << id << std::endl;
-	std::cout << "severity: ";
-	switch (severity) {
-	case GL_DEBUG_SEVERITY_LOW:
-		std::cout << "LOW";
-		break;
-	case GL_DEBUG_SEVERITY_MEDIUM:
-		std::cout << "MEDIUM";
-		break;
-	case GL_DEBUG_SEVERITY_HIGH:
-		std::cout << "HIGH";
-		break;
-	case GL_DEBUG_SEVERITY_NOTIFICATION:
-		std::cout << "NOTIFICATION";
-		break;
-	default:
-		std::cout << "UNKNOWN (" << severity <<")";
-	}
-	std::cout << std::endl;
-	std::cout << "---------------------opengl-callback-end--------------" << std::endl;
-	if (type == GL_DEBUG_TYPE_ERROR)
-	{
-		__debugbreak();
-	}
+#undef CALLBACK_
 }
 
 void OGLFramework::init()
 {
-    gl_context = SDL_GL_CreateContext(SDLFramework::getInstance()->getWindow());
-
-	//Initialize GLEW
+    gl_context = SDL_GL_CreateContext(SDLFramework::getWindow());
+	SDL_GL_MakeCurrent(SDLFramework::getWindow(), gl_context);
+	
     glewExperimental = GL_TRUE; 
     GLenum glewError = glewInit();
     if( glewError != GLEW_OK )
@@ -96,12 +149,17 @@ void OGLFramework::init()
         throw std::runtime_error("Error initializing GLEW!");
     }
 
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(openglCallbackFunction, nullptr);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	OGLFramework::resizeWindow();
 
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
-		
+	glDebugMessageCallback((GLDEBUGPROC)openGLDebugCallback, nullptr);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
+	glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, 0, nullptr, false);
+
+#ifndef NDEBUG
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
+
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 
@@ -118,7 +176,7 @@ void OGLFramework::init()
 
 void OGLFramework::loadImGuiBackends()
 {
-	ImGui_ImplSDL2_InitForOpenGL(SDLFramework::getInstance()->getWindow(), gl_context);
+	ImGui_ImplSDL2_InitForOpenGL(SDLFramework::getWindow(), gl_context);
 	std::string glsl_version = "#version " + std::to_string(GLMAYOR) + std::to_string(GLMINOR) + "0";
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 }
@@ -135,4 +193,22 @@ void OGLFramework::destroyImGui()
 	ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
+}
+
+void OGLFramework::renderImgui()
+{
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void OGLFramework::render()
+{
+	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void OGLFramework::resizeWindow()
+{
+	int width, height;
+	SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
+	glViewport(0, 0, width, height);
 }

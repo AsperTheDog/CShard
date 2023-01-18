@@ -1,16 +1,23 @@
 #pragma once
+#include <vector>
+
 #include "imgui.h"
+
+typedef void (*ImGuiWindowCall)();
 
 class ImGuiManager
 {
 public:
-	ImGuiManager();
-	~ImGuiManager();
+	ImGuiManager() = delete;
 
-	void newFrame();
-	void render();
+	static void init();
+	static void newFrame();
+	static void render();
+	static void destroy();
 
+	static void addWindowCall(ImGuiWindowCall call);
 private:
-	ImGuiIO* io;
+	static ImGuiIO* io;
+	static std::vector<ImGuiWindowCall> windowCalls;
 };
 

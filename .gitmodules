@@ -1,0 +1,3 @@
+[submodule "CShard\\dependencies\\ImGui\\src"]
+	path = CShard\\dependencies\\ImGui\\src
+	url = https://github.com/ocornut/imgui

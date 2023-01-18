@@ -15,7 +15,7 @@ void GFramework::create(GLibraries lib)
 	}
 }
 
-GFramework* GFramework::getInstance()
+GFramework* GFramework::get()
 {
 	return GFramework::instance;
 }
@@ -24,3 +24,5 @@ void GFramework::deleteInstance()
 {
 	delete instance;
 }
+
+void GFramework::destroy() {}

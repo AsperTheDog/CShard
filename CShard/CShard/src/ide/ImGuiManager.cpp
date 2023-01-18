@@ -1,9 +1,15 @@
 #include "ImGuiManager.hpp"
-#include "device/graphics/GFramework.hpp"
+
+#include <iostream>
+
+#include "../device/graphics/GFramework.hpp"
 
 #include "imgui.h"
 
-ImGuiManager::ImGuiManager()
+ImGuiIO* ImGuiManager::io;
+std::vector<ImGuiWindowCall> ImGuiManager::windowCalls;
+
+void ImGuiManager::init()
 {
 	IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -11,20 +17,29 @@ ImGuiManager::ImGuiManager()
 
     ImGui::StyleColorsDark();
 
-    GFramework::getInstance()->loadImGuiBackends();
-}
-
-ImGuiManager::~ImGuiManager()
-{
-    GFramework::getInstance()->destroyImGui();
+    GFramework::get()->loadImGuiBackends();
 }
 
 void ImGuiManager::newFrame()
 {
-    GFramework::getInstance()->loadImGuiFrame();
+    GFramework::get()->loadImGuiFrame();
 }
 
 void ImGuiManager::render()
 {
+    for (auto imguiCall : windowCalls) 
+        imguiCall();
     ImGui::Render();
+
+    GFramework::get()->renderImgui();
+}
+
+void ImGuiManager::destroy()
+{
+    GFramework::get()->destroyImGui();
+}
+
+void ImGuiManager::addWindowCall(ImGuiWindowCall call)
+{
+    ImGuiManager::windowCalls.push_back(call);
 }

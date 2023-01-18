@@ -1,10 +1,6 @@
 #pragma once
-#include "device/graphics/GFramework.hpp"
-#include "device/window/SDLFramework.hpp"
-
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <SDL_opengl.h>
+#include "../GFramework.hpp"
+#include "../../window/SDLFramework.hpp"
 
 #define GLMAYOR 4
 #define GLMINOR 5
@@ -16,6 +12,9 @@ public:
 	void loadImGuiBackends() override;
 	void loadImGuiFrame() override;
 	void destroyImGui() override;
+	void renderImgui() override;
+	void render() override;
+	void resizeWindow() override;
 
 private:
 	SDL_GLContext gl_context = nullptr;

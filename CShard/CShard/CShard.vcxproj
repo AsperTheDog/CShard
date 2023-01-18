@@ -19,18 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\ImGui\src\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\dependencies\ImGui\src\backends\imgui_impl_sdl.cpp" />
+    <ClCompile Include="src\device\graphics\opengl\OGLFramework.cpp" />
     <ClCompile Include="src\device\window\SDLFramework.cpp" />
     <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.hpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
     <ClCompile Include="src\elements\GameObject.cpp" />
     <ClCompile Include="src\elements\Camera.cpp" />
     <ClCompile Include="src\ide\ImGuiManager.cpp" />
     <ClCompile Include="src\device\graphics\GFramework.cpp" />
-    <ClCompile Include="src\device\graphics\opengl\OGLFramework.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependencies\ImGui\src\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\dependencies\ImGui\src\backends\imgui_impl_sdl.h" />
+    <ClInclude Include="src\device\graphics\GUtils.hpp" />
+    <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
     <ClInclude Include="src\device\window\SDLFramework.hpp" />
     <ClInclude Include="src\Engine.hpp" />
     <ClInclude Include="src\input\InputManager.hpp" />
@@ -38,7 +45,6 @@
     <ClInclude Include="src\elements\Camera.hpp" />
     <ClInclude Include="src\ide\ImGuiManager.hpp" />
     <ClInclude Include="src\device\graphics\GFramework.hpp" />
-    <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
     <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -102,12 +108,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>%(SolutionDir)dependencies/glew/include;%(SolutionDir)dependencies/sdl/include;%(SolutionDir)dependencies/ImGui;%(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%(SolutionDir)$(Platform)\$(Configuration);%(SolutionDir)dependencies\glew\lib\Release\$(Platform);%(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\Release\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ImGui.lib;glew32.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -120,14 +126,14 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>%(SolutionDir)dependencies/glew/include;%(SolutionDir)dependencies/sdl/include;%(SolutionDir)dependencies/ImGui;%(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%(SolutionDir)$(Platform)\$(Configuration);%(SolutionDir)dependencies\glew\lib\Release\$(Platform);%(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\Release\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ImGui.lib;glew32.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -137,13 +143,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)CShard/src;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ImGui.lib;glew32.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\Release\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -155,7 +161,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)CShard/src;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -163,7 +169,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ImGui.lib;glew32.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\Release\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

@@ -1,13 +1,20 @@
 #pragma once
 
-#include "device/graphics/GFramework.hpp"
+#include "device/graphics/GUtils.hpp"
 
 class Engine
 {
 public:
-	Engine();
+	Engine() = delete;
 
-	void init(GLibraries lib);
-	void run();
+	static void init(GLibraries lib);
+	static void run();
+	static void shutDown();
+
+private:
+	static bool event();
+	static void render();
+
+	static void addImGuiWindows();
 };
 

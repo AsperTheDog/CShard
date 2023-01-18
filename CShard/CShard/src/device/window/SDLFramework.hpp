@@ -1,25 +1,24 @@
 #pragma once
 
 #include <SDL.h>
-#include <device/graphics/GFramework.hpp>
+#include <unordered_set>
+#include <vector>
+#include "../graphics/GUtils.hpp"
 
 class SDLFramework
 {
 public:
-	static void create(GLibraries lib);
-	static SDLFramework* getInstance();
+	SDLFramework() = delete;
 
-	void init();
-	SDL_Window* getWindow();
-	bool shouldWindowClose();
+	static void init(GLibraries lib);
+	static SDL_Window* getWindow();
+	static std::vector<SDL_Event> getEvents(std::unordered_set<uint32_t>& subscribedTypes);
+	static void swapWindow();
+	static void destroy();
 
 private:
-	SDLFramework(GLibraries lib);
-
-	GLibraries lib;
-	SDL_WindowFlags window_flags{};
-	SDL_Window* window = nullptr;
-	
-	static SDLFramework* instance;
+	static GLibraries lib;
+	static SDL_WindowFlags window_flags;
+	static SDL_Window* window;
 };
 

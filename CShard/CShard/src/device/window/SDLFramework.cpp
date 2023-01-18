@@ -1,19 +1,18 @@
 #include "SDLFramework.hpp"
+
 #include <stdexcept>
+#include "../../ide/imGuiBackends/imGuiBackendsLoader.hpp"
+#include "../graphics/GFramework.hpp"
 
-void SDLFramework::create(GLibraries lib)
-{
-    instance = new SDLFramework(lib);
-}
+GLibraries SDLFramework::lib;
+SDL_WindowFlags SDLFramework::window_flags;
+SDL_Window* SDLFramework::window;
 
-SDLFramework* SDLFramework::getInstance()
+void SDLFramework::init(GLibraries lib)
 {
-    return nullptr;
-}
+    SDLFramework::lib = lib;
 
-void SDLFramework::init()
-{
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         throw std::runtime_error("Error: " + std::string(SDL_GetError()));
     }
@@ -36,20 +35,39 @@ void SDLFramework::init()
     {
         window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     }
-    window = SDL_CreateWindow("CShard", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDLFramework::window = SDL_CreateWindow("CShard", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 }
 
 SDL_Window* SDLFramework::getWindow()
 {
-    return window;
+    return SDLFramework::window;
 }
 
-bool SDLFramework::shouldWindowClose()
+std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& subscribedTypes)
 {
-    return false;
+    std::vector<SDL_Event> events;
+
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+    {
+        ImGui_ImplSDL2_ProcessEvent(&event);
+        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
+        {
+	        GFramework::get()->resizeWindow();
+        }
+        if (subscribedTypes.contains(event.type))
+			events.push_back(event);
+    }
+    return events;
 }
 
-SDLFramework::SDLFramework(GLibraries lib)
+void SDLFramework::swapWindow()
 {
-    this->lib = lib;
+    SDL_GL_SwapWindow(SDLFramework::window);
+}
+
+void SDLFramework::destroy()
+{
+    SDL_DestroyWindow(SDLFramework::window);
+    SDL_Quit();
 }
