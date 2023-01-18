@@ -6,15 +6,14 @@
 
 #include "imgui.h"
 
-ImGuiIO* ImGuiManager::io;
 std::vector<ImGuiWindowCall> ImGuiManager::windowCalls;
 
 void ImGuiManager::init()
 {
 	IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    io = &ImGui::GetIO();
 
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     ImGui::StyleColorsDark();
 
     GFramework::get()->loadImGuiBackends();

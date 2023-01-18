@@ -1,7 +1,7 @@
 #include "SDLFramework.hpp"
 
 #include <stdexcept>
-#include "../../ide/imGuiBackends/imGuiBackendsLoader.hpp"
+#include "backends/imgui_impl_sdl.h"
 #include "../graphics/GFramework.hpp"
 
 GLibraries SDLFramework::lib;

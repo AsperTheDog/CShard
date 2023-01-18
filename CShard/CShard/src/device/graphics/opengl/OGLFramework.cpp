@@ -12,7 +12,8 @@
 #include <GL/glew.h>
 #include <sstream>
 
-#include "../../../ide/imGuiBackends/imGuiBackendsLoader.hpp"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_sdl.h"
 
 /*
  * This debug callback function was made using the labhelper.cpp file as template

@@ -17,7 +17,6 @@ public:
 
 	static void addWindowCall(ImGuiWindowCall call);
 private:
-	static ImGuiIO* io;
 	static std::vector<ImGuiWindowCall> windowCalls;
 };
 

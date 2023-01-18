@@ -19,12 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\dependencies\ImGui\src\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\dependencies\ImGui\src\backends\imgui_impl_sdl.cpp" />
     <ClCompile Include="src\device\graphics\opengl\OGLFramework.cpp" />
     <ClCompile Include="src\device\window\SDLFramework.cpp" />
     <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.hpp" />
+    <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
     <ClCompile Include="src\elements\GameObject.cpp" />
     <ClCompile Include="src\elements\Camera.cpp" />
@@ -34,8 +32,6 @@
     <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\dependencies\ImGui\src\backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="..\dependencies\ImGui\src\backends\imgui_impl_sdl.h" />
     <ClInclude Include="src\device\graphics\GUtils.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
     <ClInclude Include="src\device\window\SDLFramework.hpp" />
@@ -104,7 +100,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -122,7 +118,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -140,7 +136,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -158,7 +154,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
