@@ -1,6 +1,7 @@
-[submodule "CShard\\dependencies\\ImGui\\src"]
-	path = CShard\\dependencies\\ImGui\\src
+[submodule "CShard/dependencies/ImGui/src"]
+	path = CShard/dependencies/ImGui/src
 	url = https://github.com/ocornut/imgui
-[submodule "CShard\\dependencies\\glm"]
-	path = CShard\\dependencies\\glm
+	branch = docking
+[submodule "CShard/dependencies/glm"]
+	path = CShard/dependencies/glm
 	url = https://github.com/g-truc/glm
