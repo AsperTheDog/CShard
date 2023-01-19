@@ -3,7 +3,7 @@
 
 #include "imgui.h"
 
-typedef void (*ImGuiWindowCall)();
+typedef void (*ImGuiWindowCall)(bool*);
 
 class ImGuiManager
 {
@@ -14,9 +14,11 @@ public:
 	static void newFrame();
 	static void render();
 	static void destroy();
+	static ImGuiIO* getIO();
 
 	static void addWindowCall(ImGuiWindowCall call);
 private:
-	static std::vector<ImGuiWindowCall> windowCalls;
+	static std::vector<std::pair<ImGuiWindowCall, bool>> windowCalls;
+	static ImGuiIO* io;
 };
 

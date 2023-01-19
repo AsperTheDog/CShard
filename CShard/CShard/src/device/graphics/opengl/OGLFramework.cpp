@@ -14,6 +14,7 @@
 
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl.h"
+#include "../../../ide/ImGuiManager.hpp"
 
 /*
  * This debug callback function was made using the labhelper.cpp file as template
@@ -199,6 +200,14 @@ void OGLFramework::destroyImGui()
 void OGLFramework::renderImgui()
 {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    if (ImGuiManager::getIO()->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+    }
 }
 
 void OGLFramework::render()

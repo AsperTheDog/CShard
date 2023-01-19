@@ -1,17 +1,34 @@
 #include "InputManager.hpp"
 
+#include <algorithm>
 #include <imgui.h>
+#include <string>
 
 #include "../device/window/SDLFramework.hpp"
-
-std::unordered_map<uint32_t, inputMapping> InputManager::inputMappings;
+std::unordered_map<uint32_t, InputMapping> InputManager::inputMappings;
 std::unordered_set<uint32_t> InputManager::subscribedTypes;
 int32_t InputManager::x, InputManager::y;
-std::unordered_map<ShardEvent, std::string> InputManager::inputTypes;
+std::vector<ShardEvent> InputManager::inputTypes;
+std::unordered_map<ShardEvent, std::string> InputManager::inputTypeNames;
+const char* InputManager::inputNames[5] = {
+		"Keyboard down",
+		"Keyboard up",
+		"Mouse button down",
+		"Mouse button up",
+		"Mouse wheel"
+	};;
 std::unordered_map<std::string, int32_t> InputManager::keyboardKeys;
 std::unordered_map<int32_t, std::string> InputManager::keyboardKeyNames;
 
-bool InputManager::addMapping(uint32_t id, inputMapping value)
+int InputManager::tempDeleteID = 0;
+int InputManager::tempID = 0;
+int InputManager::tempButton = 0;
+bool InputManager::tempWheel = false;
+int InputManager::tempType = 0;
+char InputManager::tempValue[20] = "";
+
+
+bool InputManager::addMapping(uint32_t id, InputMapping value)
 {
 	if (InputManager::inputMappings.contains(id)) return false;
 	InputManager::subscribeToEvent((ShardEvent)value.type);
@@ -52,7 +69,7 @@ std::vector<uint32_t> InputManager::triggeredEvents(bool* shouldClose)
 			else if (event.type == EVENT_MOUSEWHEEL)
 			{
 				int isFlipped = event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED;
-				bool direction = event.wheel.mouseX * (isFlipped ? -1 : 1) > 0;
+				bool direction = event.wheel.y * (isFlipped ? -1 : 1) > 0;
 				if (direction == mapping.second.val.wheelDir) events.push_back(mapping.first);
 			}
 		}
@@ -76,30 +93,130 @@ void InputManager::unsubscribeFromEvent(ShardEvent event)
 	InputManager::subscribedTypes.erase(event);
 }
 
-void InputManager::ImGuiWindowCall()
+void InputManager::removeMapping(uint32_t id)
 {
+	if (!InputManager::inputMappings.contains(id)) return;
+	InputManager::inputMappings.erase(id);
+}
+
+void InputManager::ImGuiWindowCall(bool* isOpen)
+{
+	if (!*isOpen) return;
+	ImGui::Begin("Input Mapper");
+	ImGui::InputInt("ID", &tempID);
+	tempID = std::max(0, tempID);
+	ImGui::Combo("Input type", &tempType, inputNames, 5);
+	bool validValue = true;
+	switch(tempType)
+	{
+	case 0:
+	case 1:
+		ImGui::InputText("Value", tempValue, 30);
+		validValue = keyboardKeys.contains(tempValue);
+		break;
+	case 2:
+	case 3:
+		ImGui::InputInt("Button", &tempButton);
+		tempButton = std::clamp(tempButton, 0, 255);
+		break;
+	case 4:
+		ImGui::Checkbox("Upwards", &tempWheel);
+		break;
+	default: 
+		validValue = false;
+	}
+
+	bool isIDInUse = inputMappings.contains(tempID);
+	if (isIDInUse) ImGui::Text("That ID already exists!");
+	if (!validValue) ImGui::Text("Invalid keyboard key");
+
+	ImGui::BeginDisabled(isIDInUse || !validValue);
+	if (ImGui::Button("Add new mapper"))
+	{
+		InputMapping mapping = {inputTypes.at(tempType), 0};
+		switch(tempType)
+		{
+		case 0:
+		case 1:
+			mapping.val.key = keyboardKeys.at(tempValue);
+			break;
+		case 2:
+		case 3:
+			mapping.val.mbutton = tempButton;
+			break;
+		case 4:
+			mapping.val.wheelDir = tempWheel;
+			break;
+		default:
+			mapping.val.key = 0;
+		}
+		InputManager::addMapping(tempID, mapping);
+		tempID++;
+	}
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
+	ImGui::InputInt("##DeleteID", &tempDeleteID);
+	ImGui::SameLine();
+	if (ImGui::Button("Delete ID"))
+	{
+		InputManager::removeMapping(tempDeleteID);
+	}
+
+	ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
+	ImGui::BeginTable("Mappings", 3, flags);
+	ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
+    ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthStretch);
+    ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+    ImGui::TableHeadersRow();
+    for (auto& map : inputMappings)
+    {
+        ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("%d", map.first);
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text(inputTypeNames.at(map.second.type).c_str());
+		ImGui::TableSetColumnIndex(2);
+        if (map.second.type == EVENT_KEYDOWN || map.second.type == EVENT_KEYUP)
+			ImGui::Text(keyboardKeyNames.at(map.second.val.key).c_str());
+		else if (map.second.type == EVENT_MOUSEBUTTONDOWN || map.second.type == EVENT_MOUSEBUTTONUP)
+			ImGui::Text("button %d", map.second.val.mbutton);
+		else if (map.second.type == EVENT_MOUSEWHEEL)
+			ImGui::Text(map.second.val.wheelDir ? "Up" : "Down");
+    }
+    ImGui::EndTable();
+	ImGui::End();
+
 	bool something = true;
 	ImGui::ShowDemoWindow(&something);
 }
 
 void InputManager::init()
 {
-	inputMappings = std::unordered_map<uint32_t, inputMapping>();
+	inputMappings = std::unordered_map<uint32_t, InputMapping>();
 	subscribedTypes = std::unordered_set<uint32_t>();
 	x = 0;
 	y = 0;
 
 	subscribedTypes.insert(SDL_QUIT);
 
-	inputTypes = std::unordered_map<ShardEvent, std::string>();
-	inputTypes.reserve(6);
+	inputTypes = std::vector<ShardEvent>();
+	inputTypes.push_back(EVENT_KEYDOWN);
+	inputTypes.push_back(EVENT_KEYUP);
+	inputTypes.push_back(EVENT_MOUSEBUTTONDOWN);
+	inputTypes.push_back(EVENT_MOUSEBUTTONUP);
+	inputTypes.push_back(EVENT_MOUSEWHEEL);
+	inputTypes.push_back(EVENT_MOUSEMOTION);
 
-	inputTypes.emplace(EVENT_KEYUP, "Keyboard up");
-	inputTypes.emplace(EVENT_KEYDOWN, "Keyboard down");
-	inputTypes.emplace(EVENT_MOUSEBUTTONDOWN, "Mouse button down");
-	inputTypes.emplace(EVENT_MOUSEBUTTONUP, "Mouse button up");
-	inputTypes.emplace(EVENT_MOUSEMOTION, "Mouse movement"); 
-	inputTypes.emplace(EVENT_MOUSEWHEEL, "Mouse wheel");
+	inputTypeNames = std::unordered_map<ShardEvent, std::string>();
+	inputTypeNames.emplace(EVENT_KEYUP, "Keyboard up");
+	inputTypeNames.emplace(EVENT_KEYDOWN, "Keyboard down");
+	inputTypeNames.emplace(EVENT_MOUSEBUTTONDOWN, "Mouse button down");
+	inputTypeNames.emplace(EVENT_MOUSEBUTTONUP, "Mouse button up");
+	inputTypeNames.emplace(EVENT_MOUSEMOTION, "Mouse movement"); 
+	inputTypeNames.emplace(EVENT_MOUSEWHEEL, "Mouse wheel");
+
+
 
 	keyboardKeys = std::unordered_map<std::string, int32_t>();
 	keyboardKeys.reserve(243);
