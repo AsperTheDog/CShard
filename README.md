@@ -24,7 +24,7 @@ wsl --install
 
 ### linux dependencies
 
-Once wsl has been installed you have to install python3 and make to linux
+Once wsl has been installed you have to install **python3** and **make** to linux
 Examples using apt:
 ```
 sudo apt-get install python3
