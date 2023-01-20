@@ -135,12 +135,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/src/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\$(Configuration)\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/$(Configuration)/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>winmm.lib;imm32.lib;version.lib;ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -153,14 +153,14 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/src/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\$(Configuration)\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/$(Configuration)/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>winmm.lib;imm32.lib;version.lib;ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -170,14 +170,14 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/src/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>winmm.lib;imm32.lib;version.lib;ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\$(Configuration)\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/$(Configuration)/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -188,7 +188,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/src/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -197,7 +197,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>winmm.lib;imm32.lib;version.lib;ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\ImGui\lib\$(Platform)\$(Configuration);$(SolutionDir)dependencies\glew\lib\$(Configuration)\$(Platform);$(SolutionDir)dependencies\sdl\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/$(Configuration)/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
