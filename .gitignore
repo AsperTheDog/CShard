@@ -30,6 +30,8 @@
 *.exe
 *.out
 *.app
+
+#Specific project ignores
 /CShard/.vs/CShard
 /CShard/CShard/x64
 /CShard/dependencies/glew/doc
@@ -41,3 +43,8 @@
 /CShard/dependencies/ImGui/lib/x64/Debug
 /CShard/dependencies/ImGui/x64
 /CShard/x64
+
+!CShard/dependencies/sdl/lib/x64/SDL2.lib
+!CShard/dependencies/sdl/lib/Win32/SDL2.lib
+/CShard/dependencies/sdl/cmake
+/CShard/dependencies/sdl/docs

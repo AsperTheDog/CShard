@@ -11,7 +11,3 @@
 [submodule "CShard/dependencies/glew"]
 	path = CShard/dependencies/glew
 	url = https://github.com/nigels-com/glew
-[submodule "CShard/dependencies/sdl"]
-	path = CShard/dependencies/sdl
-	url = https://github.com/libsdl-org/SDL
-	branch = SDL2
