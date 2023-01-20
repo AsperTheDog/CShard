@@ -5,8 +5,13 @@
 #include "../device/graphics/GFramework.hpp"
 
 #include "imgui.h"
+#include "ImGuiWindows/AttributesWindow.hpp"
+#include "ImGuiWindows/GameWindow.hpp"
+#include "ImGuiWindows/InputWindow.hpp"
+#include "ImGuiWindows/ObjectWindow.hpp"
+#include "ImGuiWindows/DiagnosticsWindow.hpp"
 
-std::vector<std::pair<ImGuiWindowCall, bool>> ImGuiManager::windowCalls;
+std::vector<ImGuiManager::WindowData> ImGuiManager::windowCalls;
 ImGuiIO* ImGuiManager::io;
 
 void ImGuiManager::init()
@@ -39,38 +44,26 @@ void ImGuiManager::render()
 {
     {
 	    bool p_open = true;
-	    static bool opt_fullscreen = true;
-	    static bool opt_padding = false;
 	    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
 	    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-	    if (opt_fullscreen)
-	    {
-	        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-	        ImGui::SetNextWindowPos(viewport->WorkPos);
-	        ImGui::SetNextWindowSize(viewport->WorkSize);
-	        ImGui::SetNextWindowViewport(viewport->ID);
-	        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-	        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-	    }
-	    else
-	    {
-	        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-	    }
+	   
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
 	    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 	        window_flags |= ImGuiWindowFlags_NoBackground;
 
-	    if (!opt_padding)
-	        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	    ImGui::Begin("DockSpace Demo", &p_open, window_flags);
-	    if (!opt_padding)
-	        ImGui::PopStyleVar();
 
-	    if (opt_fullscreen)
-	        ImGui::PopStyleVar(2);
+    	ImGui::PopStyleVar();
+	    ImGui::PopStyleVar(2);
 
 	    // Submit the DockSpace
 	    ImGuiIO& io = ImGui::GetIO();
@@ -80,7 +73,34 @@ void ImGuiManager::render()
 	        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	    }
 
-	    for (auto& windowCall : windowCalls) windowCall.first(&windowCall.second);
+		if (ImGui::BeginMenuBar())
+	    {
+	        if (ImGui::BeginMenu("File"))
+	        {
+	            //ImGui::MenuItem("Padding", NULL, &opt_padding);
+				ImGui::MenuItem("Save project", "");
+				ImGui::Separator();
+				ImGui::MenuItem("New project", "");
+				ImGui::MenuItem("Open project", "");
+				ImGui::Separator();
+				ImGui::MenuItem("Exit", "");
+	            ImGui::EndMenu();
+	        }
+			if (ImGui::BeginMenu("Window"))
+			{
+				for (auto& windowCall : windowCalls)
+				{
+					if (ImGui::MenuItem(windowCall.name.c_str(), "", windowCall.isOpen))
+						windowCall.isOpen = !windowCall.isOpen;
+				}
+				ImGui::EndMenu();
+			}
+
+	        ImGui::EndMenuBar();
+	    }
+
+
+	    for (auto& windowCall : windowCalls) windowCall.window(&windowCall.isOpen);
 
 	    ImGui::End();
 	}
@@ -100,7 +120,16 @@ ImGuiIO* ImGuiManager::getIO()
     return io;
 }
 
-void ImGuiManager::addWindowCall(ImGuiWindowCall call)
+void ImGuiManager::addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen)
 {
-    ImGuiManager::windowCalls.emplace_back(call, true);
+	ImGuiManager::windowCalls.emplace_back(std::move(name), call, defaultOpen);
+}
+
+void ImGuiManager::addImGuiWindows()
+{
+	ImGuiManager::addWindowCall(InputWindow::showWindow, "Input mappings", false);
+	ImGuiManager::addWindowCall(ObjectWindow::showWindow, "Object list", true);
+	ImGuiManager::addWindowCall(GameWindow::showWindow, "Game window", true);
+	ImGuiManager::addWindowCall(AttributesWindow::showWindow, "Object attributes", true);
+	ImGuiManager::addWindowCall(DiagnosticsWindow::showWindow, "Stats", true);
 }

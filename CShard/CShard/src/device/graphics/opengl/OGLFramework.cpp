@@ -8,10 +8,10 @@
 #include <stdexcept>
 #include <string>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
 #include <sstream>
 
+#include "OGLMesh.hpp"
+#include "OGLTexture.hpp"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl.h"
 #include "../../../ide/ImGuiManager.hpp"
@@ -174,6 +174,19 @@ void OGLFramework::init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
+	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
+}
+
+void OGLFramework::initRender()
+{
+	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void OGLFramework::endRender()
+{
 }
 
 void OGLFramework::loadImGuiBackends()
@@ -210,10 +223,29 @@ void OGLFramework::renderImgui()
     }
 }
 
-void OGLFramework::render()
+OGLFramework::Shader* OGLFramework::getBaseShader()
 {
-	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	return this->baseShader;
+}
+
+OGLFramework::Shader* OGLFramework::getBackShader()
+{
+	return this->backgroundShader;
+}
+
+GMesh* OGLFramework::createMesh(std::string filepath)
+{
+	return new OGLMesh(filepath);
+}
+
+GTexture* OGLFramework::createTexture(std::string filepath)
+{
+	return new OGLTexture(filepath);
+}
+
+void OGLFramework::setDefaultTexture()
+{
+	this->defaultTex.useTexture();
 }
 
 void OGLFramework::resizeWindow()
@@ -221,4 +253,61 @@ void OGLFramework::resizeWindow()
 	int width, height;
 	SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
 	glViewport(0, 0, width, height);
+}
+
+OGLFramework::Shader::Shader(const std::string& vertex, const std::string& fragment)
+{
+	uint32_t gs = 0;
+
+	// create shaders then link them into a pipeline
+	uint32_t vs = loadShader(GL_VERTEX_SHADER, vertex);
+	uint32_t fs = loadShader(GL_FRAGMENT_SHADER, fragment);
+
+	OGLFramework::Shader::linkProgram(vs, fs);
+
+	// once the pipeline is done we don't need the shader objects anymore
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+}
+
+uint32_t OGLFramework::Shader::loadShader(GLenum type, const std::string& file)
+{
+	GLint success;
+
+	uint32_t shaderID = glCreateShader(type);
+	std::string src = GFramework::loadShaderSrc(file);
+	const GLchar* shSrc = src.c_str();
+	glShaderSource(shaderID, 1, &shSrc, nullptr);
+	glCompileShader(shaderID);
+
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[512];
+		glGetShaderInfoLog(shaderID, 512, nullptr, infoLog);
+		throw std::runtime_error("Error while compiling shader");
+	}
+
+	return shaderID;
+}
+
+void OGLFramework::Shader::linkProgram(uint32_t vs, uint32_t fs)
+{
+	GLint success;
+
+	this->id = glCreateProgram();
+	glAttachShader(this->id, vs);
+	glAttachShader(this->id, fs);
+
+	glLinkProgram(this->id);
+
+	glGetProgramiv(this->id, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[512];
+		glGetProgramInfoLog(this->id, 512, nullptr, infoLog);
+		glDeleteShader(vs);
+		glDeleteShader(fs);
+		throw std::runtime_error("Error linking program");
+	}
 }

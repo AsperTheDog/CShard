@@ -5,3 +5,6 @@
 [submodule "CShard/dependencies/glm"]
 	path = CShard/dependencies/glm
 	url = https://github.com/g-truc/glm
+[submodule "CShard/dependencies/tinyObjLoader"]
+	path = CShard/dependencies/tinyObjLoader
+	url = https://github.com/tinyobjloader/tinyobjloader

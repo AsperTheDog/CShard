@@ -27,7 +27,7 @@
     <ClCompile Include="src\ide\ImGuiManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\elements\Camera.cpp">
+    <ClCompile Include="src\elements\components\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\elements\GameObject.cpp">
@@ -48,6 +48,36 @@
     <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\elements\components\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\elements\components\Collider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\elements\components\Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\graphics\GMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\graphics\opengl\OGLMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\graphics\GTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\graphics\opengl\OGLTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\graphics\vulkan\VKMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\elements\components\Background.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\device\graphics\GFramework.hpp">
@@ -59,7 +89,7 @@
     <ClInclude Include="src\ide\ImGuiManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\elements\Camera.hpp">
+    <ClInclude Include="src\elements\components\Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\elements\GameObject.hpp">
@@ -80,5 +110,56 @@
     <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\GameWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\AttributesWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\DiagnosticsWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elements\components\Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elements\components\Collider.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elements\components\Script.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\GMesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\opengl\OGLMesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\GTexture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\opengl\OGLTexture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\vulkan\VKMesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\vulkan\VKTexture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elements\components\Background.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\device\graphics\shaders\base.vert" />
+    <None Include="src\device\graphics\shaders\base.frag" />
+    <None Include="src\device\graphics\shaders\back.vert" />
+    <None Include="src\device\graphics\shaders\back.frag" />
   </ItemGroup>
 </Project>

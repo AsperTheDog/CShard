@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "backends/imgui_impl_sdl.h"
 #include "../graphics/GFramework.hpp"
+#include "../../Engine.hpp"
 
 GLibraries SDLFramework::lib;
 SDL_WindowFlags SDLFramework::window_flags;
@@ -35,6 +36,7 @@ void SDLFramework::init(GLibraries lib)
     {
         window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     }
+    window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_MAXIMIZED);
     SDLFramework::window = SDL_CreateWindow("CShard", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 }
 
@@ -50,7 +52,7 @@ std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& sub
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        ImGui_ImplSDL2_ProcessEvent(&event);
+        if (Engine::isIDE) ImGui_ImplSDL2_ProcessEvent(&event);
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
 	        GFramework::get()->resizeWindow();

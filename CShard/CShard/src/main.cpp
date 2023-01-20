@@ -2,8 +2,7 @@
 
 int main()
 {
-	Engine::init(OPENGL);
+	Engine::init(OPENGL, true);
 	Engine::run();
 	Engine::shutDown();
-	return 0;
 }

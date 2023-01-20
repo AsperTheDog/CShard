@@ -5,8 +5,13 @@
 #include "ide/ImGuiManager.hpp"
 #include "input/InputManager.hpp"
 
-void Engine::init(GLibraries lib)
+std::vector<GameObject> Engine::sceneObjects;
+
+void Engine::init(GLibraries lib, bool isIDE)
 {
+	Engine::isIDE = isIDE;
+	Engine::sceneObjects = std::vector<GameObject>();
+
 	InputManager::init();
 
 	SDLFramework::init(lib);
@@ -14,15 +19,18 @@ void Engine::init(GLibraries lib)
 	GFramework::create(lib);
 	GFramework::get()->init();
 
-	ImGuiManager::init();
-	Engine::addImGuiWindows();
+	if (Engine::isIDE)
+	{
+		ImGuiManager::init();
+		ImGuiManager::addImGuiWindows();
+	}
 }
 
 void Engine::run()
 {
 	while (true)
 	{
-		ImGuiManager::newFrame();
+		if (Engine::isIDE) ImGuiManager::newFrame();
 
 		if (Engine::event()) break;
 		Engine::render();
@@ -33,9 +41,14 @@ void Engine::run()
 
 void Engine::shutDown()
 {
-	ImGuiManager::destroy();
-	GFramework::get()->destroy();
+	if (Engine::isIDE) ImGuiManager::destroy();
+	GFramework::deleteInstance();
 	SDLFramework::destroy();
+}
+
+void Engine::compileProject()
+{
+
 }
 
 bool Engine::event()
@@ -48,12 +61,5 @@ bool Engine::event()
 
 void Engine::render()
 {
-	GFramework::get()->render();
-
-	ImGuiManager::render();
-}
-
-void Engine::addImGuiWindows()
-{
-	ImGuiManager::addWindowCall(InputManager::ImGuiWindowCall);
+	if (Engine::isIDE) ImGuiManager::render();
 }

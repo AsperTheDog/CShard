@@ -48,7 +48,7 @@ public:
 	static void removeMapping(uint32_t id);
 	static void ImGuiWindowCall(bool* isOpen);
 
-private:
+
 	static std::unordered_map<uint32_t, InputMapping> inputMappings;
 	static std::unordered_set<uint32_t> subscribedTypes;
 	static int32_t x, y;
@@ -58,12 +58,5 @@ private:
 	static const char* inputNames[5];
 	static std::unordered_map<std::string, int32_t> keyboardKeys;
 	static std::unordered_map<int32_t, std::string> keyboardKeyNames;
-
-	static int tempDeleteID;
-	static int tempID;
-	static int tempButton;
-	static bool tempWheel;
-	static int tempType;
-	static char tempValue[20];
 };
 
