@@ -8,3 +8,6 @@
 [submodule "CShard/dependencies/tinyObjLoader"]
 	path = CShard/dependencies/tinyObjLoader
 	url = https://github.com/tinyobjloader/tinyobjloader
+[submodule "CShard/dependencies/glew"]
+	path = CShard/dependencies/glew
+	url = https://github.com/Perlmint/glew-cmake
