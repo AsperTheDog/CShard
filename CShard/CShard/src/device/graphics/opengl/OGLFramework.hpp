@@ -1,14 +1,15 @@
 #pragma once
 
-#include "OGLTexture.hpp"
+#include "../GraphicsHeader.hpp"
+
 #include "../GFramework.hpp"
 #include "../../window/SDLFramework.hpp"
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
 #define GLMAYOR 4
 #define GLMINOR 5
+
+class OGLTexture;
+class Model;
 
 class OGLFramework final : public GFramework
 {
@@ -16,23 +17,18 @@ public:
 	class Shader
 	{
 	public:
-		// Contrary to what the name of the variable may make you think,
-		// this attribute holds the shader's ID
 		GLuint id{};
 
 		Shader(const std::string& vertex, const std::string& fragment);
-
-		// Compiles a shader from a file to an OpenGL object
 		static uint32_t loadShader(GLenum type, const std::string& file);
-
-		// Simply picks up all shaders together and links them into an OpenGL pipeline
 		void linkProgram(uint32_t vs, uint32_t fs);
 	};
 
-	void init() override;
+	OGLFramework();
+
 	void initRender() override;
 	void endRender() override;
-	void resizeWindow() override;
+	void resizeWindow(int width, int height) override;
 
 	void loadImGuiBackends() override;
 	void loadImGuiFrame() override;
@@ -46,11 +42,16 @@ public:
 	GTexture* createTexture(std::string filepath) override;
 
 	void setDefaultTexture() override;
+	void loadCamUniforms(Camera* camera) override;
+	void loadModelUniforms(Model* mod, glm::mat4& parent) override;
+	uint32_t getImGuiTexture() override;
 
+	Shader* baseShader = nullptr;
+	Shader* backgroundShader = nullptr;
 private:
 
 	SDL_GLContext gl_context = nullptr;
-	OGLTexture defaultTex{DEFAULT_TEX_LOCATION};
-	Shader* baseShader = nullptr;
-	Shader* backgroundShader = nullptr;
+	OGLTexture* imGuiTexture;
+	OGLTexture* imGuiDepth;
+	uint32_t imGuiFBO = 0;
 };

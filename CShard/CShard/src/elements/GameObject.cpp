@@ -1,35 +1,68 @@
 #include "GameObject.hpp"
 
-void GameObject::addCam()
+#include "components/Camera.hpp"
+#include "components/Collider.hpp"
+#include "components/Model.hpp"
+#include "components/Script.hpp"
+#include "components/Background.hpp"
+
+GameObject::GameObject(const std::string& name)
 {
-	this->cams.emplace_back();
+	sprintf(this->name, "%s", name.c_str());
 }
 
-void GameObject::addCollider()
+void GameObject::addComponent(Component& comp)
 {
-	ColliderData data = {COLLIDE_SPHERE, };
-	data.val.radius = 1.f;
-	this->colls.emplace_back(data);
+	switch (comp.type)
+	{
+	case COMPONENT_CAMERA:
+		comp.value.cam = new Camera();
+		break;
+	case COMPONENT_COLLIDER: 
+		comp.value.coll = new Collider();
+		break;
+	case COMPONENT_MODEL: 
+		comp.value.mod = new Model();
+		break;
+	case COMPONENT_SCRIPT: 
+		comp.value.scr = new Script();
+		break;
+	case COMPONENT_BACKGROUND: 
+		comp.value.back = new Background();
+		hasBackground = true;
+		break;
+	}
+	this->components.push_back(comp);
 }
 
-void GameObject::addModel()
+std::vector<Component>::iterator GameObject::removeComponent(std::vector<Component>::iterator it)
 {
-	this->models.emplace_back();
-}
-
-void GameObject::addScript()
-{
-	this->scripts.emplace_back();
-}
-
-void GameObject::addBackground()
-{
-	this->backgrounds.emplace_back();
+	if (it == this->components.end()) return it;
+	switch (it->type)
+	{
+	case COMPONENT_CAMERA:
+		delete it->value.cam;
+		break;
+	case COMPONENT_COLLIDER: 
+		delete it->value.coll;
+		break;
+	case COMPONENT_MODEL: 
+		delete it->value.mod;
+		break;
+	case COMPONENT_SCRIPT: 
+		delete it->value.scr;
+		break;
+	case COMPONENT_BACKGROUND: 
+		delete it->value.back;
+		hasBackground = false;
+		break;
+	}
+	return this->components.erase(it);
 }
 
 void GameObject::processCollision()
 {
-	for (auto& coll : colls) coll.testCollisions();
+	
 }
 
 void GameObject::processScript()
@@ -39,34 +72,23 @@ void GameObject::processScript()
 
 void GameObject::processRender()
 {
-	for (auto& background : backgrounds) background.render();
-	for (auto& model : models) model.render(modelMatrix);
+	
 }
 
 void GameObject::changePosition(glm::vec3 pos)
 {
-	this->pos = pos;
-	this->calculateMatrix();
+	this->modelData.pos = pos;
+	this->modelData.changed = true;
 }
 
 void GameObject::changeRotation(glm::vec3 rot)
 {
-	this->rot = rot;
-	this->calculateMatrix();
+	this->modelData.rot = rot;
+	this->modelData.changed = true;
 }
 
 void GameObject::changeScale(glm::vec3 scale)
 {
-	this->scale = scale;
-	this->calculateMatrix();
-}
-
-
-void GameObject::calculateMatrix()
-{
-	modelMatrix = glm::translate(modelMatrix, pos);
-	modelMatrix = glm::rotate(modelMatrix, rot.x, {1, 0, 0});
-	modelMatrix = glm::rotate(modelMatrix, rot.y, {0, 1, 0});
-	modelMatrix = glm::rotate(modelMatrix, rot.z, {0, 0, 1});
-	modelMatrix = glm::scale(modelMatrix, scale);
+	this->modelData.scale = scale;
+	this->modelData.changed = true;
 }

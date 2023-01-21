@@ -1,13 +1,13 @@
 #include "SDLFramework.hpp"
 
 #include <stdexcept>
-#include "backends/imgui_impl_sdl.h"
+#include <backends/imgui_impl_sdl.h>
 #include "../graphics/GFramework.hpp"
-#include "../../Engine.hpp"
 
 GLibraries SDLFramework::lib;
 SDL_WindowFlags SDLFramework::window_flags;
 SDL_Window* SDLFramework::window;
+float SDLFramework::aspectRatio;
 
 void SDLFramework::init(GLibraries lib)
 {
@@ -38,6 +38,7 @@ void SDLFramework::init(GLibraries lib)
     }
     window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_MAXIMIZED);
     SDLFramework::window = SDL_CreateWindow("CShard", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+	aspectRatio = 1280 / 720.f;
 }
 
 SDL_Window* SDLFramework::getWindow()
@@ -45,17 +46,27 @@ SDL_Window* SDLFramework::getWindow()
     return SDLFramework::window;
 }
 
-std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& subscribedTypes)
+glm::ivec2 SDLFramework::getSize()
+{
+    int width, height;
+    SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
+    return {width, height};
+}
+
+std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& subscribedTypes, bool isIDE)
 {
     std::vector<SDL_Event> events;
 
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        if (Engine::isIDE) ImGui_ImplSDL2_ProcessEvent(&event);
+        if (isIDE) ImGui_ImplSDL2_ProcessEvent(&event);
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
-	        GFramework::get()->resizeWindow();
+            int width, height;
+            SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
+            aspectRatio = (float)width / (float)height;
+	        GFramework::get()->resizeWindow(width, height);
         }
         if (subscribedTypes.contains(event.type))
 			events.push_back(event);

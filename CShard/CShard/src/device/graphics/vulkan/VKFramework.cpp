@@ -3,7 +3,7 @@
 #include "VKMesh.hpp"
 #include "VKTexture.hpp"
 
-void VKFramework::init()
+VKFramework::VKFramework()
 {
 }
 
@@ -45,6 +45,19 @@ void VKFramework::setDefaultTexture()
 {
 }
 
-void VKFramework::resizeWindow()
+void VKFramework::loadCamUniforms(Camera* camera)
+{
+}
+
+void VKFramework::loadModelUniforms(Model* mod, glm::mat4& parent)
+{
+}
+
+uint32_t VKFramework::getImGuiTexture()
+{
+	return 0;
+}
+
+void VKFramework::resizeWindow(int width, int height)
 {
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+
 #include <glm.hpp>
 
 enum ColliderType
@@ -22,6 +22,7 @@ struct ColliderData
 class Collider
 {
 public:
+	Collider();
 	explicit Collider(ColliderData data);
 
 	void testCollisions();

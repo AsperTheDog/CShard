@@ -16,3 +16,16 @@ public:
 
 	uint32_t indexNum = 0;
 };
+
+class BackOGLMesh final : public BackGMesh
+{
+public:
+	explicit BackOGLMesh();
+	~BackOGLMesh() override;
+
+	void render() override;
+
+private:
+	uint32_t VAO{};
+	uint32_t VBO{};
+};

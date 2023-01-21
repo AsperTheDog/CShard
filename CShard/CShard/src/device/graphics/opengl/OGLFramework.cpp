@@ -1,20 +1,15 @@
 #include "OGLFramework.hpp"
 
-
-#if defined(_WIN32)
-	#include <Windows.h>
-#endif
-
-#include <stdexcept>
-#include <string>
+#include <SDL_syswm.h>
 
 #include <sstream>
+#include <backends/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_sdl.h>
 
 #include "OGLMesh.hpp"
 #include "OGLTexture.hpp"
-#include "backends/imgui_impl_opengl3.h"
-#include "backends/imgui_impl_sdl.h"
 #include "../../../ide/ImGuiManager.hpp"
+#include "../../../Engine.hpp"
 
 /*
  * This debug callback function was made using the labhelper.cpp file as template
@@ -24,13 +19,7 @@
  */
 namespace
 {
-#if defined(_WIN32)
-#define CALLBACK_ CALLBACK
-#else
-#define CALLBACK_
-#endif
-	
-	GLvoid CALLBACK_ openGLDebugCallback(GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity,
+	GLvoid CALLBACK openGLDebugCallback(GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity,
 		GLsizei, GLchar const* aMessage, GLvoid*)
 	{
 		const char* srcStr = nullptr;
@@ -139,19 +128,21 @@ namespace
 #undef CALLBACK_
 }
 
-void OGLFramework::init()
+OGLFramework::OGLFramework()
 {
     gl_context = SDL_GL_CreateContext(SDLFramework::getWindow());
 	SDL_GL_MakeCurrent(SDLFramework::getWindow(), gl_context);
 	
     glewExperimental = GL_TRUE; 
-    GLenum glewError = glewInit();
-    if( glewError != GLEW_OK )
+    if( glewInit() != GLEW_OK )
     {
         throw std::runtime_error("Error initializing GLEW!");
     }
 
-	OGLFramework::resizeWindow();
+	{
+		glm::ivec2 size = SDLFramework::getSize();
+		OGLFramework::resizeWindow(size.x, size.y);
+	}
 
 	glDebugMessageCallback((GLDEBUGPROC)openGLDebugCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
@@ -177,16 +168,47 @@ void OGLFramework::init()
 
 	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
+
+	this->imGuiTexture = new OGLTexture(COLOR);
+	this->imGuiDepth = new OGLTexture(DEPTH);
+	glGenFramebuffers(1, &imGuiFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->imGuiTexture->texture, 0);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->imGuiDepth->texture, 0);
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if(status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		throw std::runtime_error(R"(ImGuiFramebuffer could not be completed)");
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void OGLFramework::initRender()
 {
+	if (Engine::isIDE)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
+		if (imGuiSize != viewPortSize)
+		{
+			viewPortSize = imGuiSize;
+			this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
+			this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
+			OGLFramework::resizeWindow(viewPortSize.x, viewPortSize.y);
+		}
+	}
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void OGLFramework::endRender()
 {
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	{
+		glm::ivec2 size = SDLFramework::getSize();
+		OGLFramework::resizeWindow(size.x, size.y);
+	}
 }
 
 void OGLFramework::loadImGuiBackends()
@@ -245,13 +267,26 @@ GTexture* OGLFramework::createTexture(std::string filepath)
 
 void OGLFramework::setDefaultTexture()
 {
-	this->defaultTex.useTexture();
+	GFramework::defaultTex->useTexture();
 }
 
-void OGLFramework::resizeWindow()
+void OGLFramework::loadCamUniforms(Camera* camera)
 {
-	int width, height;
-	SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
+
+}
+
+void OGLFramework::loadModelUniforms(Model* mod, glm::mat4& parent)
+{
+
+}
+
+uint32_t OGLFramework::getImGuiTexture()
+{
+	return this->imGuiTexture->texture;
+}
+
+void OGLFramework::resizeWindow(int width, int height)
+{
 	glViewport(0, 0, width, height);
 }
 

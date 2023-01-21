@@ -1,10 +1,7 @@
 #include "InputManager.hpp"
 
-#include <algorithm>
-#include <imgui.h>
-#include <string>
-
 #include "../device/window/SDLFramework.hpp"
+
 std::unordered_map<uint32_t, InputMapping> InputManager::inputMappings;
 std::unordered_set<uint32_t> InputManager::subscribedTypes;
 int32_t InputManager::x, InputManager::y;
@@ -28,9 +25,9 @@ bool InputManager::addMapping(uint32_t id, InputMapping value)
 	return true;
 }
 
-std::vector<uint32_t> InputManager::triggeredEvents(bool* shouldClose)
+std::vector<uint32_t> InputManager::triggeredEvents(bool* shouldClose, bool isIDE)
 {
-	std::vector<SDL_Event> SDLevents = SDLFramework::getEvents(subscribedTypes);
+	std::vector<SDL_Event> SDLevents = SDLFramework::getEvents(subscribedTypes, isIDE);
 	std::vector<uint32_t> events{};
 	for (auto& event : SDLevents)
 	{

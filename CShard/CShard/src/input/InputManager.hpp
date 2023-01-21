@@ -1,7 +1,6 @@
 #pragma once
 #include <unordered_map>
 #include <unordered_set>
-#include <string>
 
 #include <SDL_events.h>
 
@@ -40,7 +39,7 @@ public:
 	static void init();
 
 	static bool addMapping(uint32_t id, InputMapping value);
-	static std::vector<uint32_t> triggeredEvents(bool* shouldClose);
+	static std::vector<uint32_t> triggeredEvents(bool* shouldClose, bool isIDE);
 
 	static void getMouseMovement(int32_t& x, int32_t& y);
 	static void subscribeToEvent(ShardEvent event);

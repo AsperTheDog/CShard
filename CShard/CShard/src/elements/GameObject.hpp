@@ -1,23 +1,45 @@
 #pragma once
+#include <string>
 #include <vector>
+#include "PhysicalData.hpp"
 
-#include "components/Camera.hpp"
-#include "components/Collider.hpp"
-#include "components/Model.hpp"
-#include "components/Script.hpp"
+class Background;
+class Script;
+class Model;
+class Collider;
+class Camera;
 
-#include <gtx/transform.hpp>
+enum ComponentType
+{
+	COMPONENT_CAMERA,
+	COMPONENT_COLLIDER,
+	COMPONENT_MODEL,
+	COMPONENT_SCRIPT,
+	COMPONENT_BACKGROUND
+};
 
-#include "components/Background.hpp"
+union ComponentUnion
+{
+	Camera* cam;
+	Collider* coll;
+	Model* mod;
+	Script* scr;
+	Background* back;
+};
+
+struct Component
+{
+	ComponentType type;
+	ComponentUnion value;
+};
 
 class GameObject
 {
 public:
-	void addCam();
-	void addCollider();
-	void addModel();
-	void addScript();
-	void addBackground();
+	explicit GameObject(const std::string& name);
+
+	void addComponent(Component& comp);
+	std::vector<Component>::iterator removeComponent(std::vector<Component>::iterator it);
 
 	void processCollision();
 	void processScript();
@@ -26,20 +48,13 @@ public:
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
 	void changeScale(glm::vec3 scale);
+	
+	char name[20]{};
+	std::vector<Component> components;
+	bool hasBackground = false;
 
+	PhysicalData modelData;
 private:
-	void calculateMatrix();
-
-	glm::vec3 pos{};
-	glm::vec3 rot{};
-	glm::vec3 scale{};
-	glm::mat4 modelMatrix{};
-
-	std::vector<Camera> cams;
-	std::vector<Collider> colls;
-	std::vector<Model> models;
-	std::vector<Script> scripts;
-	std::vector<Background> backgrounds;
 };
 
 

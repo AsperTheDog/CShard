@@ -1,66 +1,77 @@
 #include "Model.hpp"
 
-#include <utility>
 #include "../../device/graphics/GFramework.hpp"
+#include "../../Engine.hpp"
+
+#include "../../device/graphics/GTexture.hpp"
+#include "../../device/graphics/GMesh.hpp"
 
 #include <gtx/transform.hpp>
 
-Model::Model() : pos(0), rot(0), mesh(nullptr), texture(nullptr)
+Model::Model()
+	: meshID(0), textureID(0), data({})
 {
-	this->calculateMatrix();
+
 }
 
 Model::~Model()
 {
-	delete this->mesh;
-	delete this->texture;
 }
 
-void Model::render(glm::mat4 parentMat)
+void Model::render()
 {
-	if (this->texture)
-		this->texture->useTexture();
+	if (Engine::isValidTexture(textureID))
+		Engine::getTexture(textureID)->useTexture();
 	else
 		GFramework::get()->setDefaultTexture();
-	if (this->mesh)
-		this->mesh->render();
+
+	if (Engine::isValidMesh(meshID))
+		Engine::getMesh(meshID)->render();
 }
 
 void Model::changePosition(glm::vec3 pos)
 {
-	this->pos = pos;
-	this->calculateMatrix();
+	this->data.pos = pos;
+	this->data.changed = true;
 }
 
 void Model::changeRotation(glm::vec3 rot)
 {
-	this->rot = rot;
-	this->calculateMatrix();
+	this->data.rot = rot;
+	this->data.changed = true;
 }
 
 void Model::changeScale(glm::vec3 scale)
 {
-	this->scale = scale;
-	this->calculateMatrix();
+	this->data.scale = scale;
+	this->data.changed = true;
 }
 
-void Model::changeMesh(std::string filepath)
+void Model::changeMesh()
 {
-	delete this->mesh;
-	this->mesh = GFramework::get()->createMesh(std::move(filepath));
+	this->meshID = tempMeshID;
 }
 
-void Model::changeTexture(std::string filepath)
+void Model::changeTexture()
 {
-	delete this->texture;
-	this->texture = GFramework::get()->createTexture(std::move(filepath));
+	this->textureID = tempTexID;
 }
 
-void Model::calculateMatrix()
+void Model::calculateMatrix(PhysicalData* pData)
 {
-	modelMatrix = glm::translate(modelMatrix, pos);
-	modelMatrix = glm::rotate(modelMatrix, rot.x, {1, 0, 0});
-	modelMatrix = glm::rotate(modelMatrix, rot.y, {0, 1, 0});
-	modelMatrix = glm::rotate(modelMatrix, rot.z, {0, 0, 1});
-	modelMatrix = glm::scale(modelMatrix, scale);
+	if (!pData->changed && !data.changed) return;
+
+	modelMatrix = glm::translate(modelMatrix, pData->pos);
+	modelMatrix = glm::translate(modelMatrix, data.pos);
+	modelMatrix = glm::rotate(modelMatrix, pData->rot.x, {1, 0, 0});
+	modelMatrix = glm::rotate(modelMatrix, pData->rot.y, {0, 1, 0});
+	modelMatrix = glm::rotate(modelMatrix, pData->rot.z, {0, 0, 1});
+	modelMatrix = glm::rotate(modelMatrix, data.rot.x, {1, 0, 0});
+	modelMatrix = glm::rotate(modelMatrix, data.rot.y, {0, 1, 0});
+	modelMatrix = glm::rotate(modelMatrix, data.rot.z, {0, 0, 1});
+	modelMatrix = glm::scale(modelMatrix, pData->scale);
+	modelMatrix = glm::scale(modelMatrix, data.scale);
+
+	pData->changed = false;
+	data.changed = false;
 }

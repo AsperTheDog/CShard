@@ -1,16 +1,14 @@
 #include "Background.hpp"
 
-#include "../../device/graphics/GFramework.hpp"
+#include "../../Engine.hpp"
+#include "../../device/graphics/GTexture.hpp"
 
-#include <utility>
-
-
-void Background::setTexture(std::string filepath)
+void Background::setTexture()
 {
-	this->tex = GFramework::get()->createTexture(std::move(filepath));
+	this->texID = tempTexID;
 }
 
 void Background::render()
 {
-	if (tex) tex->renderAsBackground();
+	if (Engine::isValidTexture(texID)) Engine::getTexture(texID)->renderAsBackground();
 }

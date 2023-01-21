@@ -4,7 +4,7 @@
 #define TINYOBJLOADER_USE_MAPBOX_EARCUT
 #include <tiny_obj_loader.h>
 
-GMesh::GMesh(std::string filepath)
+GMesh::GMesh(std::string filepath) : name(filepath)
 {
 	
 	tinyobj::attrib_t attrib;

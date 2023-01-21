@@ -11,6 +11,11 @@ struct Vertex
 	glm::vec2 texUV;
 };
 
+struct BackVertex
+{
+	glm::vec2 coords;
+};
+
 class GMesh
 {
 public:
@@ -19,8 +24,19 @@ public:
 
 	virtual void render() = 0;
 
+	std::string name;
 protected:
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 };
 
+class BackGMesh
+{
+public:
+	virtual ~BackGMesh() = default;
+
+	virtual void render() = 0;
+
+protected:
+	std::vector<BackVertex> vertices;
+};

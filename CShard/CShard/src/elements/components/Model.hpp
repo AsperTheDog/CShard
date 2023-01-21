@@ -1,8 +1,7 @@
 #pragma once
-#include <string>
+#include <glm.hpp>
 
-#include "../../device/graphics/GTexture.hpp"
-#include "../../device/graphics/GMesh.hpp"
+#include "../PhysicalData.hpp"
 
 class Model
 {
@@ -10,23 +9,23 @@ public:
 	explicit Model();
 	~Model();
 
-	void render(glm::mat4 parentMat);
+	void render();
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
 	void changeScale(glm::vec3 scale);
 
-	void changeMesh(std::string filepath);
-	void changeTexture(std::string filepath);
+	void changeMesh();
+	void changeTexture();
 
+	uint32_t meshID;
+	uint32_t textureID;
+
+	int tempMeshID{}, tempTexID{};
+
+	PhysicalData data;
 private:
-	void calculateMatrix();
-
-	glm::vec3 pos;
-	glm::vec3 rot;
-	glm::vec3 scale{};
+	void calculateMatrix(PhysicalData* pData);
 	glm::mat4 modelMatrix{};
-	GMesh* mesh;
-	GTexture* texture;
 };
 

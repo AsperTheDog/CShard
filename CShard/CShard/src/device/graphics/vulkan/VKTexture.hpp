@@ -11,5 +11,6 @@ public:
 
 	void useTexture() override;
 	void renderAsBackground() override;
+	void resize(uint32_t width, uint32_t height, char* data) override;
 };
 

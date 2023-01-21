@@ -3,17 +3,30 @@
 #include <fstream>
 
 #include "opengl/OGLFramework.hpp"
+#include "opengl/OGLMesh.hpp"
+#include "opengl/OGLTexture.hpp"
 #include "vulkan/VKFramework.hpp"
+#include "vulkan/VKMesh.hpp"
+#include "vulkan/VKTexture.hpp"
+
+GLibraries GFramework::type;
+GTexture* GFramework::defaultTex;
+BackGMesh* GFramework::backgroundMesh;
 
 void GFramework::create(GLibraries lib)
 {
+    GFramework::type = lib;
 	switch(lib)
 	{
 	case OPENGL:
 		GFramework::instance = new OGLFramework();
+        defaultTex = new OGLTexture(DEFAULT_TEX_LOCATION);
+        backgroundMesh = new BackOGLMesh();
 		break;
 	case VULKAN:
 		GFramework::instance = new VKFramework();
+        defaultTex = new VKTexture(DEFAULT_TEX_LOCATION);
+        backgroundMesh = new BackVKMesh();
 		break;
 	}
 }

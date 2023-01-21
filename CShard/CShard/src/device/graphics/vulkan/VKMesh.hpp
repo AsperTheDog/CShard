@@ -1,7 +1,7 @@
 #pragma once
 #include "../GMesh.hpp"
 
-class VKMesh : public GMesh
+class VKMesh final : public GMesh
 {
 public:
 	explicit VKMesh(const std::string& filepath);
@@ -10,3 +10,16 @@ public:
 	void render() override;
 };
 
+
+class BackVKMesh final : public BackGMesh
+{
+public:
+	explicit BackVKMesh();
+	~BackVKMesh() override;
+
+	void render() override;
+
+private:
+	uint32_t VAO{};
+	uint32_t VBO{};
+};

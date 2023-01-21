@@ -7,8 +7,10 @@ class Background
 {
 public:
 	void render();
-	void setTexture(std::string filepath);
+	void setTexture();
+
+	int tempTexID{};
 private:
-	GTexture* tex = nullptr;
+	uint32_t texID = 0;
 };
 

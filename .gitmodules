@@ -8,6 +8,6 @@
 [submodule "CShard/dependencies/tinyObjLoader"]
 	path = CShard/dependencies/tinyObjLoader
 	url = https://github.com/tinyobjloader/tinyobjloader
-[submodule "CShard/dependencies/glew/src"]
-	path = CShard/dependencies/glew/src
-	url = https://github.com/nigels-com/glew
+[submodule "CShard/dependencies/stb"]
+	path = CShard/dependencies/stb
+	url = https://github.com/nothings/stb

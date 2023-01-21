@@ -155,11 +155,23 @@
     <ClInclude Include="src\elements\components\Background.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\GameOptionsWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\AssetWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\device\graphics\GraphicsHeader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elements\PhysicalData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\device\graphics\shaders\base.vert" />
-    <None Include="src\device\graphics\shaders\base.frag" />
-    <None Include="src\device\graphics\shaders\back.vert" />
-    <None Include="src\device\graphics\shaders\back.frag" />
+    <None Include="shaders\base.vert" />
+    <None Include="shaders\base.frag" />
+    <None Include="shaders\back.vert" />
+    <None Include="shaders\back.frag" />
   </ItemGroup>
 </Project>

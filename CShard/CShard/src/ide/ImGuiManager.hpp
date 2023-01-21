@@ -2,7 +2,8 @@
 #include <string>
 #include <vector>
 
-#include "imgui.h"
+#include <imgui.h>
+#include "../elements/components/Camera.hpp"
 
 typedef void (*ImGuiWindowCall)(bool*);
 
@@ -29,6 +30,8 @@ public:
 
 	static void addImGuiWindows();
 	static void addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen);
+
+	static Camera navigationCam;
 private:
 	static std::vector<WindowData> windowCalls;
 	static ImGuiIO* io;
