@@ -158,7 +158,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/src/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -195,7 +195,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/src/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
