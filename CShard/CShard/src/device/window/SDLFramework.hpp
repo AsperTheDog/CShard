@@ -16,8 +16,15 @@ public:
 	static void swapWindow();
 	static void destroy();
 	static glm::ivec2 getSize();
+	static void showErrorMessage(std::string title, std::string text);
 
 	static float aspectRatio;
+
+	inline static bool isMouseDragging = false;
+	inline static bool shouldResetMouse = false;
+	inline static bool leftClick = false;
+	inline static glm::vec2 mousePos{};
+	inline static glm::vec2 lastMousePos{};
 private:
 	static GLibraries lib;
 	static SDL_WindowFlags window_flags;

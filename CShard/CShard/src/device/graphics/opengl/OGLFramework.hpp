@@ -8,7 +8,7 @@
 #define GLMAYOR 4
 #define GLMINOR 5
 
-class OGLTexture;
+class FBOGLTexture;
 class Model;
 
 class OGLFramework final : public GFramework
@@ -51,7 +51,7 @@ public:
 private:
 
 	SDL_GLContext gl_context = nullptr;
-	OGLTexture* imGuiTexture;
-	OGLTexture* imGuiDepth;
+	FBOGLTexture* imGuiTexture;
+	FBOGLTexture* imGuiDepth;
 	uint32_t imGuiFBO = 0;
 };

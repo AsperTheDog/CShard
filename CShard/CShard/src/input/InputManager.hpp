@@ -48,7 +48,6 @@ public:
 	static void removeMapping(uint32_t id);
 	static void ImGuiWindowCall(bool* isOpen);
 
-
 	static std::unordered_map<uint32_t, InputMapping> inputMappings;
 	static std::unordered_set<uint32_t> subscribedTypes;
 	static int32_t x, y;

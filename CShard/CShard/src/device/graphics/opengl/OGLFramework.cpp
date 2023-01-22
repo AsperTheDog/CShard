@@ -169,8 +169,8 @@ OGLFramework::OGLFramework()
 	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
 
-	this->imGuiTexture = new OGLTexture(COLOR);
-	this->imGuiDepth = new OGLTexture(DEPTH);
+	this->imGuiTexture = new FBOGLTexture(COLOR, 1920, 1080);
+	this->imGuiDepth = new FBOGLTexture(DEPTH, 1920, 1080);
 	glGenFramebuffers(1, &imGuiFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->imGuiTexture->texture, 0);
@@ -196,6 +196,7 @@ void OGLFramework::initRender()
 			this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
 			this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
 			OGLFramework::resizeWindow(viewPortSize.x, viewPortSize.y);
+			Engine::activeCam->updateAspectRatio(viewPortSize.x / viewPortSize.y);
 		}
 	}
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);

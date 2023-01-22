@@ -1,5 +1,9 @@
 #include "ImGuiManager.hpp"
 
+#include <gtx/transform.hpp>
+
+#include "../device/window/SDLFramework.hpp"
+
 #include "ImGuiWindows/AssetWindow.hpp"
 #include "ImGuiWindows/AttributesWindow.hpp"
 #include "ImGuiWindows/GameWindow.hpp"
@@ -7,10 +11,6 @@
 #include "ImGuiWindows/DiagnosticsWindow.hpp"
 #include "ImGuiWindows/GameOptionsWindow.hpp"
 
-
-std::vector<ImGuiManager::WindowData> ImGuiManager::windowCalls;
-ImGuiIO* ImGuiManager::io;
-Camera ImGuiManager::navigationCam;
 
 void ImGuiManager::init()
 {
@@ -107,6 +107,10 @@ void ImGuiManager::render()
     ImGui::Render();
 
     GFramework::get()->renderImgui();
+	if (GameWindow::isHovering && SDLFramework::leftClick)
+		updateSceneCam();
+	GameWindow::isHovering = false;
+	SDLFramework::leftClick = false;
 }
 
 void ImGuiManager::destroy()
@@ -122,6 +126,20 @@ ImGuiIO* ImGuiManager::getIO()
 void ImGuiManager::addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen)
 {
 	ImGuiManager::windowCalls.emplace_back(std::move(name), call, defaultOpen);
+}
+
+void ImGuiManager::updateSceneCam()
+{
+	int delta_x = SDLFramework::mousePos.x - SDLFramework::lastMousePos.x;
+	int delta_y = SDLFramework::mousePos.y - SDLFramework::lastMousePos.y;
+	float rotation_speed = 0.001f;
+	glm::mat4 yaw = glm::rotate(rotation_speed * delta_x, navigationCam.worldUp);
+	glm::mat4 pitch = glm::rotate(
+		rotation_speed * delta_y, 
+		glm::normalize(glm::cross(navigationCam.dir, navigationCam.worldUp)));
+	navigationCam.lookAt(glm::vec3(pitch * yaw * glm::vec4(navigationCam.dir, 0.0f)));
+	SDLFramework::lastMousePos.x = SDLFramework::mousePos.x;
+	SDLFramework::lastMousePos.y = SDLFramework::mousePos.y;
 }
 
 void ImGuiManager::addImGuiWindows()

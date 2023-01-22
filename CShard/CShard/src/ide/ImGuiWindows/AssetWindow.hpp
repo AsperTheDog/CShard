@@ -1,5 +1,7 @@
 #pragma once
 #include <imgui.h>
+#include <stdexcept>
+
 #include "../../Engine.hpp"
 
 #include "../../device/graphics/GTexture.hpp"
@@ -45,7 +47,15 @@ public:
 					ImGui::SameLine();
 					if(ImGui::Button("Import##Tex"))
 					{
-						
+						std::string path = {buff};
+						try
+						{
+							Engine::addTexture(path);
+						}
+						catch (std::runtime_error& e)
+						{
+							SDLFramework::showErrorMessage("Could not load texture", "Ensure the path is correct");
+						}
 					}
 					ImGui::Separator();
 					ImGui::BeginTable("Texture##Tex", 3, flags);

@@ -3,6 +3,8 @@
 #include <vector>
 
 #include <imgui.h>
+#include <SDL_stdinc.h>
+
 #include "../elements/components/Camera.hpp"
 
 typedef void (*ImGuiWindowCall)(bool*);
@@ -30,10 +32,11 @@ public:
 
 	static void addImGuiWindows();
 	static void addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen);
+	static void updateSceneCam();
 
-	static Camera navigationCam;
+	inline static Camera navigationCam{};
 private:
-	static std::vector<WindowData> windowCalls;
-	static ImGuiIO* io;
+	inline static std::vector<WindowData> windowCalls{};
+	inline static ImGuiIO* io{};
 };
 

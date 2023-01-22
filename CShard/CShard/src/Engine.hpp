@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <vec2.hpp>
 
 #include "device/graphics/GUtils.hpp"
 #include "elements/GameObject.hpp"
@@ -28,11 +29,12 @@ public:
 	static bool isValidTexture(uint32_t id);
 	static GTexture* getTexture(uint32_t id);
 
-	inline static bool isIDE;
 	static std::unordered_map<uint32_t, GameObject> sceneObjects;
 	static std::unordered_map<uint32_t, GMesh*> meshes;
 	static std::unordered_map<uint32_t, GTexture*> textures;
 	static Camera* activeCam;
+
+	inline static bool isIDE;
 private:
 	static bool event();
 	static void render();

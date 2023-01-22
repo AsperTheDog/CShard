@@ -55,8 +55,10 @@ std::string GFramework::loadShaderSrc(const std::string& file)
     }
     else
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Could not load shader data", "Make sure the pak folder is not missing in the program folder", SDLFramework::getWindow());
-        throw std::exception("Error loading shader");
+        SDLFramework::showErrorMessage(
+            "Could not load shader data", 
+            "Make sure the pak folder is not missing in the program folder");
+    	throw std::exception("Error loading shader");
     }
     inFile.close();
     return src;

@@ -94,17 +94,31 @@ public:
 private:
 	static void showCamera(Camera* cam, std::string& uniqueID)
 	{
-		ImGui::InputFloat3(("Position##cam" + uniqueID).c_str(), &cam->pos.x);
+		glm::vec3 tempVec = cam->pos;
+		ImGui::InputFloat3(("Position##cam" + uniqueID).c_str(), &tempVec.x);
+		if (tempVec != cam->pos) cam->move(tempVec);
+
+		tempVec = cam->dir;
 		ImGui::InputFloat3(("Direction##cam" + uniqueID).c_str(), &cam->dir.x);
+		if (tempVec != cam->dir) cam->lookAt(tempVec);
 		ImGui::SameLine();
-		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) cam->dir = glm::normalize(cam->dir);
+		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
+			cam->lookAt(glm::normalize(cam->dir));
+
+		tempVec = cam->worldUp;
 		ImGui::InputFloat3(("WorldUp##cam" + uniqueID).c_str(), &cam->worldUp.x);
+		if (tempVec != cam->pos) cam->move(tempVec);
 		ImGui::SameLine();
-		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) cam->worldUp = glm::normalize(cam->worldUp);
+		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
+			cam->changeWorldUp(glm::normalize(cam->worldUp));
+
 		ImGui::Separator();
-		ImGui::DragFloat(("FOVy##cam" + uniqueID).c_str(), &cam->FOV, 1.f, 1, 179);
-		ImGui::DragFloat(("Near Plane##cam" + uniqueID).c_str(), &cam->nearPlane, 0.01f, 0.01f, 1);
-		ImGui::DragFloat(("Far Plane##cam" + uniqueID).c_str(), &cam->farPlane, 100.f, 10.f, 1000000.f);
+		float tempFOV = cam->FOV, tempNP = cam->nearPlane, tempFP = cam->farPlane;
+		ImGui::DragFloat(("FOVy##cam" + uniqueID).c_str(), &tempFOV, 1.f, 1, 179);
+		ImGui::DragFloat(("Near Plane##cam" + uniqueID).c_str(), &tempNP, 0.01f, 0.01f, 1);
+		ImGui::DragFloat(("Far Plane##cam" + uniqueID).c_str(), &tempFP, 100.f, 10.f, 1000000.f);
+		if (tempFOV != cam->FOV || tempNP != cam->nearPlane || tempFP != cam->farPlane)
+			cam->changeLense(tempFOV, tempNP, tempFP);
 	}
 
 	static void showCollider(Collider* coll, std::string& uniqueID)
@@ -114,30 +128,29 @@ private:
 
 	static void showModel(Model* mod, std::string& uniqueID)
 	{
-		glm::vec3 pos{mod->data.pos};
-		glm::vec3 rot{mod->data.rot};
-		glm::vec3 scale{mod->data.scale};
-		ImGui::DragFloat3(("Position##mod" + uniqueID).c_str(), &pos.x, 1.f, 10000.f, 10000.f);
-		if (pos != mod->data.pos) mod->changePosition(pos);
-		ImGui::DragFloat3(("scale##mod" + uniqueID).c_str(), &scale.x, 1.f, 0.f, 1000.f);
-		if (scale != mod->data.scale) mod->changeScale(scale);
-		ImGui::DragFloat3(("Rotation##mod" + uniqueID).c_str(), &rot.x, 1.f, -180.f, 180.f);
-		if (rot != mod->data.rot) mod->changeRotation(rot);
+		glm::vec3 tempVec = mod->data.pos;
+		ImGui::DragFloat3(("Position##mod" + uniqueID).c_str(), &tempVec.x, 1.f, 10000.f, 10000.f);
+		if (tempVec != mod->data.pos) mod->changePosition(tempVec);
+
+		tempVec = mod->data.scale;
+		ImGui::DragFloat3(("scale##mod" + uniqueID).c_str(), &tempVec.x, 1.f, 0.f, 1000.f);
+		if (tempVec != mod->data.scale) mod->changeScale(tempVec);
+
+		tempVec = mod->data.rot;
+		ImGui::DragFloat3(("Rotation##mod" + uniqueID).c_str(), &tempVec.x, 1.f, -180.f, 180.f);
+		if (tempVec != mod->data.rot) mod->changeRotation(tempVec);
+
 		ImGui::Separator();
 		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod->tempMeshID, 1);
 		mod->tempMeshID = std::max(0, mod->tempMeshID);
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Meshmod" + uniqueID).c_str()))
-		{
 			mod->changeMesh();
-		}
 		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &mod->tempTexID, 1);
 		mod->tempTexID = std::max(0, mod->tempTexID);
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
-		{
 			mod->changeTexture();
-		}
 	}
 
 	static void showScript(Script* scr, std::string& uniqueID)
@@ -151,9 +164,7 @@ private:
 		back->tempTexID = std::max(0, back->tempTexID);
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
-		{
 			back->setTexture();
-		}
 	}
 
 	inline static int tempType = 0;

@@ -1,18 +1,25 @@
 #include "Camera.hpp"
 
+#include <iostream>
+
 #include "../../device/window/SDLFramework.hpp"
+#include "../../ide/ImGuiManager.hpp"
 
-#include <gtc/matrix_transform.hpp>
+#include <gtx/transform.hpp>
 
-Camera::Camera() : FOV(100.f), nearPlane(0.01f), farPlane(100000.f), aspectRatio(16/9.f)
+Camera::Camera()
 {
-	this->pos = glm::vec3(0);
-	this->dir = glm::vec3(0, 0, -1);
+	this->move(glm::vec3(0));
+	this->lookAt(glm::vec3(0, 0, -1));
 	this->worldUp = glm::vec3(0, 1, 0);
+
+	this->changeLense(100.f, 0.1f, 100000.f);
 }
 
 glm::mat4 Camera::getViewMatrix()
 {
+	if (hasChangedView) this->updateViewMatrix();
+	hasChangedView = false;
 	return this->viewMatrix;
 }
 
@@ -23,10 +30,44 @@ void Camera::updateViewMatrix()
 
 glm::mat4 Camera::getProjMatrix()
 {
+	if (hasChangedProj) this->updateProjMatrix();
+	hasChangedProj = false;
 	return this->projMatrix;
 }
 
 void Camera::updateProjMatrix()
 {
-	this->projMatrix = glm::perspective(FOV, SDLFramework::aspectRatio, nearPlane, farPlane);
+	this->projMatrix = glm::perspective(glm::radians(FOV), SDLFramework::aspectRatio, nearPlane, farPlane);
+}
+
+void Camera::move(glm::vec3 pos)
+{
+	this->pos = pos;
+	hasChangedView = true;
+}
+
+void Camera::lookAt(glm::vec3 dir)
+{
+	this->dir = dir;
+	hasChangedView = true;
+}
+
+void Camera::changeWorldUp(glm::vec3 up)
+{
+	this->worldUp = up;
+	hasChangedView = true;
+}
+
+void Camera::changeLense(float FOV, float nearP, float farP)
+{
+	this->FOV = FOV;
+	if (nearP > 0) nearPlane = nearP;
+	if (farP > 0) farPlane = farP;
+	hasChangedProj = true;
+}
+
+void Camera::updateAspectRatio(float aspectRatio)
+{
+	this->aspectRatio = aspectRatio;
+	hasChangedProj = true;
 }

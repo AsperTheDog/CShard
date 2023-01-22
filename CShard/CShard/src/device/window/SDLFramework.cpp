@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <backends/imgui_impl_sdl.h>
 #include "../graphics/GFramework.hpp"
+#include "../../ide/ImGuiManager.hpp"
+#include "../../Engine.hpp"
 
 GLibraries SDLFramework::lib;
 SDL_WindowFlags SDLFramework::window_flags;
@@ -53,6 +55,11 @@ glm::ivec2 SDLFramework::getSize()
     return {width, height};
 }
 
+void SDLFramework::showErrorMessage(std::string title, std::string text)
+{
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), text.c_str(), SDLFramework::getWindow());
+}
+
 std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& subscribedTypes, bool isIDE)
 {
     std::vector<SDL_Event> events;
@@ -60,7 +67,36 @@ std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& sub
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        if (isIDE) ImGui_ImplSDL2_ProcessEvent(&event);
+        if (isIDE)
+        {
+	        ImGui_ImplSDL2_ProcessEvent(&event);
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+            {
+                if (!isMouseDragging)
+                {
+					isMouseDragging = true;
+
+					int x;
+					int y;
+					SDL_GetMouseState(&x, &y);
+					lastMousePos.x = x;
+					lastMousePos.y = y;
+                }
+			}
+            if (!(SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+			{
+				isMouseDragging = false;
+			}
+            else
+            {
+                leftClick = true;
+            }
+            if (event.type == SDL_MOUSEMOTION)
+            {
+				mousePos.x = event.motion.x;
+				mousePos.y = event.motion.y;
+            }
+        }
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
             int width, height;

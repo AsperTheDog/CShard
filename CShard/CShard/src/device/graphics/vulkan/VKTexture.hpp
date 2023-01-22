@@ -3,7 +3,7 @@
 
 #include "../GTexture.hpp"
 
-class VKTexture : public GTexture
+class VKTexture final : public GTexture
 {
 public:
 	explicit VKTexture(std::string path);
@@ -11,6 +11,11 @@ public:
 
 	void useTexture() override;
 	void renderAsBackground() override;
-	void resize(uint32_t width, uint32_t height, char* data) override;
 };
 
+class FBVKTexture final : public FBTexture
+{
+public:
+	explicit FBVKTexture(TexType type, uint32_t width, uint32_t height);
+	void resize(uint32_t width, uint32_t height, char* data) override;
+};

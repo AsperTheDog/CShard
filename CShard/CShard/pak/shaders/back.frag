@@ -5,7 +5,7 @@
 precision highp float;
 
 layout(location = 0) out vec4 fragmentColor;
-layout(binding = 6) uniform sampler2D background;
+layout(binding = 0) uniform sampler2D background;
 
 in vec2 texCoord;
 

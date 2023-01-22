@@ -14,9 +14,11 @@ public:
 			(ImTextureID)GFramework::get()->getImGuiTexture(), 
 			ImGui::GetContentRegionAvail(), 
 			ImVec2(0, 1), ImVec2(1, 0));
+		isHovering = ImGui::IsWindowHovered();
 		ImGui::End();
 	}
 
+	inline static bool isHovering = false;
 private:
 
 };

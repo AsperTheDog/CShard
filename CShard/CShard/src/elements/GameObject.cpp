@@ -72,7 +72,11 @@ void GameObject::processScript()
 
 void GameObject::processRender()
 {
-	
+	for (auto& comp : components) 
+	{
+		if (comp.type == COMPONENT_BACKGROUND) comp.value.back->render();
+		else if (comp.type == COMPONENT_MODEL) comp.value.mod->render();
+	}
 }
 
 void GameObject::changePosition(glm::vec3 pos)
