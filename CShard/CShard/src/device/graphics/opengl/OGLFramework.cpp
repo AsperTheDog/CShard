@@ -193,10 +193,9 @@ void OGLFramework::initRender()
 		if (imGuiSize != viewPortSize)
 		{
 			viewPortSize = imGuiSize;
-			this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
-			this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
+			this->resizeImGuiTextures();
 			OGLFramework::resizeWindow(viewPortSize.x, viewPortSize.y);
-			Engine::activeCam->updateAspectRatio(viewPortSize.x / viewPortSize.y);
+			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
 	}
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
@@ -206,10 +205,6 @@ void OGLFramework::initRender()
 void OGLFramework::endRender()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
-	{
-		glm::ivec2 size = SDLFramework::getSize();
-		OGLFramework::resizeWindow(size.x, size.y);
-	}
 }
 
 void OGLFramework::loadImGuiBackends()
@@ -284,6 +279,25 @@ void OGLFramework::loadModelUniforms(Model* mod, glm::mat4& parent)
 uint32_t OGLFramework::getImGuiTexture()
 {
 	return this->imGuiTexture->texture;
+}
+
+void OGLFramework::resizeImGuiTextures()
+{
+	this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
+	this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
+
+	//glDeleteFramebuffers(1, &imGuiFBO);
+	//glGenFramebuffers(1, &imGuiFBO);
+	//glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->imGuiTexture->texture, 0);
+	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	//
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->imGuiDepth->texture, 0);
+	//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	//if(status != GL_FRAMEBUFFER_COMPLETE)
+	//{
+	//	throw std::runtime_error(R"(ImGuiFramebuffer could not be completed)");
+	//}
 }
 
 void OGLFramework::resizeWindow(int width, int height)

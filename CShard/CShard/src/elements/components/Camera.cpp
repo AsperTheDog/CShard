@@ -37,7 +37,7 @@ glm::mat4 Camera::getProjMatrix()
 
 void Camera::updateProjMatrix()
 {
-	this->projMatrix = glm::perspective(glm::radians(FOV), SDLFramework::aspectRatio, nearPlane, farPlane);
+	this->projMatrix = glm::perspective(glm::radians(FOV), aspectRatio, nearPlane, farPlane);
 }
 
 void Camera::move(glm::vec3 pos)

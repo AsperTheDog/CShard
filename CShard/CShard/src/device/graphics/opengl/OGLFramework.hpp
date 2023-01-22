@@ -45,6 +45,7 @@ public:
 	void loadCamUniforms(Camera* camera) override;
 	void loadModelUniforms(Model* mod, glm::mat4& parent) override;
 	uint32_t getImGuiTexture() override;
+	void resizeImGuiTextures();
 
 	Shader* baseShader = nullptr;
 	Shader* backgroundShader = nullptr;
