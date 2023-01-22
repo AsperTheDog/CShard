@@ -19,11 +19,20 @@ public:
             {
                 if (ImGui::BeginTabItem("Meshes"))
                 {
-					ImGui::InputText("Path##Mesh", buff, 200);
+					ImGui::InputText("Path##Mesh", meshBuff, 200);
 					ImGui::SameLine();
 					if(ImGui::Button("Import##Mesh"))
 					{
-						
+						std::string path = {meshBuff};
+						try
+						{
+							Engine::addMesh(path);
+						}
+						catch (std::runtime_error& e)
+						{
+							SDLFramework::showErrorMessage("Could not load mesh", "Make sure the path is correct");
+						}
+
 					}
 					ImGui::Separator();
 					ImGui::BeginTable("Meshes##Mesh", 3, flags);
@@ -43,18 +52,18 @@ public:
                 }
                 if (ImGui::BeginTabItem("Textures"))
                 {
-                    ImGui::InputText("Path##Tex", buff, 200);
+                    ImGui::InputText("Path##Tex", texBuff, 200);
 					ImGui::SameLine();
 					if(ImGui::Button("Import##Tex"))
 					{
-						std::string path = {buff};
+						std::string path = {texBuff};
 						try
 						{
 							Engine::addTexture(path);
 						}
 						catch (std::runtime_error& e)
 						{
-							SDLFramework::showErrorMessage("Could not load texture", "Ensure the path is correct");
+							SDLFramework::showErrorMessage("Could not load texture", "Make sure the path is correct");
 						}
 					}
 					ImGui::Separator();
@@ -79,6 +88,7 @@ public:
 	}
 
 private:
-	inline static char buff[200] = "";
+	inline static char meshBuff[200] = "";
+	inline static char texBuff[200] = "";
 };
 

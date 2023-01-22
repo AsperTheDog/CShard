@@ -3,9 +3,9 @@
 #include <vector>
 
 #include <imgui.h>
-#include <SDL_stdinc.h>
 
 #include "../elements/components/Camera.hpp"
+#include "../elements/components/Model.hpp"
 
 typedef void (*ImGuiWindowCall)(bool*);
 

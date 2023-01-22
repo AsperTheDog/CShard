@@ -32,9 +32,9 @@ public:
 		ImGui::DragFloat3("Position##obj", &pos.x, 1.f, 10000.f, 10000.f);
 		if (pos != obj->modelData.pos) obj->changePosition(pos);
 		ImGui::DragFloat3("scale##obj", &scale.x, 1.f, 0.f, 1000.f);
-		if (scale != obj->modelData.scale) obj->changePosition(scale);
+		if (scale != obj->modelData.scale) obj->changeScale(scale);
 		ImGui::DragFloat3("Rotation##obj", &rot.x, 1.f, 0.f, 360.f);
-		if (rot != obj->modelData.rot) obj->changePosition(rot);
+		if (rot != obj->modelData.rot) obj->changeRotation(rot);
 		ImGui::Separator();
 		ImGui::BeginDisabled(obj->hasBackground);
 		ImGui::Combo("Input type", &tempType, componentNames, !obj->components.empty() ? 4 : 5);
@@ -151,6 +151,8 @@ private:
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
 			mod->changeTexture();
+
+		ImGui::Checkbox("Cull backface", &mod->cullFace);
 	}
 
 	static void showScript(Script* scr, std::string& uniqueID)

@@ -30,6 +30,7 @@ OGLMesh::OGLMesh(const std::string& filepath): GMesh(filepath)
 	attribLoc = glGetAttribLocation(program, "normal");
 	glVertexAttribPointer(attribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(attribLoc);
+	this->indexNum = indices.size();
 }
 
 OGLMesh::~OGLMesh()
@@ -39,10 +40,12 @@ OGLMesh::~OGLMesh()
 	glDeleteBuffers(1, &EBO);
 }
 
-void OGLMesh::render()
+void OGLMesh::render(bool culling)
 {
+	if (!culling) glDisable(GL_CULL_FACE);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, this->indexNum, GL_UNSIGNED_INT, nullptr);
+	if (!culling) glEnable(GL_CULL_FACE);
 }
 
 BackOGLMesh::BackOGLMesh()

@@ -49,7 +49,7 @@ void VKFramework::loadCamUniforms(Camera* camera)
 {
 }
 
-void VKFramework::loadModelUniforms(Model* mod, glm::mat4& parent)
+void VKFramework::loadModelUniforms(Model* mod)
 {
 }
 

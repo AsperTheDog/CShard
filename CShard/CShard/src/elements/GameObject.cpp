@@ -75,8 +75,14 @@ void GameObject::processRender()
 	for (auto& comp : components) 
 	{
 		if (comp.type == COMPONENT_BACKGROUND) comp.value.back->render();
-		else if (comp.type == COMPONENT_MODEL) comp.value.mod->render();
+		else if (comp.type == COMPONENT_MODEL)
+		{
+			comp.value.mod->calculateMatrix(modelData);
+			comp.value.mod->render();
+		}
 	}
+
+	modelData.changed = false;
 }
 
 void GameObject::changePosition(glm::vec3 pos)

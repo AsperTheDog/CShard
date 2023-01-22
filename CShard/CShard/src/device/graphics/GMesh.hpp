@@ -22,7 +22,7 @@ public:
 	explicit GMesh(std::string filepath);
 	virtual ~GMesh() = default;
 
-	virtual void render() = 0;
+	virtual void render(bool culling) = 0;
 
 	std::string name;
 protected:

@@ -20,7 +20,7 @@ public:
 
 	void setDefaultTexture() override;
 	void loadCamUniforms(Camera* camera) override;
-	void loadModelUniforms(Model* mod, glm::mat4& parent) override;
+	void loadModelUniforms(Model* mod) override;
 	uint32_t getImGuiTexture() override;
 };
 

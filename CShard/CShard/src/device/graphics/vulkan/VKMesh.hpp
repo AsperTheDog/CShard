@@ -7,7 +7,7 @@ public:
 	explicit VKMesh(const std::string& filepath);
 	~VKMesh() override;
 
-	void render() override;
+	void render(bool culling) override;
 };
 
 

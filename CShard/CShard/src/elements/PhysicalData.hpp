@@ -3,8 +3,8 @@
 
 struct PhysicalData
 {
-	glm::vec3 pos{};
-	glm::vec3 rot{};
-	glm::vec3 scale{};
-	bool changed = false;
+	glm::vec3 pos{0};
+	glm::vec3 rot{0};
+	glm::vec3 scale{1};
+	bool changed = true;
 };

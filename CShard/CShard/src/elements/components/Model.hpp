@@ -18,14 +18,14 @@ public:
 	void changeMesh();
 	void changeTexture();
 
+	void calculateMatrix(PhysicalData& pData);
+
 	uint32_t meshID;
 	uint32_t textureID;
-
 	int tempMeshID{}, tempTexID{};
-
 	PhysicalData data;
-private:
-	void calculateMatrix(PhysicalData* pData);
 	glm::mat4 modelMatrix{};
+	bool cullFace = true;
+private:
 };
 

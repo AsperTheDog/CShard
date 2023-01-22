@@ -8,7 +8,7 @@ public:
 	explicit OGLMesh(const std::string& filepath);
 	~OGLMesh() override;
 
-	void render() override;
+	void render(bool culling) override;
 
 	uint32_t VAO{};
 	uint32_t VBO{};

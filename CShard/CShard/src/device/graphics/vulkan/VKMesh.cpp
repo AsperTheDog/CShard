@@ -8,7 +8,7 @@ VKMesh::~VKMesh()
 {
 }
 
-void VKMesh::render()
+void VKMesh::render(bool culling)
 {
 }
 

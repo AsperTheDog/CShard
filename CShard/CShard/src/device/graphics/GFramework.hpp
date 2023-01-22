@@ -5,6 +5,8 @@
 #include "GUtils.hpp"
 
 #define DEFAULT_TEX_LOCATION "pak/resources/tex/__noTex.png"
+#define GRID_TEX_LOCATION "pak/resources/tex/__grid.png"
+#define GRID_MESH_LOCATION "pak/resources/obj/__grid.obj"
 
 #define BASE_VERTEX_LOCATION "pak/shaders/base.vert"
 #define BASE_FRAGMENT_LOCATION "pak/shaders/base.frag"
@@ -39,7 +41,7 @@ public:
 
 	virtual void setDefaultTexture() = 0;
 	virtual void loadCamUniforms(Camera* camera) = 0;
-	virtual void loadModelUniforms(Model* mod, glm::mat4& parent) = 0;
+	virtual void loadModelUniforms(Model* mod) = 0;
 	virtual uint32_t getImGuiTexture() = 0;
 
 	static GTexture* defaultTex;

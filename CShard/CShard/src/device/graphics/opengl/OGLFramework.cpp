@@ -1,5 +1,6 @@
 #include "OGLFramework.hpp"
 
+#include <iostream>
 #include <SDL_syswm.h>
 
 #include <sstream>
@@ -268,12 +269,15 @@ void OGLFramework::setDefaultTexture()
 
 void OGLFramework::loadCamUniforms(Camera* camera)
 {
-
+	glUseProgram(this->baseShader->id);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "vMatrix"), 1, false, &camera->getViewMatrix()[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "pMatrix"), 1, false, &camera->getProjMatrix()[0].x);
 }
 
-void OGLFramework::loadModelUniforms(Model* mod, glm::mat4& parent)
+void OGLFramework::loadModelUniforms(Model* mod)
 {
-
+	glUseProgram(this->baseShader->id);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "mMatrix"), 1, false, &mod->modelMatrix[0].x);
 }
 
 uint32_t OGLFramework::getImGuiTexture()
@@ -285,19 +289,6 @@ void OGLFramework::resizeImGuiTextures()
 {
 	this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
 	this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
-
-	//glDeleteFramebuffers(1, &imGuiFBO);
-	//glGenFramebuffers(1, &imGuiFBO);
-	//glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->imGuiTexture->texture, 0);
-	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	//
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->imGuiDepth->texture, 0);
-	//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	//if(status != GL_FRAMEBUFFER_COMPLETE)
-	//{
-	//	throw std::runtime_error(R"(ImGuiFramebuffer could not be completed)");
-	//}
 }
 
 void OGLFramework::resizeWindow(int width, int height)
@@ -307,8 +298,6 @@ void OGLFramework::resizeWindow(int width, int height)
 
 OGLFramework::Shader::Shader(const std::string& vertex, const std::string& fragment)
 {
-	uint32_t gs = 0;
-
 	// create shaders then link them into a pipeline
 	uint32_t vs = loadShader(GL_VERTEX_SHADER, vertex);
 	uint32_t fs = loadShader(GL_FRAGMENT_SHADER, fragment);

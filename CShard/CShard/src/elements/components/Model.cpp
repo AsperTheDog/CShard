@@ -20,13 +20,15 @@ Model::~Model()
 
 void Model::render()
 {
+	GFramework::get()->loadModelUniforms(this);
+
 	if (Engine::isValidTexture(textureID))
 		Engine::getTexture(textureID)->useTexture();
 	else
 		GFramework::get()->setDefaultTexture();
 
 	if (Engine::isValidMesh(meshID))
-		Engine::getMesh(meshID)->render();
+		Engine::getMesh(meshID)->render(cullFace);
 }
 
 void Model::changePosition(glm::vec3 pos)
@@ -57,21 +59,21 @@ void Model::changeTexture()
 	this->textureID = tempTexID;
 }
 
-void Model::calculateMatrix(PhysicalData* pData)
+void Model::calculateMatrix(PhysicalData& pData)
 {
-	if (!pData->changed && !data.changed) return;
+	if (!pData.changed && !data.changed) return;
 
-	modelMatrix = glm::translate(modelMatrix, pData->pos);
+	modelMatrix = glm::mat4(1);
+	modelMatrix = glm::translate(modelMatrix, pData.pos);
 	modelMatrix = glm::translate(modelMatrix, data.pos);
-	modelMatrix = glm::rotate(modelMatrix, pData->rot.x, {1, 0, 0});
-	modelMatrix = glm::rotate(modelMatrix, pData->rot.y, {0, 1, 0});
-	modelMatrix = glm::rotate(modelMatrix, pData->rot.z, {0, 0, 1});
-	modelMatrix = glm::rotate(modelMatrix, data.rot.x, {1, 0, 0});
-	modelMatrix = glm::rotate(modelMatrix, data.rot.y, {0, 1, 0});
-	modelMatrix = glm::rotate(modelMatrix, data.rot.z, {0, 0, 1});
-	modelMatrix = glm::scale(modelMatrix, pData->scale);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.x), {1, 0, 0});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.y), {0, 1, 0});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.z), {0, 0, 1});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.x), {1, 0, 0});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.y), {0, 1, 0});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.z), {0, 0, 1});
+	modelMatrix = glm::scale(modelMatrix, pData.scale);
 	modelMatrix = glm::scale(modelMatrix, data.scale);
 
-	pData->changed = false;
 	data.changed = false;
 }

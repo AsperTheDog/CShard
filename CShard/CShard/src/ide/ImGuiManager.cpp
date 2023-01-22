@@ -32,6 +32,11 @@ void ImGuiManager::init()
 
     GFramework::get()->loadImGuiBackends();
 	navigationCam = Camera();
+
+	if (Engine::isIDE)
+	{
+		
+	}
 }
 
 void ImGuiManager::newFrame()
