@@ -13,7 +13,7 @@ public:
 	void renderAsBackground() override;
 };
 
-class FBVKTexture final : public FBTexture
+class FBVKTexture final : public GEmptyTexture
 {
 public:
 	explicit FBVKTexture(TexType type, uint32_t width, uint32_t height);

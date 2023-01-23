@@ -15,13 +15,22 @@ public:
 	uint32_t texture{};
 };
 
-class FBOGLTexture final : public FBTexture
+class OGLEmptyTexture final : public GEmptyTexture
 {
 public:
-	FBOGLTexture(TexType type, uint32_t width, uint32_t height);
-	~FBOGLTexture() override;
+	OGLEmptyTexture(TexType type, uint32_t width, uint32_t height);
+	~OGLEmptyTexture() override;
 
 	void resize(uint32_t width, uint32_t height, char* data) override;
+
+	uint32_t texture{};
+};
+
+class OGLCubeTexture final : public GCubeTexture
+{
+public:
+	explicit OGLCubeTexture(uint32_t width, uint32_t height);
+	~OGLCubeTexture() override;
 
 	uint32_t texture{};
 };

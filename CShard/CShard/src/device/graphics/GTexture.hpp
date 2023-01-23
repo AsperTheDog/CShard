@@ -19,13 +19,20 @@ public:
 	std::string name;
 };
 
-class FBTexture
+class GEmptyTexture
 {
 public:
-	explicit FBTexture(TexType type);
-	virtual ~FBTexture() = default;
+	explicit GEmptyTexture(TexType type);
+	virtual ~GEmptyTexture() = default;
 	virtual void resize(uint32_t width, uint32_t height, char* data) = 0;
 
 	TexType type;
+};
+
+class GCubeTexture
+{
+public:
+	virtual ~GCubeTexture() = default;
+
 };
 

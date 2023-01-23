@@ -3,6 +3,12 @@
 
 #include "../PhysicalData.hpp"
 
+struct Material
+{
+	float emission;
+    float shininess;
+};
+
 class Model
 {
 public:
@@ -24,7 +30,9 @@ public:
 	uint32_t textureID;
 	int tempMeshID{}, tempTexID{};
 	PhysicalData data;
+	Material mat;
 	glm::mat4 modelMatrix{};
+	glm::mat4 invModelMatrix{};
 	bool cullFace = true;
 private:
 };

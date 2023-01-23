@@ -22,5 +22,7 @@ public:
 	void loadCamUniforms(Camera* camera) override;
 	void loadModelUniforms(Model* mod) override;
 	uint32_t getImGuiTexture() override;
+	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
+	void loadLightUniforms(Light* light, PhysicalData&) override;
 };
 

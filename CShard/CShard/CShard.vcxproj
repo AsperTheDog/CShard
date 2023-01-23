@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\device\graphics\opengl\OGLShadowMap.cpp" />
+    <ClCompile Include="src\device\graphics\GShadowMap.cpp" />
+    <ClCompile Include="src\elements\components\Light.cpp" />
     <ClCompile Include="src\elements\components\Background.cpp" />
     <ClCompile Include="src\device\graphics\opengl\OGLTexture.cpp" />
     <ClCompile Include="src\device\graphics\GTexture.cpp" />
@@ -42,6 +45,9 @@
     <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\device\graphics\opengl\OGLShadowMap.hpp" />
+    <ClInclude Include="src\device\graphics\GShadowMap.hpp" />
+    <ClInclude Include="src\elements\components\Light.hpp" />
     <ClInclude Include="src\device\graphics\GraphicsHeader.hpp" />
     <ClInclude Include="src\elements\PhysicalData.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\AssetWindow.hpp" />

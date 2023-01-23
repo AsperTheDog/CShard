@@ -59,6 +59,53 @@ void SDLFramework::showErrorMessage(std::string title, std::string text)
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), text.c_str(), SDLFramework::getWindow());
 }
 
+uint64_t SDLFramework::getWindowTime()
+{
+    return SDL_GetTicks64();
+}
+
+void SDLFramework::manageIDEControls(SDL_Event& event)
+{
+    ImGui_ImplSDL2_ProcessEvent(&event);
+    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    {
+        if (!isMouseDragging)
+        {
+			isMouseDragging = true;
+
+			int x;
+			int y;
+			SDL_GetMouseState(&x, &y);
+			ImGuiManager::lastMousePos.x = x;
+			ImGuiManager::lastMousePos.y = y;
+        }
+	}
+    if (!(SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+	{
+		isMouseDragging = false;
+	}
+    else
+    {
+        leftClick = true;
+    }
+    if (event.type == SDL_MOUSEMOTION)
+    {
+		ImGuiManager::mousePos.x = event.motion.x;
+		ImGuiManager::mousePos.y = event.motion.y;
+    }
+    if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) 
+        && (event.key.keysym.sym == SDLK_w 
+            || event.key.keysym.sym == SDLK_a 
+            || event.key.keysym.sym == SDLK_s
+            || event.key.keysym.sym == SDLK_d
+			|| event.key.keysym.sym == SDLK_SPACE
+            || event.key.keysym.sym == SDLK_LSHIFT))
+    {
+        ImGuiManager::keyDowns.insert_or_assign(event.key.keysym.sym, event.type == SDL_KEYDOWN);
+    }
+
+}
+
 std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& subscribedTypes, bool isIDE)
 {
     std::vector<SDL_Event> events;
@@ -66,36 +113,8 @@ std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& sub
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        if (isIDE)
-        {
-	        ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
-            {
-                if (!isMouseDragging)
-                {
-					isMouseDragging = true;
+        if (isIDE) manageIDEControls(event);
 
-					int x;
-					int y;
-					SDL_GetMouseState(&x, &y);
-					lastMousePos.x = x;
-					lastMousePos.y = y;
-                }
-			}
-            if (!(SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)))
-			{
-				isMouseDragging = false;
-			}
-            else
-            {
-                leftClick = true;
-            }
-            if (event.type == SDL_MOUSEMOTION)
-            {
-				mousePos.x = event.motion.x;
-				mousePos.y = event.motion.y;
-            }
-        }
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
             int width, height;

@@ -58,6 +58,15 @@ uint32_t VKFramework::getImGuiTexture()
 	return 0;
 }
 
+GCubeTexture* VKFramework::createCubeTexture(uint32_t width, uint32_t height)
+{
+	return nullptr;
+}
+
+void VKFramework::loadLightUniforms(Light* light, PhysicalData&)
+{
+}
+
 void VKFramework::resizeWindow(int width, int height)
 {
 }

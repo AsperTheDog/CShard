@@ -1,10 +1,13 @@
 #include "GameObject.hpp"
 
+#include "../device/graphics/GFramework.hpp"
+
 #include "components/Camera.hpp"
 #include "components/Collider.hpp"
 #include "components/Model.hpp"
 #include "components/Script.hpp"
 #include "components/Background.hpp"
+#include "components/Light.hpp"
 
 GameObject::GameObject(const std::string& name)
 {
@@ -26,6 +29,10 @@ void GameObject::addComponent(Component& comp)
 		break;
 	case COMPONENT_SCRIPT: 
 		comp.value.scr = new Script();
+		break;
+	case COMPONENT_LIGHT:
+		comp.value.li = new Light();
+		GFramework::lightSourceCount++;
 		break;
 	case COMPONENT_BACKGROUND: 
 		comp.value.back = new Background();
@@ -51,6 +58,10 @@ std::vector<Component>::iterator GameObject::removeComponent(std::vector<Compone
 		break;
 	case COMPONENT_SCRIPT: 
 		delete it->value.scr;
+		break;
+	case COMPONENT_LIGHT:
+		delete it->value.li;
+		GFramework::lightSourceCount--;
 		break;
 	case COMPONENT_BACKGROUND: 
 		delete it->value.back;
@@ -101,4 +112,13 @@ void GameObject::changeScale(glm::vec3 scale)
 {
 	this->modelData.scale = scale;
 	this->modelData.changed = true;
+}
+
+void GameObject::processLights()
+{
+	for (auto& comp : components)
+	{
+		if (comp.type == COMPONENT_LIGHT)
+			GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
+	}
 }

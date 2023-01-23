@@ -2,12 +2,14 @@
 #include "ObjectWindow.hpp"
 
 #include "../../Engine.hpp"
+#include "../../device/graphics/GFramework.hpp"
 
 #include "../../elements/components/Camera.hpp"
 #include "../../elements/components/Collider.hpp"
 #include "../../elements/components/Model.hpp"
 #include "../../elements/components/Script.hpp"
 #include "../../elements/components/Background.hpp"
+#include "../../elements/components/Light.hpp"
 
 class AttributesWindow
 {
@@ -37,13 +39,18 @@ public:
 		if (rot != obj->modelData.rot) obj->changeRotation(rot);
 		ImGui::Separator();
 		ImGui::BeginDisabled(obj->hasBackground);
-		ImGui::Combo("Input type", &tempType, componentNames, !obj->components.empty() ? 4 : 5);
+		ImGui::Combo("Input type", &tempType, componentNames, !obj->components.empty() ? 5 : 6);
 		ImGui::SameLine();
+		ImGui::EndDisabled();
+		ImGui::BeginDisabled(obj->hasBackground || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempType] == COMPONENT_LIGHT));
 		if (ImGui::Button("Create"))
 		{
 			Component comp = Component(compTypes[tempType]);
 			obj->addComponent(comp);
 		}
+		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
+		ImGui::Text("Lights left: %d", MAX_LIGHTS - GFramework::lightSourceCount);
+		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
 		ImGui::EndDisabled();
 		ImGui::Separator();
 		ImGui::Separator();
@@ -82,6 +89,11 @@ public:
 				ImGui::SameLine();
 				ImGui::Text("Background Component");
 				showBackground(i->value.back, uniqueID);
+				break;
+			case COMPONENT_LIGHT:
+				ImGui::SameLine();
+				ImGui::Text("LightSource Component");
+				showLightSource(i->value.li, uniqueID);
 				break;
 			default: ;
 			}
@@ -139,7 +151,9 @@ private:
 		tempVec = mod->data.rot;
 		ImGui::DragFloat3(("Rotation##mod" + uniqueID).c_str(), &tempVec.x, 1.f, -180.f, 180.f);
 		if (tempVec != mod->data.rot) mod->changeRotation(tempVec);
-
+		ImGui::Separator();
+		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod->mat.shininess, 0.01f, 0, 1);
+		ImGui::DragFloat(("Emission##mod" + uniqueID).c_str(), &mod->mat.emission, 0.01f, 0, 1);
 		ImGui::Separator();
 		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod->tempMeshID, 1);
 		mod->tempMeshID = std::max(0, mod->tempMeshID);
@@ -157,7 +171,6 @@ private:
 
 	static void showScript(Script* scr, std::string& uniqueID)
 	{
-		
 	}
 
 	static void showBackground(Background* back, std::string& uniqueID)
@@ -169,19 +182,31 @@ private:
 			back->setTexture();
 	}
 
+	static void showLightSource(Light* li, std::string& uniqueID)
+	{
+		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li->position.x, 1.f, 10000.f, 10000.f);
+		ImGui::DragFloat3(("Color##li" + uniqueID).c_str(), &li->color.x, 0.01f, 0, 1);
+		ImGui::Separator();
+		ImGui::DragFloat(("Constant##li" + uniqueID).c_str(), &li->constant, 0.01f, 0, 1);
+		ImGui::DragFloat(("Linear##li" + uniqueID).c_str(), &li->linear, 0.01f, 0, 1);
+		ImGui::DragFloat(("Quadratic##li" + uniqueID).c_str(), &li->quadratic, 0.01f, 0, 1);
+	}
+
 	inline static int tempType = 0;
-	inline static const char* componentNames[5] = {
+	inline static const char* componentNames[6] = {
 		"Camera",
 		"Collider",
 		"Model",
 		"Script",
+		"Light",
 		"Background"
 	};
-	inline static constexpr ComponentType compTypes[5] = {
+	inline static constexpr ComponentType compTypes[6] = {
 		COMPONENT_CAMERA,
 		COMPONENT_COLLIDER,
 		COMPONENT_MODEL,
 		COMPONENT_SCRIPT,
+		COMPONENT_LIGHT,
 		COMPONENT_BACKGROUND
 	};
 };

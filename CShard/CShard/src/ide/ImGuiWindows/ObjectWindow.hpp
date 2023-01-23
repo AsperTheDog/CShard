@@ -13,7 +13,6 @@ public:
 			Engine::addObject();
 		}
 		ImGui::InputInt("##DeleteID", &tempDeleteID);
-		tempDeleteID = std::min((uint64_t)tempDeleteID, Engine::sceneObjects.size() - 1);
 		ImGui::SameLine();
 		if (ImGui::Button("Delete ID"))
 		{

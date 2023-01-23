@@ -16,7 +16,7 @@ void VKTexture::renderAsBackground()
 {
 }
 
-FBVKTexture::FBVKTexture(TexType type, uint32_t width, uint32_t height) : FBTexture(type)
+FBVKTexture::FBVKTexture(TexType type, uint32_t width, uint32_t height) : GEmptyTexture(type)
 {
 }
 

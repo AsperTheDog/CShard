@@ -14,13 +14,14 @@ public:
 
 	void move(glm::vec3 pos);
 	void lookAt(glm::vec3 dir);
-	void changeWorldUp(glm::vec3 up);
+	void changeWorldUp(glm::vec3 worldUp);
 	void changeLense(float FOV, float nearP = -1, float farP = -1);
 	void updateAspectRatio(float aspectRatio);
 
 	glm::vec3 pos{};
 	glm::vec3 dir{};
 	glm::vec3 worldUp{};
+	glm::vec3 right{};
 
 	float FOV{};
 	float nearPlane{};

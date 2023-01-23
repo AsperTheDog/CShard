@@ -28,7 +28,7 @@ public:
 						{
 							Engine::addMesh(path);
 						}
-						catch (std::runtime_error& e)
+						catch (std::runtime_error)
 						{
 							SDLFramework::showErrorMessage("Could not load mesh", "Make sure the path is correct");
 						}
@@ -61,7 +61,7 @@ public:
 						{
 							Engine::addTexture(path);
 						}
-						catch (std::runtime_error& e)
+						catch (std::runtime_error)
 						{
 							SDLFramework::showErrorMessage("Could not load texture", "Make sure the path is correct");
 						}

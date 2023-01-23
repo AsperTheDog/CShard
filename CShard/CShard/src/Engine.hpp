@@ -1,10 +1,11 @@
 #pragma once
 
 #include <unordered_map>
-#include <vec2.hpp>
 
 #include "device/graphics/GUtils.hpp"
 #include "elements/GameObject.hpp"
+
+#define MAX_LIGHTS 10
 
 class Camera;
 class GTexture;
@@ -35,9 +36,13 @@ public:
 	static Camera* activeCam;
 
 	inline static bool isIDE;
+	inline static float dt = 0.f;
 private:
+	static void updateDeltaTime();
 	static bool event();
 	static void render();
+
+	inline static uint64_t prevDt = 0;
 
 	static uint32_t IDManager;
 };

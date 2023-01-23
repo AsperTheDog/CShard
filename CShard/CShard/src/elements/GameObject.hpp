@@ -3,6 +3,7 @@
 #include <vector>
 #include "PhysicalData.hpp"
 
+class Light;
 class Background;
 class Script;
 class Model;
@@ -15,6 +16,7 @@ enum ComponentType
 	COMPONENT_COLLIDER,
 	COMPONENT_MODEL,
 	COMPONENT_SCRIPT,
+	COMPONENT_LIGHT,
 	COMPONENT_BACKGROUND
 };
 
@@ -25,6 +27,7 @@ union ComponentUnion
 	Model* mod;
 	Script* scr;
 	Background* back;
+	Light* li;
 };
 
 struct Component
@@ -48,7 +51,8 @@ public:
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
 	void changeScale(glm::vec3 scale);
-	
+	void processLights();
+
 	char name[20]{};
 	std::vector<Component> components;
 	bool hasBackground = false;

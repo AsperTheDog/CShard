@@ -8,7 +8,8 @@
 #define GLMAYOR 4
 #define GLMINOR 5
 
-class FBOGLTexture;
+struct PhysicalData;
+class OGLEmptyTexture;
 class Model;
 
 class OGLFramework final : public GFramework
@@ -46,13 +47,15 @@ public:
 	void loadModelUniforms(Model* mod) override;
 	uint32_t getImGuiTexture() override;
 	void resizeImGuiTextures();
+	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
+	void loadLightUniforms(Light* light, PhysicalData& parent) override;
 
 	Shader* baseShader = nullptr;
 	Shader* backgroundShader = nullptr;
 private:
-
+	uint16_t lightCounter = 0;
 	SDL_GLContext gl_context = nullptr;
-	FBOGLTexture* imGuiTexture;
-	FBOGLTexture* imGuiDepth;
+	OGLEmptyTexture* imGuiTexture;
+	OGLEmptyTexture* imGuiDepth;
 	uint32_t imGuiFBO = 0;
 };

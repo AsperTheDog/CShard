@@ -32,11 +32,12 @@ void ImGuiManager::init()
 
     GFramework::get()->loadImGuiBackends();
 	navigationCam = Camera();
-
-	if (Engine::isIDE)
-	{
-		
-	}
+	keyDowns.emplace(SDLK_w, false);
+	keyDowns.emplace(SDLK_a, false);
+	keyDowns.emplace(SDLK_s, false);
+	keyDowns.emplace(SDLK_d, false);
+	keyDowns.emplace(SDLK_SPACE, false);
+	keyDowns.emplace(SDLK_LSHIFT, false);
 }
 
 void ImGuiManager::newFrame()
@@ -99,21 +100,23 @@ void ImGuiManager::render()
 				}
 				ImGui::EndMenu();
 			}
-
 	        ImGui::EndMenuBar();
 	    }
 
-
 	    for (auto& windowCall : windowCalls) windowCall.window(&windowCall.isOpen);
-
 	    ImGui::End();
 	}
 
     ImGui::Render();
 
     GFramework::get()->renderImgui();
+}
+
+void ImGuiManager::update()
+{
 	if (GameWindow::isHovering && SDLFramework::leftClick)
-		updateSceneCam();
+		updateSceneCamDir();
+	updateSceneCamPos();
 	GameWindow::isHovering = false;
 	SDLFramework::leftClick = false;
 }
@@ -133,18 +136,31 @@ void ImGuiManager::addWindowCall(ImGuiWindowCall call, std::string name, bool de
 	ImGuiManager::windowCalls.emplace_back(std::move(name), call, defaultOpen);
 }
 
-void ImGuiManager::updateSceneCam()
+void ImGuiManager::updateSceneCamDir()
 {
-	int delta_x = SDLFramework::mousePos.x - SDLFramework::lastMousePos.x;
-	int delta_y = SDLFramework::mousePos.y - SDLFramework::lastMousePos.y;
+	float delta_x = mousePos.x - lastMousePos.x;
+	float delta_y = mousePos.y - lastMousePos.y;
 	float rotation_speed = 0.001f;
 	glm::mat4 yaw = glm::rotate(rotation_speed * delta_x, navigationCam.worldUp);
 	glm::mat4 pitch = glm::rotate(
 		rotation_speed * delta_y, 
 		glm::normalize(glm::cross(navigationCam.dir, navigationCam.worldUp)));
 	navigationCam.lookAt(glm::vec3(pitch * yaw * glm::vec4(navigationCam.dir, 0.0f)));
-	SDLFramework::lastMousePos.x = SDLFramework::mousePos.x;
-	SDLFramework::lastMousePos.y = SDLFramework::mousePos.y;
+	lastMousePos.x = mousePos.x;
+	lastMousePos.y = mousePos.y;
+}
+
+void ImGuiManager::updateSceneCamPos()
+{
+	glm::vec3 movement{0};
+	if (keyDowns.at(SDLK_w)) movement += navigationCam.dir;
+	if (keyDowns.at(SDLK_s)) movement -= navigationCam.dir;
+	if (keyDowns.at(SDLK_d)) movement += navigationCam.right;
+	if (keyDowns.at(SDLK_a)) movement -= navigationCam.right;
+	if (keyDowns.at(SDLK_SPACE)) movement += navigationCam.worldUp;
+	if (keyDowns.at(SDLK_LSHIFT)) movement -= navigationCam.worldUp;
+	if (movement != glm::vec3(0))
+		navigationCam.move(navigationCam.pos + glm::normalize(movement) * (Engine::dt * movementMult));
 }
 
 void ImGuiManager::addImGuiWindows()

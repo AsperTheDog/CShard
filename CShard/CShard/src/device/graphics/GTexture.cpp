@@ -4,6 +4,6 @@ GTexture::GTexture(std::string filepath) : name(filepath)
 {
 }
 
-FBTexture::FBTexture(TexType type) : type(type)
+GEmptyTexture::GEmptyTexture(TexType type) : type(type)
 {
 }

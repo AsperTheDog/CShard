@@ -9,9 +9,8 @@
 #include <gtx/transform.hpp>
 
 Model::Model()
-	: meshID(0), textureID(0), data({})
+	: meshID(0), textureID(0), data({}), mat{0, 0}
 {
-
 }
 
 Model::~Model()
@@ -65,15 +64,16 @@ void Model::calculateMatrix(PhysicalData& pData)
 
 	modelMatrix = glm::mat4(1);
 	modelMatrix = glm::translate(modelMatrix, pData.pos);
-	modelMatrix = glm::translate(modelMatrix, data.pos);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.x), {1, 0, 0});
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.y), {0, 1, 0});
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.z), {0, 0, 1});
+	modelMatrix = glm::scale(modelMatrix, pData.scale);
+	modelMatrix = glm::translate(modelMatrix, data.pos);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.x), {1, 0, 0});
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.y), {0, 1, 0});
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.z), {0, 0, 1});
-	modelMatrix = glm::scale(modelMatrix, pData.scale);
 	modelMatrix = glm::scale(modelMatrix, data.scale);
+	invModelMatrix = glm::transpose(glm::inverse(modelMatrix));
 
 	data.changed = false;
 }

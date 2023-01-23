@@ -57,7 +57,7 @@ void OGLTexture::renderAsBackground()
 	GFramework::backgroundMesh->render();
 }
 
-FBOGLTexture::FBOGLTexture(TexType type, uint32_t width, uint32_t height) : FBTexture(type)
+OGLEmptyTexture::OGLEmptyTexture(TexType type, uint32_t width, uint32_t height) : GEmptyTexture(type)
 {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -75,16 +75,36 @@ FBOGLTexture::FBOGLTexture(TexType type, uint32_t width, uint32_t height) : FBTe
 	}
 }
 
-FBOGLTexture::~FBOGLTexture()
+OGLEmptyTexture::~OGLEmptyTexture()
 {
-
+	glDeleteTextures(1, &texture);
 }
 
-void FBOGLTexture::resize(uint32_t width, uint32_t height, char* data)
+void OGLEmptyTexture::resize(uint32_t width, uint32_t height, char* data)
 {
 	glBindTexture(GL_TEXTURE_2D, texture);
 	if (type == COLOR)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	else
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, data);
+}
+
+OGLCubeTexture::OGLCubeTexture(uint32_t width, uint32_t height)
+{
+	glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	for (uint8_t i = 0 ; i < 6 ; i++) {
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
+    }
+}
+
+OGLCubeTexture::~OGLCubeTexture()
+{
+	glDeleteTextures(1, &texture);
 }

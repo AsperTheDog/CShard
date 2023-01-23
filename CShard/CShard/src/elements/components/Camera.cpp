@@ -11,7 +11,7 @@ Camera::Camera()
 {
 	this->move(glm::vec3(0));
 	this->lookAt(glm::vec3(0, 0, -1));
-	this->worldUp = glm::vec3(0, 1, 0);
+	this->changeWorldUp(glm::vec3(0, 1, 0));
 
 	this->changeLense(100.f, 0.1f, 100000.f);
 }
@@ -49,12 +49,14 @@ void Camera::move(glm::vec3 pos)
 void Camera::lookAt(glm::vec3 dir)
 {
 	this->dir = dir;
+	this->right = glm::cross(dir, worldUp);
 	hasChangedView = true;
 }
 
-void Camera::changeWorldUp(glm::vec3 up)
+void Camera::changeWorldUp(glm::vec3 worldUp)
 {
-	this->worldUp = up;
+	this->worldUp = worldUp;
+	this->right = glm::cross(dir, worldUp);
 	hasChangedView = true;
 }
 

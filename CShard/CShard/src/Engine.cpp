@@ -42,7 +42,8 @@ void Engine::run()
 	while (true)
 	{
 		if (Engine::isIDE) ImGuiManager::newFrame();
-
+		
+		updateDeltaTime();
 		if (Engine::event()) break;
 		Engine::render();
 
@@ -87,6 +88,7 @@ uint32_t Engine::addTexture(std::string& filepath)
 
 void Engine::removeObject(uint32_t id)
 {
+	if (!sceneObjects.contains(id)) return;
 	Engine::sceneObjects.erase(id);
 }
 
@@ -118,8 +120,18 @@ GTexture* Engine::getTexture(uint32_t id)
 	return textures.at(id);
 }
 
+void Engine::updateDeltaTime()
+{
+	uint64_t now = SDLFramework::getWindowTime();
+	dt = (now - prevDt) * 0.001f;
+	prevDt = now;
+}
+
 bool Engine::event()
 {
+	if (isIDE)
+		ImGuiManager::update();
+
 	bool shouldClose = false;
 	std::vector<uint32_t> inputs =  InputManager::triggeredEvents(&shouldClose, isIDE);
 
@@ -134,6 +146,10 @@ void Engine::render()
 	for (auto& obj : sceneObjects | std::views::values)
 	{
 		if (obj.hasBackground) obj.processRender();
+	}
+	for (auto& obj : sceneObjects |std::views::values)
+	{
+		if (!obj.hasBackground) obj.processLights();
 	}
 	for (auto& obj : sceneObjects | std::views::values)
 	{

@@ -11,6 +11,7 @@
 #include "OGLTexture.hpp"
 #include "../../../ide/ImGuiManager.hpp"
 #include "../../../Engine.hpp"
+#include "../../../elements/components/Light.hpp"
 
 /*
  * This debug callback function was made using the labhelper.cpp file as template
@@ -170,8 +171,8 @@ OGLFramework::OGLFramework()
 	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
 
-	this->imGuiTexture = new FBOGLTexture(COLOR, 1920, 1080);
-	this->imGuiDepth = new FBOGLTexture(DEPTH, 1920, 1080);
+	this->imGuiTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
+	this->imGuiDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
 	glGenFramebuffers(1, &imGuiFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->imGuiTexture->texture, 0);
@@ -199,6 +200,8 @@ void OGLFramework::initRender()
 			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
 	}
+	glUniform1ui(glGetUniformLocation(this->baseShader->id, "lightNum"), lightSourceCount);
+
 	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -206,6 +209,7 @@ void OGLFramework::initRender()
 void OGLFramework::endRender()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	lightCounter = 0;
 }
 
 void OGLFramework::loadImGuiBackends()
@@ -270,14 +274,19 @@ void OGLFramework::setDefaultTexture()
 void OGLFramework::loadCamUniforms(Camera* camera)
 {
 	glUseProgram(this->baseShader->id);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "vMatrix"), 1, false, &camera->getViewMatrix()[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "pMatrix"), 1, false, &camera->getProjMatrix()[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "camMats.vMatrix"), 1, false, &camera->getViewMatrix()[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "camMats.pMatrix"), 1, false, &camera->getProjMatrix()[0].x);
+	glUniform3fv(glGetUniformLocation(this->baseShader->id, "cam.pos"), 1, &camera->pos.x);
+	glUniform3fv(glGetUniformLocation(this->baseShader->id, "cam.dir"), 1, &camera->dir.x);
 }
 
 void OGLFramework::loadModelUniforms(Model* mod)
 {
 	glUseProgram(this->baseShader->id);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "mMatrix"), 1, false, &mod->modelMatrix[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "model.mat"), 1, false, &mod->modelMatrix[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "model.invMat"), 1, false, &mod->invModelMatrix[0].x);
+	glUniform1f(glGetUniformLocation(this->baseShader->id, "mat.shininess"), mod->mat.shininess);
+	glUniform1f(glGetUniformLocation(this->baseShader->id, "mat.emission"), mod->mat.emission);
 }
 
 uint32_t OGLFramework::getImGuiTexture()
@@ -289,6 +298,23 @@ void OGLFramework::resizeImGuiTextures()
 {
 	this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
 	this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
+}
+
+GCubeTexture* OGLFramework::createCubeTexture(uint32_t width, uint32_t height)
+{
+	return new OGLCubeTexture(width, height);
+}
+
+void OGLFramework::loadLightUniforms(Light* light, PhysicalData& parent)
+{
+	glm::vec3 pos = light->getLightpos(parent);
+	glUseProgram(this->baseShader->id);
+	glUniform1f(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].constant").c_str()), light->constant);
+	glUniform1f(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].linear").c_str()), light->linear);
+	glUniform1f(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].quadratic").c_str()), light->quadratic);
+	glUniform3fv(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].position").c_str()), 1, &pos.x);
+	glUniform3fv(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].color").c_str()), 1, &light->color.x);
+	lightCounter++;
 }
 
 void OGLFramework::resizeWindow(int width, int height)
