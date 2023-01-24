@@ -1,6 +1,7 @@
 #include "Engine.hpp"
 
 #include <ranges>
+#include <fstream>
 
 #include "device/window/SDLFramework.hpp"
 #include "device/graphics/GFramework.hpp"
@@ -10,13 +11,7 @@
 #include "device/graphics/GTexture.hpp"
 #include "device/graphics/GMesh.hpp"
 
-std::unordered_map<uint32_t, GameObject> Engine::sceneObjects;
-Camera* Engine::activeCam;
-std::unordered_map<uint32_t, GMesh*> Engine::meshes;
-std::unordered_map<uint32_t, GTexture*> Engine::textures;
-uint32_t Engine::IDManager;
-
-void Engine::init(GLibraries lib, bool isIDE)
+void Engine::init(GLibraries lib, bool isIDE, char* initFileName)
 {
 	Engine::isIDE = isIDE;
 	Engine::sceneObjects = std::unordered_map<uint32_t, GameObject>();
@@ -34,6 +29,10 @@ void Engine::init(GLibraries lib, bool isIDE)
 		ImGuiManager::init();
 		ImGuiManager::addImGuiWindows();
 		activeCam = &ImGuiManager::navigationCam;
+	}
+	if (!activeCam)
+	{
+		activeCam = &defaultCam;
 	}
 }
 
@@ -60,9 +59,23 @@ void Engine::shutDown()
 	SDLFramework::destroy();
 }
 
-void Engine::compileProject()
+void Engine::compileProject(std::string name)
 {
-
+	std::ofstream wf("pak/projects/" + name + ".shrdprj", std::ios::out | std::ios::binary);
+	if(!wf) {
+		SDLFramework::showErrorMessage("Could not save project", "Could not write to save file");
+		return;
+	}
+	for (auto& obj : sceneObjects){
+		wf.write((char*) &obj.first, sizeof(obj.first));
+		wf.write((char*) obj.second.name, MAX_NAME_LENGTH);
+		wf.write((char*) &obj.second.modelData, sizeof(obj.second.modelData));
+		uint32_t components = obj.second.components.size();
+		wf.write((char*) &components, sizeof(uint32_t));
+		for (auto& comp : obj.second.components){
+			//wf.write
+		}
+	}
 }
 
 uint32_t Engine::addObject()

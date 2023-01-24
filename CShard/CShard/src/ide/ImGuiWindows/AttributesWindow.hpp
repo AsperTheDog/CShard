@@ -27,7 +27,7 @@ public:
 			ImGui::End();
 			return;
 		}
-		ImGui::InputText("Object name", obj->name, 20);
+		ImGui::InputText("Object name", obj->name, MAX_NAME_LENGTH);
 		glm::vec3 pos{obj->modelData.pos};
 		glm::vec3 rot{obj->modelData.rot};
 		glm::vec3 scale{obj->modelData.scale};

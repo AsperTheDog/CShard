@@ -83,7 +83,9 @@ void ImGuiManager::render()
 	        if (ImGui::BeginMenu("File"))
 	        {
 	            //ImGui::MenuItem("Padding", NULL, &opt_padding);
-				ImGui::MenuItem("Save project", "");
+				if (ImGui::MenuItem("Save project", "")){
+					showSaveWin = true;
+				};
 				ImGui::Separator();
 				ImGui::MenuItem("New project", "");
 				ImGui::MenuItem("Open project", "");
@@ -105,6 +107,7 @@ void ImGuiManager::render()
 
 	    for (auto& windowCall : windowCalls) windowCall.window(&windowCall.isOpen);
 	    ImGui::End();
+		ImGui::ShowDemoWindow();
 	}
 
     ImGui::Render();
@@ -161,6 +164,17 @@ void ImGuiManager::updateSceneCamPos()
 	if (keyDowns.at(SDLK_LSHIFT)) movement -= navigationCam.worldUp;
 	if (movement != glm::vec3(0))
 		navigationCam.move(navigationCam.pos + glm::normalize(movement) * (Engine::dt * movementMult));
+}
+
+void ImGuiManager::showSaveWindow()
+{
+	if (!showSaveWin) return;
+	ImGui::Begin("Saving options", &showSaveWin);
+	ImGui::Text("Project name");
+	ImGui::InputText("##ProjName", nameBuff, 50);
+	if (ImGui::Button("Save")){
+		Engine::compileProject(nameBuff);
+	}
 }
 
 void ImGuiManager::addImGuiWindows()

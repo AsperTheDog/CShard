@@ -19,17 +19,17 @@ OGLMesh::OGLMesh(const std::string& filepath): GMesh(filepath)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
-	GLuint attribLoc = glGetAttribLocation(program, "position");
-	glVertexAttribPointer(attribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, coords)));
-	glEnableVertexAttribArray(attribLoc);
+	//GLuint attribLoc = glGetAttribLocation(program, "position");
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, coords)));
+	glEnableVertexAttribArray(0);
 
-	attribLoc = glGetAttribLocation(program, "texCoords");
-	glVertexAttribPointer(attribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, texUV)));
-	glEnableVertexAttribArray(attribLoc);
+	//attribLoc = glGetAttribLocation(program, "texCoords");
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, texUV)));
+	glEnableVertexAttribArray(1);
 
-	attribLoc = glGetAttribLocation(program, "normal");
-	glVertexAttribPointer(attribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, normal)));
-	glEnableVertexAttribArray(attribLoc);
+	//attribLoc = glGetAttribLocation(program, "normal");
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, normal)));
+	glEnableVertexAttribArray(2);
 	this->indexNum = indices.size();
 }
 

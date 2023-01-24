@@ -32,7 +32,7 @@ GMesh::GMesh(std::string filepath) : name(filepath)
 				    attrib.texcoords[2 * index.texcoord_index + 1]
 				};
 			if (attrib.normals.size() <= 3 * index.normal_index + 2)
-				vertex.normal = {0, 1, 0};
+				vertex.normal = {0, 0, 0};
 			else
 				vertex.normal = {
 					attrib.normals[3 * index.normal_index + 0],

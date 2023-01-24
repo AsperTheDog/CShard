@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <unordered_set>
 #include <vec2.hpp>
+#include <string>
 #include "../graphics/GUtils.hpp"
 
 class SDLFramework

@@ -8,6 +8,8 @@
 #include "../elements/components/Camera.hpp"
 #include "../elements/components/Model.hpp"
 
+#define MAX_NAME_LENGTH 20
+
 typedef void (*ImGuiWindowCall)(bool*);
 
 enum SceneControls
@@ -51,6 +53,10 @@ public:
 	inline static std::unordered_map<int32_t, bool> keyDowns{};
 	inline static float movementMult = 6.f;
 private:
+	static void showSaveWindow();
+
+	inline static char nameBuff[MAX_NAME_LENGTH];
+	inline static bool showSaveWin = false;
 	inline static std::vector<WindowData> windowCalls{};
 	inline static ImGuiIO* io{};
 };
