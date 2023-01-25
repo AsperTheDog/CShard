@@ -43,12 +43,12 @@ public:
 	GTexture* createTexture(std::string filepath) override;
 
 	void setDefaultTexture() override;
-	void loadCamUniforms(Camera* camera) override;
-	void loadModelUniforms(Model* mod) override;
+	void loadCamUniforms(Camera& camera) override;
+	void loadModelUniforms(Model& mod) override;
 	uint32_t getImGuiTexture() override;
 	void resizeImGuiTextures();
 	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
-	void loadLightUniforms(Light* light, PhysicalData& parent) override;
+	void loadLightUniforms(Light& light, PhysicalData& parent) override;
 
 	Shader* baseShader = nullptr;
 	Shader* backgroundShader = nullptr;

@@ -1,17 +1,25 @@
 #include "GameObject.hpp"
 
+#include <iostream>
+
 #include "../device/graphics/GFramework.hpp"
 
-#include "components/Camera.hpp"
-#include "components/Collider.hpp"
-#include "components/Model.hpp"
-#include "components/Script.hpp"
-#include "components/Background.hpp"
-#include "components/Light.hpp"
+ComponentUnion::ComponentUnion()
+{
+	scr = Script();
+}
+
+Component::Component() : type(COMPONENT_SCRIPT)
+{
+}
+
+Component::Component(ComponentType type) : type(type)
+{
+}
 
 GameObject::GameObject(const std::string& name)
 {
-	sprintf(this->name, "%s", name.c_str());
+	strcpy_s(this->name, sizeof(this->name), name.c_str());
 }
 
 void GameObject::addComponent(Component& comp)
@@ -19,23 +27,23 @@ void GameObject::addComponent(Component& comp)
 	switch (comp.type)
 	{
 	case COMPONENT_CAMERA:
-		comp.value.cam = new Camera();
+		comp.value.cam = Camera();
 		break;
 	case COMPONENT_COLLIDER: 
-		comp.value.coll = new Collider();
+		comp.value.coll = Collider();
 		break;
 	case COMPONENT_MODEL: 
-		comp.value.mod = new Model();
+		comp.value.mod = Model();
 		break;
 	case COMPONENT_SCRIPT: 
-		comp.value.scr = new Script();
+		comp.value.scr = Script();
 		break;
 	case COMPONENT_LIGHT:
-		comp.value.li = new Light();
+		comp.value.li = Light();
 		GFramework::lightSourceCount++;
 		break;
 	case COMPONENT_BACKGROUND: 
-		comp.value.back = new Background();
+		comp.value.back = Background();
 		hasBackground = true;
 		break;
 	}
@@ -45,29 +53,6 @@ void GameObject::addComponent(Component& comp)
 std::vector<Component>::iterator GameObject::removeComponent(std::vector<Component>::iterator it)
 {
 	if (it == this->components.end()) return it;
-	switch (it->type)
-	{
-	case COMPONENT_CAMERA:
-		delete it->value.cam;
-		break;
-	case COMPONENT_COLLIDER: 
-		delete it->value.coll;
-		break;
-	case COMPONENT_MODEL: 
-		delete it->value.mod;
-		break;
-	case COMPONENT_SCRIPT: 
-		delete it->value.scr;
-		break;
-	case COMPONENT_LIGHT:
-		delete it->value.li;
-		GFramework::lightSourceCount--;
-		break;
-	case COMPONENT_BACKGROUND: 
-		delete it->value.back;
-		hasBackground = false;
-		break;
-	}
 	return this->components.erase(it);
 }
 
@@ -85,11 +70,11 @@ void GameObject::processRender()
 {
 	for (auto& comp : components) 
 	{
-		if (comp.type == COMPONENT_BACKGROUND) comp.value.back->render();
+		if (comp.type == COMPONENT_BACKGROUND) comp.value.back.render();
 		else if (comp.type == COMPONENT_MODEL)
 		{
-			comp.value.mod->calculateMatrix(modelData);
-			comp.value.mod->render();
+			comp.value.mod.calculateMatrix(modelData);
+			comp.value.mod.render();
 		}
 	}
 

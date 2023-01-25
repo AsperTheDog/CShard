@@ -45,11 +45,11 @@ void VKFramework::setDefaultTexture()
 {
 }
 
-void VKFramework::loadCamUniforms(Camera* camera)
+void VKFramework::loadCamUniforms(Camera& camera)
 {
 }
 
-void VKFramework::loadModelUniforms(Model* mod)
+void VKFramework::loadModelUniforms(Model& mod)
 {
 }
 
@@ -63,7 +63,7 @@ GCubeTexture* VKFramework::createCubeTexture(uint32_t width, uint32_t height)
 	return nullptr;
 }
 
-void VKFramework::loadLightUniforms(Light* light, PhysicalData&)
+void VKFramework::loadLightUniforms(Light& light, PhysicalData&)
 {
 }
 

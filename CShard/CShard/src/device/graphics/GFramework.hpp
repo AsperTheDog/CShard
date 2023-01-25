@@ -4,16 +4,6 @@
 
 #include "GUtils.hpp"
 
-#define DEFAULT_TEX_LOCATION "pak/resources/tex/__noTex.png"
-#define GRID_TEX_LOCATION "pak/resources/tex/__grid.png"
-#define GRID_MESH_LOCATION "pak/resources/obj/__grid.obj"
-
-#define BASE_VERTEX_LOCATION "pak/shaders/base.vert"
-#define BASE_FRAGMENT_LOCATION "pak/shaders/base.frag"
-
-#define BACK_VERTEX_LOCATION "pak/shaders/back.vert"
-#define BACK_FRAGMENT_LOCATION "pak/shaders/back.frag"
-
 struct PhysicalData;
 class GCubeTexture;
 class Light;
@@ -44,9 +34,9 @@ public:
 	virtual GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) = 0;
 
 	virtual void setDefaultTexture() = 0;
-	virtual void loadCamUniforms(Camera* camera) = 0;
-	virtual void loadModelUniforms(Model* mod) = 0;
-	virtual void loadLightUniforms(Light* light, PhysicalData&) = 0;
+	virtual void loadCamUniforms(Camera& camera) = 0;
+	virtual void loadModelUniforms(Model& mod) = 0;
+	virtual void loadLightUniforms(Light& light, PhysicalData&) = 0;
 	virtual uint32_t getImGuiTexture() = 0;
 
 	static GTexture* defaultTex;

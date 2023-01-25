@@ -23,7 +23,7 @@ public:
         for (auto& objElem : Engine::sceneObjects)
         {
 			char buf[32];
-			sprintf(buf, "%d: %s", objElem.first, objElem.second.name);
+			sprintf_s(buf, "%d: %s", objElem.first, objElem.second.name);
 			if (objElem.second.hasBackground) 
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0,255,0,255));
             if (ImGui::Selectable(buf, (uint32_t)selectedObject == objElem.first))

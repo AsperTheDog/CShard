@@ -9,6 +9,8 @@
 #include "vulkan/VKMesh.hpp"
 #include "vulkan/VKTexture.hpp"
 
+#include "../../Config.hpp"
+
 GLibraries GFramework::type;
 GTexture* GFramework::defaultTex;
 BackGMesh* GFramework::backgroundMesh;

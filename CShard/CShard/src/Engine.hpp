@@ -6,8 +6,6 @@
 #include "elements/GameObject.hpp"
 #include "elements/components/Camera.hpp"
 
-#define MAX_LIGHTS 10
-
 class GTexture;
 class GMesh;
 
@@ -19,7 +17,8 @@ public:
 	static void init(GLibraries lib, bool isIDE, char* initFileName = nullptr);
 	static void run();
 	static void shutDown();
-	static void compileProject(std::string name);
+	static void compileProject(const std::string& name);
+	static void loadProject(std::string filename);
 	static uint32_t addObject();
 	static uint32_t addMesh(std::string& filepath);
 	static uint32_t addTexture(std::string& filepath);

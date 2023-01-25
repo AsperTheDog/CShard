@@ -83,9 +83,9 @@ void ImGuiManager::render()
 	        if (ImGui::BeginMenu("File"))
 	        {
 	            //ImGui::MenuItem("Padding", NULL, &opt_padding);
-				if (ImGui::MenuItem("Save project", "")){
+				if (ImGui::MenuItem("Save project", ""))
 					showSaveWin = true;
-				};
+
 				ImGui::Separator();
 				ImGui::MenuItem("New project", "");
 				ImGui::MenuItem("Open project", "");
@@ -106,8 +106,37 @@ void ImGuiManager::render()
 	    }
 
 	    for (auto& windowCall : windowCalls) windowCall.window(&windowCall.isOpen);
+
+		
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (showSaveWin) ImGui::OpenPopup("Add name");
+
+        if (ImGui::BeginPopupModal("Add name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Set a name for the project");
+            ImGui::Separator();
+			ImGui::InputText("##projectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+			ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
+            if (ImGui::Button("OK", ImVec2(120, 0)))
+            {
+				Engine::compileProject(nameBuff);
+				showSaveWin = false;
+	            ImGui::CloseCurrentPopup();
+            }
+			ImGui::EndDisabled();
+		    ImGui::SetItemDefaultFocus();
+		    ImGui::SameLine();
+		    if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		    {
+				showSaveWin = false;
+			    ImGui::CloseCurrentPopup();
+		    }
+		    ImGui::EndPopup();
+        }
+
 	    ImGui::End();
-		ImGui::ShowDemoWindow();
 	}
 
     ImGui::Render();
@@ -117,10 +146,12 @@ void ImGuiManager::render()
 
 void ImGuiManager::update()
 {
-	if (GameWindow::isHovering && SDLFramework::leftClick)
-		updateSceneCamDir();
-	updateSceneCamPos();
-	GameWindow::isHovering = false;
+	if (GameWindow::isFocused)
+	{
+		if (SDLFramework::leftClick)
+			updateSceneCamDir();
+		updateSceneCamPos();
+	}
 	SDLFramework::leftClick = false;
 }
 
@@ -164,17 +195,6 @@ void ImGuiManager::updateSceneCamPos()
 	if (keyDowns.at(SDLK_LSHIFT)) movement -= navigationCam.worldUp;
 	if (movement != glm::vec3(0))
 		navigationCam.move(navigationCam.pos + glm::normalize(movement) * (Engine::dt * movementMult));
-}
-
-void ImGuiManager::showSaveWindow()
-{
-	if (!showSaveWin) return;
-	ImGui::Begin("Saving options", &showSaveWin);
-	ImGui::Text("Project name");
-	ImGui::InputText("##ProjName", nameBuff, 50);
-	if (ImGui::Button("Save")){
-		Engine::compileProject(nameBuff);
-	}
 }
 
 void ImGuiManager::addImGuiWindows()

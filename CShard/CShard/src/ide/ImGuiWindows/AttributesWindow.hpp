@@ -27,7 +27,7 @@ public:
 			ImGui::End();
 			return;
 		}
-		ImGui::InputText("Object name", obj->name, MAX_NAME_LENGTH);
+		ImGui::InputText("Object name", obj->name, MAX_OBJ_NAME_LENGTH);
 		glm::vec3 pos{obj->modelData.pos};
 		glm::vec3 rot{obj->modelData.rot};
 		glm::vec3 scale{obj->modelData.scale};
@@ -104,92 +104,92 @@ public:
 	}
 
 private:
-	static void showCamera(Camera* cam, std::string& uniqueID)
+	static void showCamera(Camera& cam, std::string& uniqueID)
 	{
-		glm::vec3 tempVec = cam->pos;
+		glm::vec3 tempVec = cam.pos;
 		ImGui::InputFloat3(("Position##cam" + uniqueID).c_str(), &tempVec.x);
-		if (tempVec != cam->pos) cam->move(tempVec);
+		if (tempVec != cam.pos) cam.move(tempVec);
 
-		tempVec = cam->dir;
-		ImGui::InputFloat3(("Direction##cam" + uniqueID).c_str(), &cam->dir.x);
-		if (tempVec != cam->dir) cam->lookAt(tempVec);
+		tempVec = cam.dir;
+		ImGui::InputFloat3(("Direction##cam" + uniqueID).c_str(), &cam.dir.x);
+		if (tempVec != cam.dir) cam.lookAt(tempVec);
 		ImGui::SameLine();
 		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
-			cam->lookAt(glm::normalize(cam->dir));
+			cam.lookAt(glm::normalize(cam.dir));
 
-		tempVec = cam->worldUp;
-		ImGui::InputFloat3(("WorldUp##cam" + uniqueID).c_str(), &cam->worldUp.x);
-		if (tempVec != cam->pos) cam->move(tempVec);
+		tempVec = cam.worldUp;
+		ImGui::InputFloat3(("WorldUp##cam" + uniqueID).c_str(), &cam.worldUp.x);
+		if (tempVec != cam.pos) cam.move(tempVec);
 		ImGui::SameLine();
 		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
-			cam->changeWorldUp(glm::normalize(cam->worldUp));
+			cam.changeWorldUp(glm::normalize(cam.worldUp));
 
 		ImGui::Separator();
-		float tempFOV = cam->FOV, tempNP = cam->nearPlane, tempFP = cam->farPlane;
+		float tempFOV = cam.FOV, tempNP = cam.nearPlane, tempFP = cam.farPlane;
 		ImGui::DragFloat(("FOVy##cam" + uniqueID).c_str(), &tempFOV, 1.f, 1, 179);
 		ImGui::DragFloat(("Near Plane##cam" + uniqueID).c_str(), &tempNP, 0.01f, 0.01f, 1);
 		ImGui::DragFloat(("Far Plane##cam" + uniqueID).c_str(), &tempFP, 100.f, 10.f, 1000000.f);
-		if (tempFOV != cam->FOV || tempNP != cam->nearPlane || tempFP != cam->farPlane)
-			cam->changeLense(tempFOV, tempNP, tempFP);
+		if (tempFOV != cam.FOV || tempNP != cam.nearPlane || tempFP != cam.farPlane)
+			cam.changeLense(tempFOV, tempNP, tempFP);
 	}
 
-	static void showCollider(Collider* coll, std::string& uniqueID)
+	static void showCollider(Collider& coll, std::string& uniqueID)
 	{
 		
 	}
 
-	static void showModel(Model* mod, std::string& uniqueID)
+	static void showModel(Model& mod, std::string& uniqueID)
 	{
-		glm::vec3 tempVec = mod->data.pos;
+		glm::vec3 tempVec = mod.data.pos;
 		ImGui::DragFloat3(("Position##mod" + uniqueID).c_str(), &tempVec.x, 1.f, 10000.f, 10000.f);
-		if (tempVec != mod->data.pos) mod->changePosition(tempVec);
+		if (tempVec != mod.data.pos) mod.changePosition(tempVec);
 
-		tempVec = mod->data.scale;
+		tempVec = mod.data.scale;
 		ImGui::DragFloat3(("scale##mod" + uniqueID).c_str(), &tempVec.x, 1.f, 0.f, 1000.f);
-		if (tempVec != mod->data.scale) mod->changeScale(tempVec);
+		if (tempVec != mod.data.scale) mod.changeScale(tempVec);
 
-		tempVec = mod->data.rot;
+		tempVec = mod.data.rot;
 		ImGui::DragFloat3(("Rotation##mod" + uniqueID).c_str(), &tempVec.x, 1.f, -180.f, 180.f);
-		if (tempVec != mod->data.rot) mod->changeRotation(tempVec);
+		if (tempVec != mod.data.rot) mod.changeRotation(tempVec);
 		ImGui::Separator();
-		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod->mat.shininess, 0.01f, 0, 1);
-		ImGui::DragFloat(("Emission##mod" + uniqueID).c_str(), &mod->mat.emission, 0.01f, 0, 1);
+		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod.mat.shininess, 0.01f, 0, 1);
+		ImGui::DragFloat(("Emission##mod" + uniqueID).c_str(), &mod.mat.emission, 0.01f, 0, 1);
 		ImGui::Separator();
-		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod->tempMeshID, 1);
-		mod->tempMeshID = std::max(0, mod->tempMeshID);
+		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod.tempMeshID, 1);
+		mod.tempMeshID = std::max(0, mod.tempMeshID);
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Meshmod" + uniqueID).c_str()))
-			mod->changeMesh();
-		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &mod->tempTexID, 1);
-		mod->tempTexID = std::max(0, mod->tempTexID);
+			mod.changeMesh();
+		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &mod.tempTexID, 1);
+		mod.tempTexID = std::max(0, mod.tempTexID);
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
-			mod->changeTexture();
+			mod.changeTexture();
 
-		ImGui::Checkbox("Cull backface", &mod->cullFace);
+		ImGui::Checkbox("Cull backface", &mod.cullFace);
 	}
 
-	static void showScript(Script* scr, std::string& uniqueID)
+	static void showScript(Script& scr, std::string& uniqueID)
 	{
 	}
 
-	static void showBackground(Background* back, std::string& uniqueID)
+	static void showBackground(Background& back, std::string& uniqueID)
 	{
-		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &back->tempTexID, 1);
-		back->tempTexID = std::max(0, back->tempTexID);
+		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &back.tempTexID, 1);
+		back.tempTexID = std::max(0, back.tempTexID);
 		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
-			back->setTexture();
+			back.setTexture();
 	}
 
-	static void showLightSource(Light* li, std::string& uniqueID)
+	static void showLightSource(Light& li, std::string& uniqueID)
 	{
-		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li->position.x, 1.f, 10000.f, 10000.f);
-		ImGui::DragFloat3(("Color##li" + uniqueID).c_str(), &li->color.x, 0.01f, 0, 1);
+		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li.position.x, 1.f, 10000.f, 10000.f);
+		ImGui::DragFloat3(("Color##li" + uniqueID).c_str(), &li.color.x, 0.01f, 0, 1);
 		ImGui::Separator();
-		ImGui::DragFloat(("Constant##li" + uniqueID).c_str(), &li->constant, 0.01f, 0, 1);
-		ImGui::DragFloat(("Linear##li" + uniqueID).c_str(), &li->linear, 0.01f, 0, 1);
-		ImGui::DragFloat(("Quadratic##li" + uniqueID).c_str(), &li->quadratic, 0.01f, 0, 1);
+		ImGui::DragFloat(("Constant##li" + uniqueID).c_str(), &li.constant, 0.01f, 0, 1);
+		ImGui::DragFloat(("Linear##li" + uniqueID).c_str(), &li.linear, 0.01f, 0, 1);
+		ImGui::DragFloat(("Quadratic##li" + uniqueID).c_str(), &li.quadratic, 0.01f, 0, 1);
 	}
 
 	inline static int tempType = 0;

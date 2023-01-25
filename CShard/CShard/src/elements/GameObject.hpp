@@ -1,14 +1,15 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <vector>
 #include "PhysicalData.hpp"
 
-class Light;
-class Background;
-class Script;
-class Model;
-class Collider;
-class Camera;
+#include "components/Background.hpp"
+#include "components/Camera.hpp"
+#include "components/Collider.hpp"
+#include "components/Light.hpp"
+#include "components/Model.hpp"
+#include "components/Script.hpp"
 
 enum ComponentType
 {
@@ -22,18 +23,25 @@ enum ComponentType
 
 union ComponentUnion
 {
-	Camera* cam;
-	Collider* coll;
-	Model* mod;
-	Script* scr;
-	Background* back;
-	Light* li;
+	Camera cam;
+	Collider coll;
+	Model mod;
+	Script scr;
+	Background back;
+	Light li;
+
+	ComponentUnion();
+	~ComponentUnion(){}
 };
 
 struct Component
 {
 	ComponentType type;
 	ComponentUnion value;
+
+	Component();
+	explicit Component(ComponentType type);
+	~Component(){}
 };
 
 class GameObject

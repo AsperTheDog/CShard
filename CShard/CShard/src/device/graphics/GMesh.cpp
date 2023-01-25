@@ -40,7 +40,7 @@ GMesh::GMesh(std::string filepath) : name(filepath)
 					attrib.normals[3 * index.normal_index + 2]
 				};
 	        vertices.push_back(vertex);
-	        indices.push_back(indices.size());
+	        indices.push_back((uint32_t)indices.size());
 	    }
 	}
 }

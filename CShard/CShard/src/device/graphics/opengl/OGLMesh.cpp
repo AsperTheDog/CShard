@@ -30,7 +30,7 @@ OGLMesh::OGLMesh(const std::string& filepath): GMesh(filepath)
 	//attribLoc = glGetAttribLocation(program, "normal");
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(2);
-	this->indexNum = indices.size();
+	this->indexNum = (uint32_t)indices.size();
 }
 
 OGLMesh::~OGLMesh()

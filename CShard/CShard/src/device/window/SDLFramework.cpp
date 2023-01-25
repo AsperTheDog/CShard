@@ -76,8 +76,8 @@ void SDLFramework::manageIDEControls(SDL_Event& event)
 			int x;
 			int y;
 			SDL_GetMouseState(&x, &y);
-			ImGuiManager::lastMousePos.x = x;
-			ImGuiManager::lastMousePos.y = y;
+			ImGuiManager::lastMousePos.x = (float)x;
+			ImGuiManager::lastMousePos.y = (float)y;
         }
 	}
     if (!(SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)))
@@ -90,8 +90,8 @@ void SDLFramework::manageIDEControls(SDL_Event& event)
     }
     if (event.type == SDL_MOUSEMOTION)
     {
-		ImGuiManager::mousePos.x = event.motion.x;
-		ImGuiManager::mousePos.y = event.motion.y;
+		ImGuiManager::mousePos.x = (float)event.motion.x;
+		ImGuiManager::mousePos.y = (float)event.motion.y;
     }
     if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) 
         && (event.key.keysym.sym == SDLK_w 

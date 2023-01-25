@@ -19,7 +19,7 @@ public:
             {
                 if (ImGui::BeginTabItem("Meshes"))
                 {
-					ImGui::InputText("Path##Mesh", meshBuff, 200);
+					ImGui::InputText("Path##Mesh", meshBuff, MAX_ASSET_NAME_LENGTH);
 					ImGui::SameLine();
 					if(ImGui::Button("Import##Mesh"))
 					{
@@ -52,7 +52,7 @@ public:
                 }
                 if (ImGui::BeginTabItem("Textures"))
                 {
-                    ImGui::InputText("Path##Tex", texBuff, 200);
+                    ImGui::InputText("Path##Tex", texBuff, MAX_ASSET_NAME_LENGTH);
 					ImGui::SameLine();
 					if(ImGui::Button("Import##Tex"))
 					{
@@ -88,7 +88,7 @@ public:
 	}
 
 private:
-	inline static char meshBuff[200] = "";
-	inline static char texBuff[200] = "";
+	inline static char meshBuff[MAX_ASSET_NAME_LENGTH] = "";
+	inline static char texBuff[MAX_ASSET_NAME_LENGTH] = "";
 };
 

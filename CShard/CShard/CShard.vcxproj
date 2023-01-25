@@ -45,6 +45,7 @@
     <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Config.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLShadowMap.hpp" />
     <ClInclude Include="src\device\graphics\GShadowMap.hpp" />
     <ClInclude Include="src\elements\components\Light.hpp" />

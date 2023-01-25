@@ -13,7 +13,6 @@ class Model
 {
 public:
 	explicit Model();
-	~Model();
 
 	void render();
 

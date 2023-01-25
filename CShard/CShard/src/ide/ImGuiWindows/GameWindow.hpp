@@ -11,14 +11,14 @@ public:
 		ImGui::Begin("Game", isOpen);
 		GFramework::imGuiSize = {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
 		ImGui::Image(
-			(ImTextureID)GFramework::get()->getImGuiTexture(), 
+			(ImTextureID)(uint64_t)GFramework::get()->getImGuiTexture(), 
 			ImGui::GetContentRegionAvail(), 
 			ImVec2(0, 1), ImVec2(1, 0));
-		isHovering = ImGui::IsWindowHovered();
+		isFocused = ImGui::IsWindowFocused();
 		ImGui::End();
 	}
-
-	inline static bool isHovering = false;
+	
+	inline static bool isFocused = false;
 private:
 
 };

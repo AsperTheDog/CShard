@@ -63,5 +63,5 @@ void main() {
 
     for(int i = 0; i < lightNum; i++)
         result += CalcPointLight(pLights[i], norm, pos, viewDir);
-    outColor = max(vec4(result, alpha), amb);
+    outColor = max(vec4(result, 1.0), amb);
 }
