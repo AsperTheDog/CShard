@@ -28,6 +28,7 @@ public:
 	static GMesh* getMesh(uint32_t id);
 	static bool isValidTexture(uint32_t id);
 	static GTexture* getTexture(uint32_t id);
+	static void clone(uint32_t index);
 
 	inline static std::unordered_map<uint32_t, GameObject> sceneObjects{};
 	inline static std::unordered_map<uint32_t, GMesh*> meshes{};

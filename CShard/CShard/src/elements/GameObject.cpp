@@ -40,19 +40,38 @@ void GameObject::addComponent(Component& comp)
 		break;
 	case COMPONENT_LIGHT:
 		comp.value.li = Light();
-		GFramework::lightSourceCount++;
+		lightCount++;
 		break;
 	case COMPONENT_BACKGROUND: 
 		comp.value.back = Background();
 		hasBackground = true;
 		break;
 	}
+	GFramework::lightSourceCount += lightCount;
+	this->components.push_back(comp);
+}
+
+void GameObject::insertComponent(Component& comp)
+{
+	if (comp.type == COMPONENT_LIGHT)
+	{
+		lightCount++;
+		GFramework::lightSourceCount++;
+	}
+	else if (comp.type == COMPONENT_BACKGROUND) 
+		hasBackground = true;
+
 	this->components.push_back(comp);
 }
 
 std::vector<Component>::iterator GameObject::removeComponent(std::vector<Component>::iterator it)
 {
 	if (it == this->components.end()) return it;
+	if (it->type == COMPONENT_BACKGROUND) hasBackground = false;
+	else if (it->type == COMPONENT_LIGHT) {
+		lightCount--;
+		GFramework::lightSourceCount--;
+	}
 	return this->components.erase(it);
 }
 
@@ -66,8 +85,19 @@ void GameObject::processScript()
 
 }
 
+void GameObject::processLights()
+{
+	if (!show) return;
+	for (auto& comp : components)
+	{
+		if (comp.type == COMPONENT_LIGHT)
+			GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
+	}
+}
+
 void GameObject::processRender()
 {
+	if (!show) return;
 	for (auto& comp : components) 
 	{
 		if (comp.type == COMPONENT_BACKGROUND) comp.value.back.render();
@@ -99,11 +129,8 @@ void GameObject::changeScale(glm::vec3 scale)
 	this->modelData.changed = true;
 }
 
-void GameObject::processLights()
+void GameObject::toggleActive()
 {
-	for (auto& comp : components)
-	{
-		if (comp.type == COMPONENT_LIGHT)
-			GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
-	}
+	show = !show;
+	GFramework::lightSourceCount += (show ? 1 : -1) * lightCount;
 }

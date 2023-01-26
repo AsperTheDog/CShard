@@ -135,12 +135,9 @@ void ImGuiManager::render()
 		    }
 		    ImGui::EndPopup();
         }
-
 	    ImGui::End();
 	}
-
     ImGui::Render();
-
     GFramework::get()->renderImgui();
 }
 
@@ -153,6 +150,8 @@ void ImGuiManager::update()
 		updateSceneCamPos();
 	}
 	SDLFramework::leftClick = false;
+	ImGuiManager::copied = false;
+	ImGuiManager::pasted = false;
 }
 
 void ImGuiManager::destroy()

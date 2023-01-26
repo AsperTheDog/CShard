@@ -69,6 +69,7 @@ void Engine::compileProject(const std::string& name)
 		SDLFramework::showErrorMessage("Could not save project", "Could not write to save file");
 		return;
 	}
+	wf.write((char*) &Engine::IDManager, sizeof(IDManager));
 	wf.write((char*) &ImGuiManager::navigationCam, sizeof(Camera));
 	uint32_t mappingNum = (uint32_t)InputManager::inputMappings.size();
 	wf.write((char*)&mappingNum, sizeof(mappingNum));
@@ -126,6 +127,7 @@ void Engine::loadProject(std::string filename)
 		SDLFramework::showErrorMessage("Could not load project", "Could not read save file");
 		return;
 	}
+	wf.read((char*) &Engine::IDManager, sizeof(IDManager));
 	wf.read((char*) &ImGuiManager::navigationCam, sizeof(Camera));
 	uint32_t num = 0;
 	wf.read((char*)&num, sizeof(uint32_t));
@@ -176,7 +178,11 @@ void Engine::loadProject(std::string filename)
 			Component comp{};
 			wf.read((char*)&comp, sizeof(comp));
 			if (comp.type == COMPONENT_BACKGROUND) obj.hasBackground = true;
-			else if (comp.type == COMPONENT_LIGHT) GFramework::lightSourceCount++;
+			else if (comp.type == COMPONENT_LIGHT)
+			{
+				GFramework::lightSourceCount++;
+				obj.lightCount++;
+			}
 			obj.components.push_back(comp);
 		}
 		sceneObjects.emplace(id, obj);
@@ -209,6 +215,7 @@ uint32_t Engine::addTexture(std::string& filepath)
 void Engine::removeObject(uint32_t id)
 {
 	if (!sceneObjects.contains(id)) return;
+	GFramework::lightSourceCount -= sceneObjects.at(id).lightCount;
 	Engine::sceneObjects.erase(id);
 }
 
@@ -238,6 +245,22 @@ GTexture* Engine::getTexture(uint32_t id)
 {
 	if (!isValidTexture(id)) return nullptr;
 	return textures.at(id);
+}
+
+void Engine::clone(uint32_t index)
+{
+	if (!Engine::sceneObjects.contains(index)) return;
+	GameObject objToCopy = Engine::sceneObjects.at(index);
+	GameObject newObj{objToCopy.name};
+	newObj.modelData = objToCopy.modelData;
+	for (auto& comp : objToCopy.components)
+	{
+		Component newComp{};
+		memcpy(&newComp, &comp, sizeof(comp));
+		newObj.insertComponent(comp);
+	}
+	IDManager++;
+	Engine::sceneObjects.emplace(IDManager, newObj);
 }
 
 void Engine::updateDeltaTime()
