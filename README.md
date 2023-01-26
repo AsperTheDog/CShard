@@ -12,28 +12,4 @@ In the CShard folder you will find the solution file. The first time building gl
 
 # Prerequisites
 
-Unfortunately glew is not easy to build. There are some tools that our computer needs before we are able to compile it:
-
-### WSL
-
-Since glew requires us to run a makefile we need wsl.
-To install wsl simply open a command console and type
-```
-wsl --install
-```
-
-### linux dependencies
-
-Once wsl has been installed you have to install **python3** and **make** to linux
-Examples using apt:
-```
-sudo apt-get install python3
-sudo apt-get install make
-```
-
-Additionally, if python is ran as python3 this package must be installed for the make to work correctly
-```
-sudo apt-get install python-is-python3
-```
-
-Once all of these are up and running the visual studio project should build and run without any problems
+The system needs a GPU capable of running OpenGL 4.6
