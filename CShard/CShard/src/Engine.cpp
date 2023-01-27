@@ -46,8 +46,10 @@ void Engine::run()
 		if (Engine::isIDE) ImGuiManager::newFrame();
 
 		updateDeltaTime();
-		if (Engine::event()) break;
+		Engine::event();
 		Engine::render();
+
+		if (confirmQuit) break;
 
 		SDLFramework::swapWindow();
 	}
@@ -185,6 +187,14 @@ void Engine::loadProject(std::string filename)
 	wf.close();
 }
 
+void Engine::resetProject()
+{
+	InputManager::inputMappings.clear();
+	Engine::sceneObjects.clear();
+	Engine::meshes.clear();
+	Engine::textures.clear();
+}
+
 uint32_t Engine::addObject()
 {
 	IDManager++;
@@ -247,15 +257,12 @@ void Engine::updateDeltaTime()
 	prevDt = now;
 }
 
-bool Engine::event()
+void Engine::event()
 {
 	if (isIDE)
 		ImGuiManager::update();
 
-	bool shouldClose = false;
-	std::vector<uint32_t> inputs = InputManager::triggeredEvents(&shouldClose, isIDE);
-
-	return shouldClose;
+	std::vector<uint32_t> inputs = InputManager::triggeredEvents(&Engine::shouldQuit, isIDE);
 }
 
 void Engine::render()

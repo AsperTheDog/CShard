@@ -56,6 +56,8 @@ private:
 
 	inline static char nameBuff[MAX_OBJ_NAME_LENGTH];
 	inline static bool showSaveWin = false;
+	inline static bool showLoadWin = false;
+	inline static bool showNewWin = false;
 	inline static std::vector<WindowData> windowCalls{};
 	inline static ImGuiIO* io{};
 };

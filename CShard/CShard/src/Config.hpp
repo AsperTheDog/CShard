@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_LIGHTS 10
+#define MAX_LIGHTS 20
 #define MAX_ASSET_NAME_LENGTH 150
 #define MAX_OBJ_NAME_LENGTH 20
 

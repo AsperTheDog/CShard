@@ -27,7 +27,7 @@ struct Material {
     float shininess;
 }; 
 
-uniform PointLight pLights[10];
+uniform PointLight pLights[20];
 uniform Camera cam;
 uniform Material mat;
 uniform uint lightNum;
@@ -63,5 +63,5 @@ void main() {
 
     for(int i = 0; i < lightNum; i++)
         result += CalcPointLight(pLights[i], norm, pos, viewDir);
-    outColor = max(vec4(result, 1.0), amb);
+    outColor = max(vec4(result, alpha), amb);
 }
