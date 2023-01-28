@@ -27,7 +27,7 @@ struct Material {
     float shininess;
 }; 
 
-uniform PointLight pLights[10];
+uniform PointLight pLights[20];
 uniform Camera cam;
 uniform Material mat;
 uniform uint lightNum;
