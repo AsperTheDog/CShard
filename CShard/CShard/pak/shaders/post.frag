@@ -10,6 +10,7 @@ layout(binding = 1) uniform sampler2D render;
 in vec2 texCoord;
 
 uniform uint current;
+uniform float grainIntensity;
 uniform float randomSeed;
 uniform float mult;
 
@@ -27,7 +28,7 @@ vec3 dithering(vec3 rgbSample)
 {
 	vec2 uvr = texCoord;
 	uvr.y *= random(vec2(uvr.y, randomSeed));
-	rgbSample += random(uvr)*0.15;
+	rgbSample += random(uvr) * grainIntensity;
 	return rgbSample;
 }
 

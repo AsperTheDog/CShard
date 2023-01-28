@@ -161,11 +161,11 @@ private:
 	static void showModel(Model& mod, std::string& uniqueID)
 	{
 		glm::vec3 tempVec = mod.data.pos;
-		ImGui::DragFloat3(("Position##mod" + uniqueID).c_str(), &tempVec.x, 1.f, 10000.f, 10000.f);
+		ImGui::DragFloat3(("Position##mod" + uniqueID).c_str(), &tempVec.x, 0.1f, 10000.f, 10000.f);
 		if (tempVec != mod.data.pos) mod.changePosition(tempVec);
 
 		tempVec = mod.data.scale;
-		ImGui::DragFloat3(("scale##mod" + uniqueID).c_str(), &tempVec.x, 1.f, 0.f, 1000.f);
+		ImGui::DragFloat3(("scale##mod" + uniqueID).c_str(), &tempVec.x, 0.1f, 0.f, 1000.f);
 		if (tempVec != mod.data.scale) mod.changeScale(tempVec);
 
 		tempVec = mod.data.rot;

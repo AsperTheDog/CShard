@@ -3,7 +3,6 @@
 #include <stdexcept>
 
 #include "OGLFramework.hpp"
-#include "../GraphicsHeader.hpp"
 #include "../../../Engine.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -12,7 +11,13 @@
 #include "../GMesh.hpp"
 #include "../../../elements/components/Camera.hpp"
 
-OGLTexture::OGLTexture(const std::string& path) : GTexture(path)
+OGLTexture::OGLTexture(
+	const std::string& path, 
+	TextureOptions min,
+	TextureOptions mag, 
+	TextureOptions wrapS, 
+	TextureOptions wrapT)
+	: GTexture(path)
 {
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
@@ -25,10 +30,10 @@ OGLTexture::OGLTexture(const std::string& path) : GTexture(path)
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmapEXT(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 	stbi_image_free(data);
 }
@@ -57,16 +62,22 @@ void OGLTexture::renderAsBackground()
 	GFramework::fullQuadMesh->render();
 }
 
-OGLEmptyTexture::OGLEmptyTexture(TexType type, uint32_t width, uint32_t height) : GEmptyTexture(type)
+OGLEmptyTexture::OGLEmptyTexture(
+	TexType type, uint32_t width, uint32_t height,
+	TextureOptions min,
+	TextureOptions mag, 
+	TextureOptions wrapS, 
+	TextureOptions wrapT)
+	: GEmptyTexture(type)
 {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
 	if (type == COLOR)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 	}
 	else

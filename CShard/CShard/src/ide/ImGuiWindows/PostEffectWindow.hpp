@@ -16,6 +16,7 @@ public:
 		ImGui::DragFloat("Color multiplier", &GFramework::postMult, 0.01f, 0.f, 1.f);
 		ImGui::Separator();
 		ImGui::Text("Film Grain");
+		ImGui::DragFloat("Intensity", &GFramework::filmGrain.intensity, 0.01f, 0.01f, 1.f);
 		ImGui::End();
 	}
 

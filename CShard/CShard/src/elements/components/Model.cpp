@@ -9,7 +9,7 @@
 #include <gtx/transform.hpp>
 
 Model::Model()
-	: meshID(0), textureID(0), data({}), mat{0, 0}
+	: meshID(0), textureID(0), data({}), mat{0, 1}
 {
 }
 

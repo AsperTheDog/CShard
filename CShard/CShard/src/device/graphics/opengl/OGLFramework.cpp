@@ -317,6 +317,7 @@ void OGLFramework::setPostUniforms()
 	glUseProgram(this->postShader->id);
 	glUniform1ui(glGetUniformLocation(this->postShader->id, "current"), postEffectsActive ? filmGrain.id : 0);
 	glUniform1f(glGetUniformLocation(this->postShader->id, "randomSeed"), filmGrain.nextNum);
+	glUniform1f(glGetUniformLocation(this->postShader->id, "grainIntensity"), filmGrain.intensity);
 	filmGrain.next();
 	glUniform1f(glGetUniformLocation(this->postShader->id, "mult"), postMult);
 }

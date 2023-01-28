@@ -13,7 +13,10 @@ GMesh::GMesh(std::string filepath) : name(filepath)
     std::string warn, err;
 
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str())) {
-        throw std::runtime_error(warn + err);
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, ("pak/resources/obj/" + filepath).c_str()))
+        {
+	        throw std::runtime_error("Could not load file");
+        }
     }
 
 	for (const auto& shape : shapes) {
