@@ -61,38 +61,45 @@ public:
 			if (ImGui::Button(("-##Comp" + uniqueID).c_str()))
 			{
 				i = obj->removeComponent(i);
+				if (copiedAttr == i - obj->components.begin()) copiedAttr = -1;
 				if (i == obj->components.end()) break;
 			}
 			switch(i->type)
 			{
 			case COMPONENT_CAMERA:
 				ImGui::SameLine();
-				ImGui::Text("Camera Component");
+				if (ImGui::Selectable(("Camera Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
+					selectedAttr = i - obj->components.begin();
 				showCamera(i->value.cam, uniqueID);
 				break;
 			case COMPONENT_COLLIDER:
 				ImGui::SameLine();
-				ImGui::Text("Collider Component");
+				if (ImGui::Selectable(("Collider Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
+					selectedAttr = i - obj->components.begin();
 				showCollider(i->value.coll, uniqueID);
 				break;
 			case COMPONENT_MODEL:
 				ImGui::SameLine();
-				ImGui::Text("Model Component");
+				if (ImGui::Selectable(("Model Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
+					selectedAttr = i - obj->components.begin();
 				showModel(i->value.mod, uniqueID);
 				break;
 			case COMPONENT_SCRIPT:
 				ImGui::SameLine();
-				ImGui::Text("Script Component");
+				if (ImGui::Selectable(("Script Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
+					selectedAttr = i - obj->components.begin();
 				showScript(i->value.scr, uniqueID);
 				break;
 			case COMPONENT_BACKGROUND:
 				ImGui::SameLine();
-				ImGui::Text("Background Component");
+				if (ImGui::Selectable(("Background Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
+					selectedAttr = i - obj->components.begin();
 				showBackground(i->value.back, uniqueID);
 				break;
 			case COMPONENT_LIGHT:
 				ImGui::SameLine();
-				ImGui::Text("LightSource Component");
+				if (ImGui::Selectable(("LightSource Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
+					selectedAttr = i - obj->components.begin();
 				showLightSource(i->value.li, uniqueID);
 				break;
 			default: ;
@@ -100,6 +107,19 @@ public:
 			ImGui::Separator();
 			ImGui::Separator();
 		}
+		if (ImGui::IsWindowFocused() && ImGuiManager::copied && selectedAttr >= 0)
+		{
+			copiedAttr = selectedAttr;
+			ObjectWindow::copiedObj = -1;
+		}
+		if (ImGui::IsWindowFocused() && ImGuiManager::pasted && copiedAttr >= 0)
+		{
+			Component& comp = obj->components.at(copiedAttr);
+			Component newComp{};
+			memcpy(&newComp, &comp, sizeof(comp));
+			obj->insertComponent(newComp);
+		}
+
 		ImGui::End();
 	}
 
@@ -152,7 +172,7 @@ private:
 		ImGui::DragFloat3(("Rotation##mod" + uniqueID).c_str(), &tempVec.x, 1.f, -180.f, 180.f);
 		if (tempVec != mod.data.rot) mod.changeRotation(tempVec);
 		ImGui::Separator();
-		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod.mat.shininess, 0.01f, 0, 1);
+		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod.mat.shininess, 0.2f, 1.f, 60.f);
 		ImGui::DragFloat(("Emission##mod" + uniqueID).c_str(), &mod.mat.emission, 0.01f, 0, 1);
 		ImGui::Separator();
 		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod.tempMeshID, 1);
@@ -209,4 +229,7 @@ private:
 		COMPONENT_LIGHT,
 		COMPONENT_BACKGROUND
 	};
+
+	inline static int selectedAttr = -1;
+	inline static int copiedAttr = -1;
 };

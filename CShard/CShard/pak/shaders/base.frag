@@ -39,7 +39,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 camDir)
     
     float amb = mat.emission;
     float diff = max(dot(normal, lightDir), 0.0);
-    float spec = pow(max(dot(camDir, reflectDir), 0.0), mat.shininess);
+    vec3 halfV = normalize(lightDir + camDir);
+    float spec = pow(max(dot(normal, halfV), 0.0), mat.shininess * 4);
     
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    

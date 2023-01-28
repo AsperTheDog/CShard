@@ -45,6 +45,7 @@ public:
 	void setDefaultTexture() override;
 	void loadCamUniforms(Camera& camera) override;
 	void loadModelUniforms(Model& mod) override;
+	void setPostUniforms() override;
 	uint32_t getImGuiTexture() override;
 	void resizeImGuiTextures();
 	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
@@ -52,10 +53,14 @@ public:
 
 	Shader* baseShader = nullptr;
 	Shader* backgroundShader = nullptr;
+	Shader* postShader = nullptr;
 private:
 	uint16_t lightCounter = 0;
 	SDL_GLContext gl_context = nullptr;
-	OGLEmptyTexture* imGuiTexture;
-	OGLEmptyTexture* imGuiDepth;
-	uint32_t imGuiFBO = 0;
+	OGLEmptyTexture* baseTexture;
+	OGLEmptyTexture* baseDepth;
+	OGLEmptyTexture* postTexture;
+	OGLEmptyTexture* postDepth;
+	uint32_t baseFBO = 0;
+	uint32_t postFBO = 0;
 };

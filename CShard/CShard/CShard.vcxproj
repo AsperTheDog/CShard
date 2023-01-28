@@ -48,6 +48,7 @@
     <ClInclude Include="src\Config.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLShadowMap.hpp" />
     <ClInclude Include="src\device\graphics\GShadowMap.hpp" />
+    <ClInclude Include="src\device\graphics\PostEffects.hpp" />
     <ClInclude Include="src\elements\components\Light.hpp" />
     <ClInclude Include="src\device\graphics\GraphicsHeader.hpp" />
     <ClInclude Include="src\elements\PhysicalData.hpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
     <ClInclude Include="src\device\window\SDLFramework.hpp" />
     <ClInclude Include="src\Engine.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\PostEffectWindow.hpp" />
     <ClInclude Include="src\input\InputManager.hpp" />
     <ClInclude Include="src\elements\GameObject.hpp" />
     <ClInclude Include="src\elements\components\Camera.hpp" />

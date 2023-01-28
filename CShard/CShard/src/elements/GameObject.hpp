@@ -50,6 +50,7 @@ public:
 	explicit GameObject(const std::string& name);
 
 	void addComponent(Component& comp);
+	void insertComponent(Component& comp);
 	std::vector<Component>::iterator removeComponent(std::vector<Component>::iterator it);
 
 	void processCollision();
@@ -60,10 +61,13 @@ public:
 	void changeRotation(glm::vec3 rot);
 	void changeScale(glm::vec3 scale);
 	void processLights();
+	void toggleActive();
 
 	char name[20]{};
 	std::vector<Component> components;
+	uint32_t lightCount = 0;
 	bool hasBackground = false;
+	bool show = true;
 
 	PhysicalData modelData;
 private:

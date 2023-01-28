@@ -54,7 +54,7 @@ void OGLTexture::renderAsBackground()
 	glUniformMatrix4fv(glGetUniformLocation(program, "invPV"), 1, false, &invPV[0].x);
 	glUniform3fv(glGetUniformLocation(program, "camPos"), 1, &Engine::activeCam->pos.x);
 
-	GFramework::backgroundMesh->render();
+	GFramework::fullQuadMesh->render();
 }
 
 OGLEmptyTexture::OGLEmptyTexture(TexType type, uint32_t width, uint32_t height) : GEmptyTexture(type)

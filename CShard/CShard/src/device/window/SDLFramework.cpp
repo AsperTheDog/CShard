@@ -103,6 +103,13 @@ void SDLFramework::manageIDEControls(SDL_Event& event)
     {
         ImGuiManager::keyDowns.insert_or_assign(event.key.keysym.sym, event.type == SDL_KEYDOWN);
     }
+    else if(event.type == SDL_KEYDOWN && event.key.keysym.mod & KMOD_CTRL)
+    {
+        if (event.key.keysym.sym == SDLK_c)
+			ImGuiManager::copied = true;
+        else if (event.key.keysym.sym == SDLK_v)
+            ImGuiManager::pasted = true;
+    }
 
 }
 

@@ -13,7 +13,7 @@
 
 GLibraries GFramework::type;
 GTexture* GFramework::defaultTex;
-BackGMesh* GFramework::backgroundMesh;
+BackGMesh* GFramework::fullQuadMesh;
 
 void GFramework::create(GLibraries lib)
 {
@@ -23,12 +23,12 @@ void GFramework::create(GLibraries lib)
 	case OPENGL:
 		GFramework::instance = new OGLFramework();
         defaultTex = new OGLTexture(DEFAULT_TEX_LOCATION);
-        backgroundMesh = new BackOGLMesh();
+        fullQuadMesh = new BackOGLMesh();
 		break;
 	case VULKAN:
 		GFramework::instance = new VKFramework();
         defaultTex = new VKTexture(DEFAULT_TEX_LOCATION);
-        backgroundMesh = new BackVKMesh();
+        fullQuadMesh = new BackVKMesh();
 		break;
 	}
 }

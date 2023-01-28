@@ -47,11 +47,15 @@ public:
 	static void updateSceneCamDir();
 	static void updateSceneCamPos();
 
+
 	inline static Camera navigationCam{};
 	inline static glm::vec2 mousePos{};
 	inline static glm::vec2 lastMousePos{};
 	inline static std::unordered_map<int32_t, bool> keyDowns{};
 	inline static float movementMult = 6.f;
+	inline static bool copied = false;
+	inline static bool pasted = false;
+
 private:
 
 	inline static char nameBuff[MAX_OBJ_NAME_LENGTH];

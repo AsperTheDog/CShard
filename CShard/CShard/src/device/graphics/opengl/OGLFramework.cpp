@@ -170,20 +170,36 @@ OGLFramework::OGLFramework()
 
 	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
+	this->postShader = new Shader(POST_VERTEX_LOCATION, POST_FRAGMENT_LOCATION);
 
-	this->imGuiTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
-	this->imGuiDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
-	glGenFramebuffers(1, &imGuiFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->imGuiTexture->texture, 0);
+	this->baseTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
+	this->baseDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
+	glGenFramebuffers(1, &baseFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->baseTexture->texture, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->imGuiDepth->texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->baseDepth->texture, 0);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
-		throw std::runtime_error(R"(ImGuiFramebuffer could not be completed)");
+		throw std::runtime_error(R"(BaseFramebuffer could not be completed)");
 	}
+
+	this->postTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
+	this->postDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
+	glGenFramebuffers(1, &postFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->postTexture->texture, 0);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->postDepth->texture, 0);
+	status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if(status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		throw std::runtime_error(R"(PostFramebuffer could not be completed)");
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -191,7 +207,7 @@ void OGLFramework::initRender()
 {
 	if (Engine::isIDE)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, imGuiFBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
 		if (imGuiSize != viewPortSize)
 		{
 			viewPortSize = imGuiSize;
@@ -202,12 +218,19 @@ void OGLFramework::initRender()
 	}
 	glUniform1ui(glGetUniformLocation(this->baseShader->id, "lightNum"), lightSourceCount);
 
-	glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void OGLFramework::endRender()
 {
+	this->setPostUniforms();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
+	
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, this->baseTexture->texture);
+	GFramework::fullQuadMesh->render();
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	lightCounter = 0;
 }
@@ -289,15 +312,26 @@ void OGLFramework::loadModelUniforms(Model& mod)
 	glUniform1f(glGetUniformLocation(this->baseShader->id, "mat.emission"), mod.mat.emission);
 }
 
+void OGLFramework::setPostUniforms()
+{
+	glUseProgram(this->postShader->id);
+	glUniform1ui(glGetUniformLocation(this->postShader->id, "current"), postEffectsActive ? filmGrain.id : 0);
+	glUniform1f(glGetUniformLocation(this->postShader->id, "randomSeed"), filmGrain.nextNum);
+	filmGrain.next();
+	glUniform1f(glGetUniformLocation(this->postShader->id, "mult"), postMult);
+}
+
 uint32_t OGLFramework::getImGuiTexture()
 {
-	return this->imGuiTexture->texture;
+	return this->postTexture->texture;
 }
 
 void OGLFramework::resizeImGuiTextures()
 {
-	this->imGuiTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
-	this->imGuiDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
+	this->baseTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
+	this->baseDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
+	this->postTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
+	this->postDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
 }
 
 GCubeTexture* OGLFramework::createCubeTexture(uint32_t width, uint32_t height)

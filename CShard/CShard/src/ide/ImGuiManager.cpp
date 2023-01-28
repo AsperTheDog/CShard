@@ -10,6 +10,7 @@
 #include "ImGuiWindows/InputWindow.hpp"
 #include "ImGuiWindows/DiagnosticsWindow.hpp"
 #include "ImGuiWindows/GameOptionsWindow.hpp"
+#include "ImGuiWindows/PostEffectWindow.hpp"
 
 
 void ImGuiManager::init()
@@ -237,9 +238,7 @@ void ImGuiManager::render()
 
 	    ImGui::End();
 	}
-
     ImGui::Render();
-
     GFramework::get()->renderImgui();
 }
 
@@ -252,6 +251,8 @@ void ImGuiManager::update()
 		updateSceneCamPos();
 	}
 	SDLFramework::leftClick = false;
+	ImGuiManager::copied = false;
+	ImGuiManager::pasted = false;
 }
 
 void ImGuiManager::destroy()
@@ -305,4 +306,5 @@ void ImGuiManager::addImGuiWindows()
 	ImGuiManager::addWindowCall(AssetWindow::showWindow, "Assets", true);
 	ImGuiManager::addWindowCall(DiagnosticsWindow::showWindow, "Diagnostics", false);
 	ImGuiManager::addWindowCall(GameOptionsWindow::showWindow, "Game control", false);
+	ImGuiManager::addWindowCall(PostEffectWindow::showWindow, "Post Effects", false);
 }
