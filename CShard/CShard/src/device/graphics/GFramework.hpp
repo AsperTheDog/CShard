@@ -3,6 +3,7 @@
 #include <string>
 
 #include "GUtils.hpp"
+#include "PostEffects.hpp"
 
 struct PhysicalData;
 class GCubeTexture;
@@ -37,15 +38,20 @@ public:
 	virtual void loadCamUniforms(Camera& camera) = 0;
 	virtual void loadModelUniforms(Model& mod) = 0;
 	virtual void loadLightUniforms(Light& light, PhysicalData&) = 0;
+	virtual void setPostUniforms() = 0;
 	virtual uint32_t getImGuiTexture() = 0;
 
 	static GTexture* defaultTex;
-	static BackGMesh* backgroundMesh;
+	static BackGMesh* fullQuadMesh;
 	static GLibraries type;
 
 	inline static glm::uvec2 imGuiSize{1920, 1080};
 	inline static uint8_t lightSourceCount = 0;
 	inline static Light* lights[10];
+
+	inline static float postMult = 1.f;
+	inline static FilmGrain filmGrain{};
+	inline static bool postEffectsActive = false;
 protected:
 	inline static glm::uvec2 viewPortSize{1920, 1080};
 	static std::string loadShaderSrc(const std::string& file);

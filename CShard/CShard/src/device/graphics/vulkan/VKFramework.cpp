@@ -67,6 +67,10 @@ void VKFramework::loadLightUniforms(Light& light, PhysicalData&)
 {
 }
 
+void VKFramework::setPostUniforms()
+{
+}
+
 void VKFramework::resizeWindow(int width, int height)
 {
 }
