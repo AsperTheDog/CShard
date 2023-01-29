@@ -8,8 +8,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "../GMesh.hpp"
 #include "../../../elements/components/Camera.hpp"
+#include "OGLMesh.hpp"
 
 OGLTexture::OGLTexture(
 	const std::string& path, 
@@ -17,8 +17,24 @@ OGLTexture::OGLTexture(
 	TextureOptions mag, 
 	TextureOptions wrapS, 
 	TextureOptions wrapT)
-	: GTexture(path)
+	: name(path)
 {
+	commit(path, min, mag, wrapS, wrapT);
+}
+
+OGLTexture::~OGLTexture()
+{
+	glDeleteTextures(1, &texture);
+}
+
+void OGLTexture::commit(
+	const std::string& path, 
+	TextureOptions min, 
+	TextureOptions mag, 
+	TextureOptions wrapS,
+	TextureOptions wrapT)
+{
+	this->name = path;
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 4);
@@ -38,11 +54,6 @@ OGLTexture::OGLTexture(
 	stbi_image_free(data);
 }
 
-OGLTexture::~OGLTexture()
-{
-	glDeleteTextures(1, &texture);
-}
-
 void OGLTexture::useTexture()
 {
 	glActiveTexture(GL_TEXTURE0);
@@ -53,23 +64,23 @@ void OGLTexture::renderAsBackground()
 {
 	this->useTexture();
 
-	GLuint program = ((OGLFramework*)GFramework::get())->backgroundShader->id;
+	GLuint program = OGLFramework::getBackShader()->id;
 	glUseProgram(program);
 	glm::mat4 invPV = glm::inverse(Engine::activeCam->getProjMatrix() * Engine::activeCam->getViewMatrix());
 	glUniformMatrix4fv(glGetUniformLocation(program, "invPV"), 1, false, &invPV[0].x);
 	glUniform3fv(glGetUniformLocation(program, "camPos"), 1, &Engine::activeCam->pos.x);
 
-	GFramework::fullQuadMesh->render();
+	OGLFramework::fullQuadMesh.render();
 }
 
-OGLEmptyTexture::OGLEmptyTexture(
-	TexType type, uint32_t width, uint32_t height,
-	TextureOptions min,
-	TextureOptions mag, 
+void OGLEmptyTexture::commit(
+	TexType type, uint32_t width, uint32_t height, 
+	TextureOptions min, 
+	TextureOptions mag,
 	TextureOptions wrapS, 
 	TextureOptions wrapT)
-	: GEmptyTexture(type)
 {
+	this->type = type;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
@@ -86,6 +97,17 @@ OGLEmptyTexture::OGLEmptyTexture(
 	}
 }
 
+OGLEmptyTexture::OGLEmptyTexture(
+	TexType type, uint32_t width, uint32_t height,
+	TextureOptions min,
+	TextureOptions mag, 
+	TextureOptions wrapS, 
+	TextureOptions wrapT)
+	: type(type)
+{
+	commit(type, width, height, min, mag, wrapS, wrapT);
+}
+
 OGLEmptyTexture::~OGLEmptyTexture()
 {
 	glDeleteTextures(1, &texture);
@@ -98,24 +120,4 @@ void OGLEmptyTexture::resize(uint32_t width, uint32_t height, char* data)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	else
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, data);
-}
-
-OGLCubeTexture::OGLCubeTexture(uint32_t width, uint32_t height)
-{
-	glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-	for (uint8_t i = 0 ; i < 6 ; i++) {
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
-    }
-}
-
-OGLCubeTexture::~OGLCubeTexture()
-{
-	glDeleteTextures(1, &texture);
 }

@@ -32,17 +32,18 @@ uniform Camera cam;
 uniform Material mat;
 uniform uint lightNum;
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 camDir)
+vec3 CalcPointLight(uint index, vec3 normal, vec3 camDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    PointLight light = pLights[index];
+    vec3 lightDir = normalize(light.position - pos);
     vec3 reflectDir = reflect(-lightDir, normal);
     
     float amb = mat.emission;
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 halfV = normalize(lightDir + camDir);
     float spec = pow(max(dot(normal, halfV), 0.0), mat.shininess * 4);
-    
-    float distance = length(light.position - fragPos);
+
+    float distance = length(light.position - pos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     
     vec3 color = texture(tex, texCoords).xyz;
@@ -62,7 +63,7 @@ void main() {
     vec3 result = vec3(0.0, 0.0, 0.0);
     vec4 amb = texture(tex, texCoords) * mat.emission;
 
-    for(int i = 0; i < lightNum; i++)
-        result += CalcPointLight(pLights[i], norm, pos, viewDir);
+    for(uint i = 0; i < lightNum; i++)
+        result += CalcPointLight(i, norm, viewDir);
     outColor = max(vec4(result, alpha), amb);
 }

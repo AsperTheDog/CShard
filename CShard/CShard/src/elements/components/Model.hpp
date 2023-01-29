@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include <glm.hpp>
 
 #include "../PhysicalData.hpp"
@@ -14,7 +15,7 @@ class Model
 public:
 	explicit Model();
 
-	void render();
+	void render(PhysicalData& pData, bool material);
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
@@ -23,16 +24,23 @@ public:
 	void changeMesh();
 	void changeTexture();
 
+	glm::mat4 getModelMatrix(PhysicalData& pData);
+	glm::mat4 getInvModelMatrix(PhysicalData& pData);
+
 	void calculateMatrix(PhysicalData& pData);
 
-	uint32_t meshID;
-	uint32_t textureID;
+	void serialize(std::ofstream& wf);
+	void deserialize(std::ifstream& wf);
+
 	int tempMeshID{}, tempTexID{};
 	PhysicalData data;
 	Material mat;
+	bool cullFace = true;
+
+private:
+	uint32_t meshID;
+	uint32_t textureID;
 	glm::mat4 modelMatrix{};
 	glm::mat4 invModelMatrix{};
-	bool cullFace = true;
-private:
 };
 

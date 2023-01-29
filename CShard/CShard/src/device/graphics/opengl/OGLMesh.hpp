@@ -1,29 +1,53 @@
 #pragma once
+#include <cstdint>
+#include <string>
+#include <glm.hpp>
+#include <vector>
 
-#include "../GMesh.hpp"
+struct Vertex
+{
+	glm::vec3 pos;
+	glm::vec2 texCoords;
+	glm::vec3 norm;
+};
 
-class OGLMesh final : public GMesh
+class OGLMesh final
 {
 public:
+	OGLMesh() = default;
 	explicit OGLMesh(const std::string& filepath);
-	~OGLMesh() override;
+	~OGLMesh();
 
-	void render(bool culling) override;
+	void commit(const std::string& filepath);
+	void render(bool culling);
+	
+	std::string name;
+private:
+	void extractData(const std::string& filename);
 
 	uint32_t VAO{};
 	uint32_t VBO{};
 	uint32_t EBO{};
-
 	uint32_t indexNum = 0;
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
 };
 
-class BackOGLMesh final : public BackGMesh
+//---------------------------------------------------
+
+struct BackVertex
+{
+	glm::vec2 pos;
+};
+
+class OGLPostQuad final
 {
 public:
-	explicit BackOGLMesh();
-	~BackOGLMesh() override;
+	explicit OGLPostQuad();
+	~OGLPostQuad();
 
-	void render() override;
+	void commit();
+	void render();
 
 private:
 	uint32_t VAO{};

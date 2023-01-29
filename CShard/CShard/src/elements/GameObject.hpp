@@ -1,8 +1,10 @@
 #pragma once
-#include <memory>
+
 #include <string>
 #include <vector>
 #include "PhysicalData.hpp"
+
+#include "../Config.hpp"
 
 #include "components/Background.hpp"
 #include "components/Camera.hpp"
@@ -10,6 +12,8 @@
 #include "components/Light.hpp"
 #include "components/Model.hpp"
 #include "components/Script.hpp"
+
+class GameObject;
 
 enum ComponentType
 {
@@ -42,6 +46,9 @@ struct Component
 	Component();
 	explicit Component(ComponentType type);
 	~Component(){}
+
+	void serialize(std::ofstream& wf);
+	void deserialize(std::ifstream& wf);
 };
 
 class GameObject
@@ -55,7 +62,8 @@ public:
 
 	void processCollision();
 	void processScript();
-	void processRender();
+	void processBackground();
+	void processModels();
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
@@ -63,7 +71,7 @@ public:
 	void processLights();
 	void toggleActive();
 
-	char name[20]{};
+	char name[MAX_OBJ_NAME_LENGTH]{};
 	std::vector<Component> components;
 	uint32_t lightCount = 0;
 	bool hasBackground = false;

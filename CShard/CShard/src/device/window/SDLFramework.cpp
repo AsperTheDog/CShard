@@ -2,41 +2,32 @@
 
 #include <stdexcept>
 #include <backends/imgui_impl_sdl.h>
-#include "../graphics/GFramework.hpp"
 #include "../../ide/ImGuiManager.hpp"
 #include "../../Engine.hpp"
+#include "../graphics/opengl/OGLFramework.hpp"
 
-GLibraries SDLFramework::lib;
 SDL_WindowFlags SDLFramework::window_flags;
 SDL_Window* SDLFramework::window;
 float SDLFramework::aspectRatio;
 
-void SDLFramework::init(GLibraries lib)
+void SDLFramework::init()
 {
-    SDLFramework::lib = lib;
-
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         throw std::runtime_error("Error: " + std::string(SDL_GetError()));
     }
+    
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 
-    if (lib == OPENGL)
-    {
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
-	    window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    }
-    else
-    {
-        window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    }
     window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_MAXIMIZED);
     SDLFramework::window = SDL_CreateWindow("CShard", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 	aspectRatio = 1280 / 720.f;
@@ -127,7 +118,7 @@ std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& sub
             int width, height;
             SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
             aspectRatio = (float)width / (float)height;
-	        GFramework::get()->resizeWindow(width, height);
+	        OGLFramework::resizeWindow();
         }
         if (subscribedTypes.contains(event.type))
 			events.push_back(event);

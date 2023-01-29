@@ -1,8 +1,8 @@
 #include "GameObject.hpp"
 
+#include <fstream>
 #include <iostream>
-
-#include "../device/graphics/GFramework.hpp"
+#include "../device/graphics/opengl/OGLFramework.hpp"
 
 ComponentUnion::ComponentUnion()
 {
@@ -15,6 +15,58 @@ Component::Component() : type(COMPONENT_SCRIPT)
 
 Component::Component(ComponentType type) : type(type)
 {
+}
+
+void Component::serialize(std::ofstream& wf)
+{
+	wf.write((char*) &type, sizeof(type));
+	switch (type)
+	{
+	case COMPONENT_CAMERA: 
+		value.cam.serialize(wf);
+		break;
+	case COMPONENT_COLLIDER: 
+		value.coll.serialize(wf);
+		break;
+	case COMPONENT_MODEL: 
+		value.mod.serialize(wf);
+		break;
+	case COMPONENT_SCRIPT: 
+		value.scr.serialize(wf);
+		break;
+	case COMPONENT_LIGHT: 
+		value.li.serialize(wf);
+		break;
+	case COMPONENT_BACKGROUND: 
+		value.back.serialize(wf);
+		break;
+	}
+}
+
+void Component::deserialize(std::ifstream& wf)
+{
+	wf.read((char*) &type, sizeof(type));
+	switch (type)
+	{
+	case COMPONENT_CAMERA: 
+		value.cam.deserialize(wf);
+		break;
+	case COMPONENT_COLLIDER: 
+		value.coll.deserialize(wf);
+		break;
+	case COMPONENT_MODEL: 
+		value.mod.deserialize(wf);
+		break;
+	case COMPONENT_SCRIPT: 
+		value.scr.deserialize(wf);
+		break;
+	case COMPONENT_LIGHT: 
+		value.li.deserialize(wf);
+		break;
+	case COMPONENT_BACKGROUND: 
+		value.back.deserialize(wf);
+		break;
+	}
 }
 
 GameObject::GameObject(const std::string& name)
@@ -41,13 +93,13 @@ void GameObject::addComponent(Component& comp)
 	case COMPONENT_LIGHT:
 		comp.value.li = Light();
 		lightCount++;
+		OGLFramework::lightSourceCount++;
 		break;
 	case COMPONENT_BACKGROUND: 
 		comp.value.back = Background();
 		hasBackground = true;
 		break;
 	}
-	GFramework::lightSourceCount += lightCount;
 	this->components.push_back(comp);
 }
 
@@ -56,7 +108,7 @@ void GameObject::insertComponent(Component& comp)
 	if (comp.type == COMPONENT_LIGHT)
 	{
 		lightCount++;
-		GFramework::lightSourceCount++;
+		OGLFramework::lightSourceCount++;
 	}
 	else if (comp.type == COMPONENT_BACKGROUND) 
 		hasBackground = true;
@@ -70,7 +122,7 @@ std::vector<Component>::iterator GameObject::removeComponent(std::vector<Compone
 	if (it->type == COMPONENT_BACKGROUND) hasBackground = false;
 	else if (it->type == COMPONENT_LIGHT) {
 		lightCount--;
-		GFramework::lightSourceCount--;
+		OGLFramework::lightSourceCount--;
 	}
 	return this->components.erase(it);
 }
@@ -85,27 +137,35 @@ void GameObject::processScript()
 
 }
 
+void GameObject::processBackground()
+{
+	if (!show || !hasBackground) return;
+	OGLFramework::prepareShader(SHADER_BACK);
+	components[0].value.back.render();
+}
+
 void GameObject::processLights()
 {
-	if (!show) return;
+	if (!show || lightCount == 0) return;
+	OGLFramework::prepareShader(SHADER_BASE);
+
 	for (auto& comp : components)
 	{
-		if (comp.type == COMPONENT_LIGHT)
-			GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
+		if (comp.type != COMPONENT_LIGHT) continue;
+	
+		OGLFramework::loadLightUniforms(comp.value.li, this->modelData);
 	}
 }
 
-void GameObject::processRender()
+void GameObject::processModels()
 {
 	if (!show) return;
+	OGLFramework::prepareShader(SHADER_BASE);
 	for (auto& comp : components) 
 	{
-		if (comp.type == COMPONENT_BACKGROUND) comp.value.back.render();
-		else if (comp.type == COMPONENT_MODEL)
-		{
-			comp.value.mod.calculateMatrix(modelData);
-			comp.value.mod.render();
-		}
+		if (comp.type != COMPONENT_MODEL) continue;
+		
+		comp.value.mod.render(modelData, true);
 	}
 
 	modelData.changed = false;
@@ -132,5 +192,5 @@ void GameObject::changeScale(glm::vec3 scale)
 void GameObject::toggleActive()
 {
 	show = !show;
-	GFramework::lightSourceCount += (show ? 1 : -1) * lightCount;
+	OGLFramework::lightSourceCount += (show ? 1 : -1) * lightCount;
 }

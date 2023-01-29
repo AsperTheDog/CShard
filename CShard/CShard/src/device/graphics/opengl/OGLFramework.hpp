@@ -1,18 +1,29 @@
 #pragma once
 
+#include "OGLMesh.hpp"
+#include "OGLTexture.hpp"
 #include "../GraphicsHeader.hpp"
 
-#include "../GFramework.hpp"
 #include "../../window/SDLFramework.hpp"
+#include "../PostEffects.hpp"
 
 #define GLMAYOR 4
 #define GLMINOR 5
 
-struct PhysicalData;
-class OGLEmptyTexture;
-class Model;
 
-class OGLFramework final : public GFramework
+class Light;
+class Model;
+struct PhysicalData;
+class Camera;
+
+enum ShaderType
+{
+	SHADER_BASE,
+	SHADER_BACK,
+	SHADER_POST
+};
+
+class OGLFramework
 {
 public:
 	class Shader
@@ -25,42 +36,55 @@ public:
 		void linkProgram(uint32_t vs, uint32_t fs);
 	};
 
-	OGLFramework();
+	static void create();
 
-	void initRender() override;
-	void endRender() override;
-	void resizeWindow(int width, int height) override;
+	static void initRender();
+	static void endRender();
+	static void resizeWindow();
 
-	void loadImGuiBackends() override;
-	void loadImGuiFrame() override;
-	void destroyImGui() override;
-	void renderImgui() override;
+	static void loadImGuiBackends();
+	static void loadImGuiFrame();
+	static void destroyImGui();
+	static void renderImgui();
 
-	Shader* getBaseShader();
-	Shader* getBackShader();
+	static Shader* getBaseShader();
+	static Shader* getBackShader();
 
-	GMesh* createMesh(std::string filepath) override;
-	GTexture* createTexture(std::string filepath) override;
+	static void setDefaultTexture();
+	static void loadCamUniforms(Camera& camera);
+	static void loadModelUniforms(Model& mod, PhysicalData& pData, bool material);
+	static void setPostUniforms();
+	static uint32_t getImGuiTexture();
+	static void resizeImGuiTextures();
+	static void loadLightUniforms(Light& light, PhysicalData& parent);
+	static void prepareShader(ShaderType type);
 
-	void setDefaultTexture() override;
-	void loadCamUniforms(Camera& camera) override;
-	void loadModelUniforms(Model& mod) override;
-	void setPostUniforms() override;
-	uint32_t getImGuiTexture() override;
-	void resizeImGuiTextures();
-	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
-	void loadLightUniforms(Light& light, PhysicalData& parent) override;
+	inline static Shader* baseShader = nullptr;
+	inline static Shader* backgroundShader = nullptr;
+	inline static Shader* postShader = nullptr;
 
-	Shader* baseShader = nullptr;
-	Shader* backgroundShader = nullptr;
-	Shader* postShader = nullptr;
+	inline static OGLTexture defaultTex{};
+	inline static OGLPostQuad fullQuadMesh{};
+
+	inline static glm::uvec2 imGuiSize{1920, 1080};
+	inline static uint8_t lightSourceCount = 0;
+	inline static Light* lights[10];
+
+	inline static float postMult = 1.f;
+	inline static FilmGrain filmGrain{};
+	inline static bool postEffectsActive = false;
+	inline static uint32_t activeShader = 0;
+
 private:
-	uint16_t lightCounter = 0;
-	SDL_GLContext gl_context = nullptr;
-	OGLEmptyTexture* baseTexture;
-	OGLEmptyTexture* baseDepth;
-	OGLEmptyTexture* postTexture;
-	OGLEmptyTexture* postDepth;
-	uint32_t baseFBO = 0;
-	uint32_t postFBO = 0;
+	static std::string loadShaderSrc(const std::string& file);
+
+	inline static glm::uvec2 viewPortSize{1920, 1080};
+	inline static uint16_t lightCounter = 0;
+	inline static SDL_GLContext gl_context = nullptr;
+	inline static OGLEmptyTexture baseTexture{};
+	inline static OGLEmptyTexture baseDepth{};
+	inline static OGLEmptyTexture postTexture{};
+	inline static OGLEmptyTexture postDepth{};
+	inline static uint32_t baseFBO = 0;
+	inline static uint32_t postFBO = 0;
 };

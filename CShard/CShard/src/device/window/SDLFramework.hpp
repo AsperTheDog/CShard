@@ -4,14 +4,13 @@
 #include <unordered_set>
 #include <vec2.hpp>
 #include <string>
-#include "../graphics/GUtils.hpp"
 
 class SDLFramework
 {
 public:
 	SDLFramework() = delete;
 
-	static void init(GLibraries lib);
+	static void init();
 	static SDL_Window* getWindow();
 	static std::vector<SDL_Event> getEvents(std::unordered_set<uint32_t>& subscribedTypes, bool isIDE);
 	static void swapWindow();
@@ -27,8 +26,7 @@ public:
 	inline static bool leftClick = false;
 private:
 	static void manageIDEControls(SDL_Event& event);
-
-	static GLibraries lib;
+	
 	static SDL_WindowFlags window_flags;
 	static SDL_Window* window;
 };

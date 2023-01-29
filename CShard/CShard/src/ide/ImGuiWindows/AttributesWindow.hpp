@@ -2,7 +2,7 @@
 #include "ObjectWindow.hpp"
 
 #include "../../Engine.hpp"
-#include "../../device/graphics/GFramework.hpp"
+#include "../../device/graphics/opengl/OGLFramework.hpp"
 
 #include "../../elements/components/Camera.hpp"
 #include "../../elements/components/Collider.hpp"
@@ -22,35 +22,35 @@ public:
 			ImGui::End();
 			return;
 		}
-		GameObject* obj = Engine::getObject(ObjectWindow::selectedObject);
+		GameObject* obj = ResourceManager::getObject(ObjectWindow::selectedObject);
 		if (!obj) {
 			ImGui::End();
 			return;
 		}
-		ImGui::InputText("Object name", obj->name, MAX_OBJ_NAME_LENGTH);
+		ImGui::InputText(("Object name##" + std::to_string(ObjectWindow::selectedObject)).c_str(), obj->name, MAX_OBJ_NAME_LENGTH);
 		glm::vec3 pos{obj->modelData.pos};
 		glm::vec3 rot{obj->modelData.rot};
 		glm::vec3 scale{obj->modelData.scale};
-		ImGui::DragFloat3("Position##obj", &pos.x, 1.f, 10000.f, 10000.f);
+		ImGui::DragFloat3("Position##obj", &pos.x, 0.1f, 10000.f, 10000.f);
 		if (pos != obj->modelData.pos) obj->changePosition(pos);
-		ImGui::DragFloat3("scale##obj", &scale.x, 1.f, 0.f, 1000.f);
+		ImGui::DragFloat3("scale##obj", &scale.x, 0.1f, 0.f, 1000.f);
 		if (scale != obj->modelData.scale) obj->changeScale(scale);
-		ImGui::DragFloat3("Rotation##obj", &rot.x, 1.f, 0.f, 360.f);
+		ImGui::DragFloat3("Rotation##obj", &rot.x, 0.1f, 0.f, 360.f);
 		if (rot != obj->modelData.rot) obj->changeRotation(rot);
 		ImGui::Separator();
 		ImGui::BeginDisabled(obj->hasBackground);
 		ImGui::Combo("Input type", &tempType, componentNames, !obj->components.empty() ? 5 : 6);
 		ImGui::SameLine();
 		ImGui::EndDisabled();
-		ImGui::BeginDisabled(obj->hasBackground || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempType] == COMPONENT_LIGHT));
+		ImGui::BeginDisabled(obj->hasBackground || (OGLFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempType] == COMPONENT_LIGHT));
 		if (ImGui::Button("Create"))
 		{
 			Component comp = Component(compTypes[tempType]);
 			obj->addComponent(comp);
 		}
-		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
-		ImGui::Text("Lights left: %d", MAX_LIGHTS - GFramework::lightSourceCount);
-		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
+		if (OGLFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
+		ImGui::Text("Lights left: %d", MAX_LIGHTS - OGLFramework::lightSourceCount);
+		if (OGLFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
 		ImGui::EndDisabled();
 		ImGui::Separator();
 		ImGui::Separator();
@@ -64,45 +64,39 @@ public:
 				if (copiedAttr == i - obj->components.begin()) copiedAttr = -1;
 				if (i == obj->components.end()) break;
 			}
+			ImGui::SameLine();
 			switch(i->type)
 			{
 			case COMPONENT_CAMERA:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Camera Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showCamera(i->value.cam, uniqueID);
 				break;
 			case COMPONENT_COLLIDER:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Collider Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showCollider(i->value.coll, uniqueID);
 				break;
 			case COMPONENT_MODEL:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Model Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showModel(i->value.mod, uniqueID);
 				break;
 			case COMPONENT_SCRIPT:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Script Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showScript(i->value.scr, uniqueID);
 				break;
 			case COMPONENT_BACKGROUND:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Background Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showBackground(i->value.back, uniqueID);
 				break;
 			case COMPONENT_LIGHT:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("LightSource Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showLightSource(i->value.li, uniqueID);
 				break;
-			default: ;
 			}
 			ImGui::Separator();
 			ImGui::Separator();
@@ -186,7 +180,8 @@ private:
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
 			mod.changeTexture();
 
-		ImGui::Checkbox("Cull backface", &mod.cullFace);
+		ImGui::Checkbox(("Cull backface##mod" + uniqueID).c_str(), &mod.cullFace);
+		//ImGui::Checkbox(("Cast shadows##mod" + uniqueID).c_str(), &mod.castShadows);
 	}
 
 	static void showScript(Script& scr, std::string& uniqueID)
@@ -204,7 +199,7 @@ private:
 
 	static void showLightSource(Light& li, std::string& uniqueID)
 	{
-		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li.position.x, 1.f, 10000.f, 10000.f);
+		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li.position.x, 0.1f, 10000.f, 10000.f);
 		ImGui::DragFloat3(("Color##li" + uniqueID).c_str(), &li.color.x, 0.01f, 0, 1);
 		ImGui::Separator();
 		ImGui::DragFloat(("Constant##li" + uniqueID).c_str(), &li.constant, 0.01f, 0, 1);

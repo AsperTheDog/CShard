@@ -11,18 +11,18 @@ public:
 		ImGui::Begin("Objects", isOpen);
 		if (ImGui::Button("Add object"))
 		{
-			Engine::addObject();
+			ResourceManager::addObject();
 		}
 		ImGui::InputInt("##DeleteID", &tempDeleteID);
 		ImGui::SameLine();
 		if (ImGui::Button("Delete ID"))
 		{
-			Engine::removeObject(tempDeleteID);
+			ResourceManager::removeObject(tempDeleteID);
 		}
 
 		ImGui::Separator();
 		int i = 0;
-        for (auto& objElem : Engine::sceneObjects)
+        for (auto& objElem : ResourceManager::sceneObjects)
         {
 			std::string id = std::to_string(i);
 			
@@ -53,7 +53,7 @@ public:
 		}
 		if (ImGui::IsWindowFocused() && ImGuiManager::pasted && copiedObj >= 0)
 		{
-			Engine::clone(copiedObj);
+			ResourceManager::clone(copiedObj);
 		}
 		ImGui::End();
 	}

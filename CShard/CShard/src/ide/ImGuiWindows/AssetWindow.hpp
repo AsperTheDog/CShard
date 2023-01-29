@@ -4,8 +4,9 @@
 
 #include "../../Engine.hpp"
 
-#include "../../device/graphics/GTexture.hpp"
-#include "../../device/graphics/GMesh.hpp"
+#include "../../ResourceManager.hpp"
+#include "../../device/graphics/opengl/OGLMesh.hpp"
+#include "../../device/graphics/opengl/OGLTexture.hpp"
 
 class AssetWindow
 {
@@ -26,7 +27,7 @@ public:
 						std::string path = {meshBuff};
 						try
 						{
-							Engine::addMesh(path);
+							ResourceManager::addMesh(path);
 						}
 						catch (std::runtime_error)
 						{
@@ -39,13 +40,13 @@ public:
 					ImGui::TableSetupColumn("ID##Mesh", ImGuiTableColumnFlags_WidthFixed);
 				    ImGui::TableSetupColumn("Path##Mesh", ImGuiTableColumnFlags_WidthStretch);
 				    ImGui::TableHeadersRow();
-				    for (auto& mesh : Engine::meshes)
+				    for (auto& mesh : ResourceManager::meshes)
 				    {
 				        ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::Text("%d", mesh.first);
 						ImGui::TableSetColumnIndex(1);
-						ImGui::Text(mesh.second->name.c_str());
+						ImGui::Text(mesh.second.name.c_str());
 				    }
 				    ImGui::EndTable();
 					ImGui::EndTabItem();
@@ -59,9 +60,9 @@ public:
 						std::string path = {texBuff};
 						try
 						{
-							Engine::addTexture(path);
+							ResourceManager::addTexture(path);
 						}
-						catch (std::runtime_error)
+						catch (std::runtime_error&)
 						{
 							SDLFramework::showErrorMessage("Could not load texture", "Make sure the path is correct");
 						}
@@ -71,13 +72,13 @@ public:
 					ImGui::TableSetupColumn("ID##Tex", ImGuiTableColumnFlags_WidthFixed);
 				    ImGui::TableSetupColumn("Path##Tex", ImGuiTableColumnFlags_WidthStretch);
 				    ImGui::TableHeadersRow();
-				    for (auto& tex : Engine::textures)
+				    for (auto& tex : ResourceManager::textures)
 				    {
 				        ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::Text("%d", tex.first);
 						ImGui::TableSetColumnIndex(1);
-						ImGui::Text(tex.second->name.c_str());
+						ImGui::Text(tex.second.name.c_str());
 				    }
 				    ImGui::EndTable();
 					ImGui::EndTabItem();

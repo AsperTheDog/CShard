@@ -2,7 +2,7 @@
 
 #define MAX_LIGHTS 20
 #define MAX_ASSET_NAME_LENGTH 150
-#define MAX_OBJ_NAME_LENGTH 20
+#define MAX_OBJ_NAME_LENGTH 30
 
 #define DEFAULT_TEX_LOCATION "pak/resources/tex/__noTex.png"
 #define GRID_TEX_LOCATION "pak/resources/tex/__grid.png"

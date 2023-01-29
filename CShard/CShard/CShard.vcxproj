@@ -19,14 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\device\graphics\opengl\OGLShadowMap.cpp" />
-    <ClCompile Include="src\device\graphics\GShadowMap.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\elements\components\Light.cpp" />
     <ClCompile Include="src\elements\components\Background.cpp" />
     <ClCompile Include="src\device\graphics\opengl\OGLTexture.cpp" />
-    <ClCompile Include="src\device\graphics\GTexture.cpp" />
     <ClCompile Include="src\device\graphics\opengl\OGLMesh.cpp" />
-    <ClCompile Include="src\device\graphics\GMesh.cpp" />
     <ClCompile Include="src\elements\components\Script.cpp" />
     <ClCompile Include="src\elements\components\Collider.cpp" />
     <ClCompile Include="src\elements\components\Model.cpp" />
@@ -38,16 +35,11 @@
     <ClCompile Include="src\elements\GameObject.cpp" />
     <ClCompile Include="src\elements\components\Camera.cpp" />
     <ClCompile Include="src\ide\ImGuiManager.cpp" />
-    <ClCompile Include="src\device\graphics\GFramework.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp" />
-    <ClCompile Include="src\device\graphics\vulkan\VKMesh.cpp" />
-    <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ResourceManager.hpp" />
     <ClInclude Include="src\Config.hpp" />
-    <ClInclude Include="src\device\graphics\opengl\OGLShadowMap.hpp" />
-    <ClInclude Include="src\device\graphics\GShadowMap.hpp" />
     <ClInclude Include="src\device\graphics\PostEffects.hpp" />
     <ClInclude Include="src\elements\components\Light.hpp" />
     <ClInclude Include="src\device\graphics\GraphicsHeader.hpp" />
@@ -56,9 +48,7 @@
     <ClInclude Include="src\ide\ImGuiWindows\GameOptionsWindow.hpp" />
     <ClInclude Include="src\elements\components\Background.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLTexture.hpp" />
-    <ClInclude Include="src\device\graphics\GTexture.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLMesh.hpp" />
-    <ClInclude Include="src\device\graphics\GMesh.hpp" />
     <ClInclude Include="src\elements\components\Script.hpp" />
     <ClInclude Include="src\elements\components\Collider.hpp" />
     <ClInclude Include="src\elements\components\Model.hpp" />
@@ -66,7 +56,6 @@
     <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\GameWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp" />
-    <ClInclude Include="src\device\graphics\GUtils.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
     <ClInclude Include="src\device\window\SDLFramework.hpp" />
     <ClInclude Include="src\Engine.hpp" />
@@ -75,11 +64,7 @@
     <ClInclude Include="src\elements\GameObject.hpp" />
     <ClInclude Include="src\elements\components\Camera.hpp" />
     <ClInclude Include="src\ide\ImGuiManager.hpp" />
-    <ClInclude Include="src\device\graphics\GFramework.hpp" />
-    <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\DiagnosticsWindow.hpp" />
-    <ClInclude Include="src\device\graphics\vulkan\VKMesh.hpp" />
-    <ClInclude Include="src\device\graphics\vulkan\VKTexture.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\back.frag" />
