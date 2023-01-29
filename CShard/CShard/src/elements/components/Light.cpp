@@ -1,5 +1,4 @@
 #include "Light.hpp"
-#include "../../device/graphics/GFramework.hpp"
 
 Light::Light()
 	: constant(1.f), linear(0.14f), quadratic(0.07f), position{0.f}, color{1.f}

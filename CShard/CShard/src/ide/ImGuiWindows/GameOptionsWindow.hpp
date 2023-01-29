@@ -1,4 +1,5 @@
 #pragma once
+#include "../engine/Engine.hpp"
 #include <imgui.h>
 
 class GameOptionsWindow

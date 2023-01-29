@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include "../GraphicsHeader.hpp"
+#include "GraphicsHeader.hpp"
 
 enum TexType
 {
@@ -19,17 +19,17 @@ enum TextureOptions
 	MREPEAT = GL_MIRRORED_REPEAT
 };
 
-class OGLTexture final
+class Texture final
 {
 public:
-	OGLTexture() = default;
-	explicit OGLTexture(
+	Texture() = default;
+	explicit Texture(
 		const std::string& path,
 		TextureOptions min = MIPLINEAR,
 		TextureOptions mag = LINEAR,
 		TextureOptions wrapS = REPEAT,
 		TextureOptions wrapT = MREPEAT);
-	~OGLTexture();
+	~Texture();
 
 	void commit(
 		const std::string& path,
@@ -44,17 +44,17 @@ public:
 	std::string name;
 };
 
-class OGLEmptyTexture final
+class EmptyTexture final
 {
 public:
-	OGLEmptyTexture() = default;
-	OGLEmptyTexture(
+	EmptyTexture() = default;
+	EmptyTexture(
 		TexType type, uint32_t width, uint32_t height,
 		TextureOptions min = LINEAR,
 		TextureOptions mag = LINEAR,
 		TextureOptions wrapS = REPEAT,
 		TextureOptions wrapT = REPEAT);
-	~OGLEmptyTexture();
+	~EmptyTexture();
 
 	void commit(
 		TexType type, uint32_t width, uint32_t height,

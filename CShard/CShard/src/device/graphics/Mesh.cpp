@@ -1,26 +1,24 @@
-#include "OGLMesh.hpp"
-
-#include <iostream>
+#include "Mesh.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #define TINYOBJLOADER_USE_MAPBOX_EARCUT
 #include <tiny_obj_loader.h>
 
-#include "OGLFramework.hpp"
+#include "GFramework.hpp"
 
-OGLMesh::OGLMesh(const std::string& filepath)
+Mesh::Mesh(const std::string& filepath)
 {
 	commit(filepath);
 }
 
-OGLMesh::~OGLMesh()
+Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 }
 
-void OGLMesh::commit(const std::string& filepath)
+void Mesh::commit(const std::string& filepath)
 {
 	extractData(filepath);
 	name = filepath;
@@ -49,7 +47,7 @@ void OGLMesh::commit(const std::string& filepath)
 	this->indexNum = (uint32_t)indices.size();
 }
 
-void OGLMesh::render(bool culling)
+void Mesh::render(bool culling)
 {
 	if (!culling) glDisable(GL_CULL_FACE);
 	glBindVertexArray(VAO);
@@ -57,7 +55,7 @@ void OGLMesh::render(bool culling)
 	if (!culling) glEnable(GL_CULL_FACE);
 }
 
-void OGLMesh::extractData(const std::string& filename)
+void Mesh::extractData(const std::string& filename)
 {
 	tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -100,22 +98,22 @@ void OGLMesh::extractData(const std::string& filename)
 	}
 }
 
-OGLPostQuad::OGLPostQuad()
+PostQuad::PostQuad()
 {
 
 }
 
-OGLPostQuad::~OGLPostQuad()
+PostQuad::~PostQuad()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 }
 
-void OGLPostQuad::commit()
+void PostQuad::commit()
 {
-	GLuint program = OGLFramework::getBackShader()->id;
+	GLuint program = GFramework::getBackShader()->id;
 
-	BackVertex vertices[] = {
+	PostVertex vertices[] = {
 		{glm::vec2(-1.f, -1.f)},
 		{glm::vec2( 1.f, -1.f)},
 		{glm::vec2(-1.f,  1.f)},
@@ -132,11 +130,11 @@ void OGLPostQuad::commit()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	GLuint attribLoc = glGetAttribLocation(program, "position");
-	glVertexAttribPointer(attribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(BackVertex), (GLvoid*)(offsetof(BackVertex, pos)));
+	glVertexAttribPointer(attribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(PostVertex), (GLvoid*)(offsetof(PostVertex, pos)));
 	glEnableVertexAttribArray(attribLoc);
 }
 
-void OGLPostQuad::render()
+void PostQuad::render()
 {
 	GLboolean depth = false;
 	glGetBooleanv(GL_DEPTH_TEST, &depth);

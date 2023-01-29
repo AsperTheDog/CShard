@@ -11,12 +11,12 @@ struct Vertex
 	glm::vec3 norm;
 };
 
-class OGLMesh final
+class Mesh final
 {
 public:
-	OGLMesh() = default;
-	explicit OGLMesh(const std::string& filepath);
-	~OGLMesh();
+	Mesh() = default;
+	explicit Mesh(const std::string& filepath);
+	~Mesh();
 
 	void commit(const std::string& filepath);
 	void render(bool culling);
@@ -35,16 +35,16 @@ private:
 
 //---------------------------------------------------
 
-struct BackVertex
+struct PostVertex
 {
 	glm::vec2 pos;
 };
 
-class OGLPostQuad final
+class PostQuad final
 {
 public:
-	explicit OGLPostQuad();
-	~OGLPostQuad();
+	explicit PostQuad();
+	~PostQuad();
 
 	void commit();
 	void render();

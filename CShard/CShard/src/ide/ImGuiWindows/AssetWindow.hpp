@@ -2,11 +2,9 @@
 #include <imgui.h>
 #include <stdexcept>
 
-#include "../../Engine.hpp"
-
-#include "../../ResourceManager.hpp"
-#include "../../device/graphics/opengl/OGLMesh.hpp"
-#include "../../device/graphics/opengl/OGLTexture.hpp"
+#include "../../engine/ResourceManager.hpp"
+#include "../../device/graphics/Mesh.hpp"
+#include "../../device/graphics/Texture.hpp"
 
 class AssetWindow
 {

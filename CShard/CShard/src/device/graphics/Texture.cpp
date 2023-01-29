@@ -1,17 +1,17 @@
-#include "OGLTexture.hpp"
+#include "Texture.hpp"
 
 #include <stdexcept>
 
-#include "OGLFramework.hpp"
-#include "../../../Engine.hpp"
+#include "GFramework.hpp"
+#include "../../engine/Engine.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "../../../elements/components/Camera.hpp"
-#include "OGLMesh.hpp"
+#include "../../elements/components/Camera.hpp"
+#include "Mesh.hpp"
 
-OGLTexture::OGLTexture(
+Texture::Texture(
 	const std::string& path, 
 	TextureOptions min,
 	TextureOptions mag, 
@@ -22,12 +22,12 @@ OGLTexture::OGLTexture(
 	commit(path, min, mag, wrapS, wrapT);
 }
 
-OGLTexture::~OGLTexture()
+Texture::~Texture()
 {
 	glDeleteTextures(1, &texture);
 }
 
-void OGLTexture::commit(
+void Texture::commit(
 	const std::string& path, 
 	TextureOptions min, 
 	TextureOptions mag, 
@@ -54,26 +54,26 @@ void OGLTexture::commit(
 	stbi_image_free(data);
 }
 
-void OGLTexture::useTexture()
+void Texture::useTexture()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
-void OGLTexture::renderAsBackground()
+void Texture::renderAsBackground()
 {
 	this->useTexture();
 
-	GLuint program = OGLFramework::getBackShader()->id;
+	GLuint program = GFramework::getBackShader()->id;
 	glUseProgram(program);
 	glm::mat4 invPV = glm::inverse(Engine::activeCam->getProjMatrix() * Engine::activeCam->getViewMatrix());
 	glUniformMatrix4fv(glGetUniformLocation(program, "invPV"), 1, false, &invPV[0].x);
 	glUniform3fv(glGetUniformLocation(program, "camPos"), 1, &Engine::activeCam->pos.x);
 
-	OGLFramework::fullQuadMesh.render();
+	GFramework::fullQuadMesh.render();
 }
 
-void OGLEmptyTexture::commit(
+void EmptyTexture::commit(
 	TexType type, uint32_t width, uint32_t height, 
 	TextureOptions min, 
 	TextureOptions mag,
@@ -97,7 +97,7 @@ void OGLEmptyTexture::commit(
 	}
 }
 
-OGLEmptyTexture::OGLEmptyTexture(
+EmptyTexture::EmptyTexture(
 	TexType type, uint32_t width, uint32_t height,
 	TextureOptions min,
 	TextureOptions mag, 
@@ -108,12 +108,12 @@ OGLEmptyTexture::OGLEmptyTexture(
 	commit(type, width, height, min, mag, wrapS, wrapT);
 }
 
-OGLEmptyTexture::~OGLEmptyTexture()
+EmptyTexture::~EmptyTexture()
 {
 	glDeleteTextures(1, &texture);
 }
 
-void OGLEmptyTexture::resize(uint32_t width, uint32_t height, char* data)
+void EmptyTexture::resize(uint32_t width, uint32_t height, char* data)
 {
 	glBindTexture(GL_TEXTURE_2D, texture);
 	if (type == COLOR)

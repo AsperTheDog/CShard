@@ -2,8 +2,8 @@
 
 #include <unordered_map>
 
-#include "elements/GameObject.hpp"
-#include "elements/components/Camera.hpp"
+#include "../elements/GameObject.hpp"
+#include "../elements/components/Camera.hpp"
 
 class GTexture;
 class GMesh;

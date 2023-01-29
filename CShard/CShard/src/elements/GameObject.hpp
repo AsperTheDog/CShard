@@ -4,7 +4,7 @@
 #include <vector>
 #include "PhysicalData.hpp"
 
-#include "../Config.hpp"
+#include "../engine/Config.hpp"
 
 #include "components/Background.hpp"
 #include "components/Camera.hpp"

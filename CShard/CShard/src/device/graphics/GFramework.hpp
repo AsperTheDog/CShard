@@ -1,11 +1,11 @@
 #pragma once
 
-#include "OGLMesh.hpp"
-#include "OGLTexture.hpp"
-#include "../GraphicsHeader.hpp"
+#include "Mesh.hpp"
+#include "Texture.hpp"
+#include "GraphicsHeader.hpp"
 
-#include "../../window/SDLFramework.hpp"
-#include "../PostEffects.hpp"
+#include "../window/SDLFramework.hpp"
+#include "PostEffects.hpp"
 
 #define GLMAYOR 4
 #define GLMINOR 5
@@ -23,7 +23,7 @@ enum ShaderType
 	SHADER_POST
 };
 
-class OGLFramework
+class GFramework
 {
 public:
 	class Shader
@@ -63,8 +63,8 @@ public:
 	inline static Shader* backgroundShader = nullptr;
 	inline static Shader* postShader = nullptr;
 
-	inline static OGLTexture defaultTex{};
-	inline static OGLPostQuad fullQuadMesh{};
+	inline static Texture defaultTex{};
+	inline static PostQuad fullQuadMesh{};
 
 	inline static glm::uvec2 imGuiSize{1920, 1080};
 	inline static uint8_t lightSourceCount = 0;
@@ -81,10 +81,10 @@ private:
 	inline static glm::uvec2 viewPortSize{1920, 1080};
 	inline static uint16_t lightCounter = 0;
 	inline static SDL_GLContext gl_context = nullptr;
-	inline static OGLEmptyTexture baseTexture{};
-	inline static OGLEmptyTexture baseDepth{};
-	inline static OGLEmptyTexture postTexture{};
-	inline static OGLEmptyTexture postDepth{};
+	inline static EmptyTexture baseTexture{};
+	inline static EmptyTexture baseDepth{};
+	inline static EmptyTexture postTexture{};
+	inline static EmptyTexture postDepth{};
 	inline static uint32_t baseFBO = 0;
 	inline static uint32_t postFBO = 0;
 };

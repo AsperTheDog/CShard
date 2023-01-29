@@ -7,9 +7,9 @@ public:
 	{
 		if (!*isOpen) return;
 		ImGui::Begin("Game", isOpen);
-		OGLFramework::imGuiSize = {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
+		GFramework::imGuiSize = {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
 		ImGui::Image(
-			(ImTextureID)(uint64_t)OGLFramework::getImGuiTexture(), 
+			(ImTextureID)(uint64_t)GFramework::getImGuiTexture(), 
 			ImGui::GetContentRegionAvail(), 
 			ImVec2(0, 1), ImVec2(1, 0));
 		isFocused = ImGui::IsWindowFocused();

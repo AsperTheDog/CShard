@@ -8,7 +8,7 @@
 #include "../elements/components/Camera.hpp"
 #include "../elements/components/Model.hpp"
 
-#include "../Config.hpp"
+#include "../engine/Config.hpp"
 
 typedef void (*ImGuiWindowCall)(bool*);
 

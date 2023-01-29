@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <backends/imgui_impl_sdl.h>
 #include "../../ide/ImGuiManager.hpp"
-#include "../../Engine.hpp"
-#include "../graphics/opengl/OGLFramework.hpp"
+#include "../../engine/Engine.hpp"
+#include "../graphics/GFramework.hpp"
 
 SDL_WindowFlags SDLFramework::window_flags;
 SDL_Window* SDLFramework::window;
@@ -118,7 +118,7 @@ std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& sub
             int width, height;
             SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
             aspectRatio = (float)width / (float)height;
-	        OGLFramework::resizeWindow();
+	        GFramework::resizeWindow();
         }
         if (subscribedTypes.contains(event.type))
 			events.push_back(event);

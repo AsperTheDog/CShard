@@ -1,9 +1,9 @@
 #pragma once
 #include <unordered_map>
 
-#include "device/graphics/opengl/OGLMesh.hpp"
-#include "device/graphics/opengl/OGLTexture.hpp"
-#include "elements/GameObject.hpp"
+#include "../device/graphics/Mesh.hpp"
+#include "../device/graphics/Texture.hpp"
+#include "../elements/GameObject.hpp"
 
 class ResourceManager
 {
@@ -24,14 +24,14 @@ public:
 	static void removeObject(uint32_t id);
 	static GameObject* getObject(uint32_t id);
 	static bool isValidMesh(uint32_t id);
-	static OGLMesh* getMesh(uint32_t id);
+	static Mesh* getMesh(uint32_t id);
 	static bool isValidTexture(uint32_t id);
-	static OGLTexture* getTexture(uint32_t id);
+	static Texture* getTexture(uint32_t id);
 	static void clone(uint32_t index);
 
 	inline static std::unordered_map<uint32_t, GameObject> sceneObjects{};
-	inline static std::unordered_map<uint32_t, OGLMesh> meshes{};
-	inline static std::unordered_map<uint32_t, OGLTexture> textures{};
+	inline static std::unordered_map<uint32_t, Mesh> meshes{};
+	inline static std::unordered_map<uint32_t, Texture> textures{};
 
 private:
 	inline static uint32_t meshIDCount = 0;

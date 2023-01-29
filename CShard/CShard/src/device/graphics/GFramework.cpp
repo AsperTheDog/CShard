@@ -1,4 +1,4 @@
-#include "OGLFramework.hpp"
+#include "GFramework.hpp"
 
 #include <iostream>
 #include <SDL_syswm.h>
@@ -7,11 +7,11 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_sdl.h>
 
-#include "OGLMesh.hpp"
-#include "OGLTexture.hpp"
-#include "../../../ide/ImGuiManager.hpp"
-#include "../../../Engine.hpp"
-#include "../../../elements/components/Light.hpp"
+#include "Mesh.hpp"
+#include "Texture.hpp"
+#include "../../ide/ImGuiManager.hpp"
+#include "../../engine/Engine.hpp"
+#include "../../elements/components/Light.hpp"
 
 /*
  * This debug callback function was made using the labhelper.cpp file as template
@@ -130,7 +130,7 @@ namespace
 #undef CALLBACK_
 }
 
-void OGLFramework::create()
+void GFramework::create()
 {
     gl_context = SDL_GL_CreateContext(SDLFramework::getWindow());
 	SDL_GL_MakeCurrent(SDLFramework::getWindow(), gl_context);
@@ -143,7 +143,7 @@ void OGLFramework::create()
 
 	{
 		glm::ivec2 size = SDLFramework::getSize();
-		OGLFramework::resizeWindow();
+		GFramework::resizeWindow();
 	}
 
 	glDebugMessageCallback((GLDEBUGPROC)openGLDebugCallback, nullptr);
@@ -207,7 +207,7 @@ void OGLFramework::create()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OGLFramework::initRender()
+void GFramework::initRender()
 {
 	if (Engine::isIDE)
 	{
@@ -216,7 +216,7 @@ void OGLFramework::initRender()
 		{
 			viewPortSize = imGuiSize;
 			resizeImGuiTextures();
-			OGLFramework::resizeWindow();
+			GFramework::resizeWindow();
 			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
 	}
@@ -226,7 +226,7 @@ void OGLFramework::initRender()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OGLFramework::endRender()
+void GFramework::endRender()
 {
 	prepareShader(SHADER_POST);
 	setPostUniforms();
@@ -239,28 +239,28 @@ void OGLFramework::endRender()
 	lightCounter = 0;
 }
 
-void OGLFramework::loadImGuiBackends()
+void GFramework::loadImGuiBackends()
 {
 	ImGui_ImplSDL2_InitForOpenGL(SDLFramework::getWindow(), gl_context);
 	std::string glsl_version = "#version " + std::to_string(GLMAYOR) + std::to_string(GLMINOR) + "0";
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 }
 
-void OGLFramework::loadImGuiFrame()
+void GFramework::loadImGuiFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 }
 
-void OGLFramework::destroyImGui()
+void GFramework::destroyImGui()
 {
 	ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 }
 
-void OGLFramework::renderImgui()
+void GFramework::renderImgui()
 {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     if (ImGuiManager::getIO()->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -273,22 +273,22 @@ void OGLFramework::renderImgui()
     }
 }
 
-OGLFramework::Shader* OGLFramework::getBaseShader()
+GFramework::Shader* GFramework::getBaseShader()
 {
 	return baseShader;
 }
 
-OGLFramework::Shader* OGLFramework::getBackShader()
+GFramework::Shader* GFramework::getBackShader()
 {
 	return backgroundShader;
 }
 
-void OGLFramework::setDefaultTexture()
+void GFramework::setDefaultTexture()
 {
 	defaultTex.useTexture();
 }
 
-void OGLFramework::loadCamUniforms(Camera& camera)
+void GFramework::loadCamUniforms(Camera& camera)
 {
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "camMats.vMatrix"), 1, false, &camera.getViewMatrix()[0].x);
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "camMats.pMatrix"), 1, false, &camera.getProjMatrix()[0].x);
@@ -296,7 +296,7 @@ void OGLFramework::loadCamUniforms(Camera& camera)
 	glUniform3fv(glGetUniformLocation(activeShader, "cam.dir"), 1, &camera.dir.x);
 }
 
-void OGLFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool material)
+void GFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool material)
 {
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.mat"), 1, false, &mod.getModelMatrix(pData)[0].x);
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.invMat"), 1, false, &mod.getInvModelMatrix(pData)[0].x);
@@ -307,7 +307,7 @@ void OGLFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool mater
 	}
 }
 
-void OGLFramework::setPostUniforms()
+void GFramework::setPostUniforms()
 {
 	glUniform1ui(glGetUniformLocation(activeShader, "current"), postEffectsActive ? filmGrain.id : 0);
 	glUniform1f(glGetUniformLocation(activeShader, "randomSeed"), filmGrain.nextNum);
@@ -316,12 +316,12 @@ void OGLFramework::setPostUniforms()
 	glUniform1f(glGetUniformLocation(activeShader, "mult"), postMult);
 }
 
-uint32_t OGLFramework::getImGuiTexture()
+uint32_t GFramework::getImGuiTexture()
 {
 	return postTexture.texture;
 }
 
-void OGLFramework::resizeImGuiTextures()
+void GFramework::resizeImGuiTextures()
 {
 	baseTexture.resize(viewPortSize.x, viewPortSize.y, nullptr);
 	baseDepth.resize(viewPortSize.x, viewPortSize.y, nullptr);
@@ -329,7 +329,7 @@ void OGLFramework::resizeImGuiTextures()
 	postDepth.resize(viewPortSize.x, viewPortSize.y, nullptr);
 }
 
-void OGLFramework::loadLightUniforms(Light& light, PhysicalData& parent)
+void GFramework::loadLightUniforms(Light& light, PhysicalData& parent)
 {
 	glm::vec3 pos = light.getLightpos(parent);
 	glUniform1f(glGetUniformLocation(activeShader, ("pLights[" + std::to_string(lightCounter) + "].constant").c_str()), light.constant);
@@ -340,7 +340,7 @@ void OGLFramework::loadLightUniforms(Light& light, PhysicalData& parent)
 	lightCounter++;
 }
 
-void OGLFramework::prepareShader(ShaderType type)
+void GFramework::prepareShader(ShaderType type)
 {
 	switch (type)
 	{
@@ -363,25 +363,25 @@ void OGLFramework::prepareShader(ShaderType type)
 	}
 }
 
-void OGLFramework::resizeWindow()
+void GFramework::resizeWindow()
 {
 	glViewport(0, 0, viewPortSize.x, viewPortSize.y);
 }
 
-OGLFramework::Shader::Shader(const std::string& vertex, const std::string& fragment)
+GFramework::Shader::Shader(const std::string& vertex, const std::string& fragment)
 {
 	// create shaders then link them into a pipeline
 	uint32_t vs = loadShader(GL_VERTEX_SHADER, vertex);
 	uint32_t fs = loadShader(GL_FRAGMENT_SHADER, fragment);
 
-	OGLFramework::Shader::linkProgram(vs, fs);
+	GFramework::Shader::linkProgram(vs, fs);
 
 	// once the pipeline is done we don't need the shader objects anymore
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 }
 
-uint32_t OGLFramework::Shader::loadShader(GLenum type, const std::string& file)
+uint32_t GFramework::Shader::loadShader(GLenum type, const std::string& file)
 {
 	GLint success;
 
@@ -402,7 +402,7 @@ uint32_t OGLFramework::Shader::loadShader(GLenum type, const std::string& file)
 	return shaderID;
 }
 
-void OGLFramework::Shader::linkProgram(uint32_t vs, uint32_t fs)
+void GFramework::Shader::linkProgram(uint32_t vs, uint32_t fs)
 {
 	GLint success;
 
@@ -423,7 +423,7 @@ void OGLFramework::Shader::linkProgram(uint32_t vs, uint32_t fs)
 	}
 }
 
-std::string OGLFramework::loadShaderSrc(const std::string& file)
+std::string GFramework::loadShaderSrc(const std::string& file)
 {
 	std::string src;
     std::fstream inFile;

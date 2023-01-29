@@ -19,17 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\engine\ResourceManager.cpp" />
     <ClCompile Include="src\elements\components\Light.cpp" />
     <ClCompile Include="src\elements\components\Background.cpp" />
-    <ClCompile Include="src\device\graphics\opengl\OGLTexture.cpp" />
-    <ClCompile Include="src\device\graphics\opengl\OGLMesh.cpp" />
+    <ClCompile Include="src\device\graphics\Texture.cpp" />
+    <ClCompile Include="src\device\graphics\Mesh.cpp" />
     <ClCompile Include="src\elements\components\Script.cpp" />
     <ClCompile Include="src\elements\components\Collider.cpp" />
     <ClCompile Include="src\elements\components\Model.cpp" />
-    <ClCompile Include="src\device\graphics\opengl\OGLFramework.cpp" />
+    <ClCompile Include="src\device\graphics\GFramework.cpp" />
     <ClCompile Include="src\device\window\SDLFramework.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\engine\Engine.cpp" />
     <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
     <ClCompile Include="src\elements\GameObject.cpp" />
@@ -38,8 +38,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ResourceManager.hpp" />
-    <ClInclude Include="src\Config.hpp" />
+    <ClInclude Include="src\engine\ResourceManager.hpp" />
+    <ClInclude Include="src\engine\Config.hpp" />
     <ClInclude Include="src\device\graphics\PostEffects.hpp" />
     <ClInclude Include="src\elements\components\Light.hpp" />
     <ClInclude Include="src\device\graphics\GraphicsHeader.hpp" />
@@ -47,8 +47,8 @@
     <ClInclude Include="src\ide\ImGuiWindows\AssetWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\GameOptionsWindow.hpp" />
     <ClInclude Include="src\elements\components\Background.hpp" />
-    <ClInclude Include="src\device\graphics\opengl\OGLTexture.hpp" />
-    <ClInclude Include="src\device\graphics\opengl\OGLMesh.hpp" />
+    <ClInclude Include="src\device\graphics\Texture.hpp" />
+    <ClInclude Include="src\device\graphics\Mesh.hpp" />
     <ClInclude Include="src\elements\components\Script.hpp" />
     <ClInclude Include="src\elements\components\Collider.hpp" />
     <ClInclude Include="src\elements\components\Model.hpp" />
@@ -56,9 +56,9 @@
     <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\GameWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp" />
-    <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp" />
+    <ClInclude Include="src\device\graphics\GFramework.hpp" />
     <ClInclude Include="src\device\window\SDLFramework.hpp" />
-    <ClInclude Include="src\Engine.hpp" />
+    <ClInclude Include="src\engine\Engine.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\PostEffectWindow.hpp" />
     <ClInclude Include="src\input\InputManager.hpp" />
     <ClInclude Include="src\elements\GameObject.hpp" />

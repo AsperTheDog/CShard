@@ -3,10 +3,10 @@
 #include <ranges>
 #include <fstream>
 
-#include "device/window/SDLFramework.hpp"
-#include "device/graphics/opengl/OGLFramework.hpp"
-#include "input/InputManager.hpp"
-#include "ide/ImGuiManager.hpp"
+#include "../device/window/SDLFramework.hpp"
+#include "../device/graphics/GFramework.hpp"
+#include "../input/InputManager.hpp"
+#include "../ide/ImGuiManager.hpp"
 
 #include "ResourceManager.hpp"
 
@@ -18,7 +18,7 @@ void Engine::init(bool isIDE, char* initFileName)
 	InputManager::init();
 	SDLFramework::init();
 
-	OGLFramework::create();
+	GFramework::create();
 
 	if (Engine::isIDE)
 	{
@@ -84,7 +84,7 @@ void Engine::resetProject()
 {
 	InputManager::inputMappings.clear();
 	ResourceManager::reset();
-	OGLFramework::lightSourceCount = 0;
+	GFramework::lightSourceCount = 0;
 }
 
 void Engine::updateDeltaTime()
@@ -104,15 +104,15 @@ void Engine::event()
 
 void Engine::render()
 {
-	OGLFramework::prepareShader(SHADER_BASE);
-	OGLFramework::loadCamUniforms(*Engine::activeCam);
+	GFramework::prepareShader(SHADER_BASE);
+	GFramework::loadCamUniforms(*Engine::activeCam);
 
-	OGLFramework::initRender();
+	GFramework::initRender();
 
 	ResourceManager::backgroundPass();
 	ResourceManager::lightPass();
 	ResourceManager::modelPass();
 
-	OGLFramework::endRender();
+	GFramework::endRender();
 	if (Engine::isIDE) ImGuiManager::render();
 }

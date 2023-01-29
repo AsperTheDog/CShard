@@ -1,7 +1,7 @@
 #include "Background.hpp"
 
-#include "../../device/graphics/opengl/OGLTexture.hpp"
-#include "../../ResourceManager.hpp"
+#include "../../device/graphics/Texture.hpp"
+#include "../../engine/ResourceManager.hpp"
 
 void Background::setTexture()
 {

@@ -1,8 +1,8 @@
 #pragma once
 #include "ObjectWindow.hpp"
 
-#include "../../Engine.hpp"
-#include "../../device/graphics/opengl/OGLFramework.hpp"
+#include "../../engine/ResourceManager.hpp"
+#include "../../device/graphics/GFramework.hpp"
 
 #include "../../elements/components/Camera.hpp"
 #include "../../elements/components/Collider.hpp"
@@ -42,15 +42,15 @@ public:
 		ImGui::Combo("Input type", &tempType, componentNames, !obj->components.empty() ? 5 : 6);
 		ImGui::SameLine();
 		ImGui::EndDisabled();
-		ImGui::BeginDisabled(obj->hasBackground || (OGLFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempType] == COMPONENT_LIGHT));
+		ImGui::BeginDisabled(obj->hasBackground || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempType] == COMPONENT_LIGHT));
 		if (ImGui::Button("Create"))
 		{
 			Component comp = Component(compTypes[tempType]);
 			obj->addComponent(comp);
 		}
-		if (OGLFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
-		ImGui::Text("Lights left: %d", MAX_LIGHTS - OGLFramework::lightSourceCount);
-		if (OGLFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
+		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
+		ImGui::Text("Lights left: %d", MAX_LIGHTS - GFramework::lightSourceCount);
+		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
 		ImGui::EndDisabled();
 		ImGui::Separator();
 		ImGui::Separator();

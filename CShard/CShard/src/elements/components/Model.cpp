@@ -1,10 +1,9 @@
 #include "Model.hpp"
 
-#include "../../Engine.hpp"
-#include "../../ResourceManager.hpp"
+#include "../../engine/ResourceManager.hpp"
 
 #include <gtx/transform.hpp>
-#include "../../device/graphics/opengl/OGLFramework.hpp"
+#include "../../device/graphics/GFramework.hpp"
 
 Model::Model()
 	: meshID(0), textureID(0), mat{0, 1}
@@ -13,12 +12,12 @@ Model::Model()
 
 void Model::render(PhysicalData& pData, bool material)
 {
-	OGLFramework::loadModelUniforms(*this, pData, material);
+	GFramework::loadModelUniforms(*this, pData, material);
 
 	if (ResourceManager::isValidTexture(textureID))
 		ResourceManager::getTexture(textureID)->useTexture();
 	else
-		OGLFramework::setDefaultTexture();
+		GFramework::setDefaultTexture();
 
 	if (ResourceManager::isValidMesh(meshID))
 		ResourceManager::getMesh(meshID)->render(cullFace);

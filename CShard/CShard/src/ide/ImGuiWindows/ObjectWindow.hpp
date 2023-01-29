@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Engine.hpp"
+#include "../../engine/ResourceManager.hpp"
 #include "../ImGuiManager.hpp"
 
 class ObjectWindow
