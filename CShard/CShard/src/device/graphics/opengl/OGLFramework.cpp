@@ -149,7 +149,6 @@ OGLFramework::OGLFramework()
 
 	glDebugMessageCallback((GLDEBUGPROC)openGLDebugCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, false);
 	glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, 0, nullptr, false);
 
 #ifndef NDEBUG
@@ -173,7 +172,6 @@ OGLFramework::OGLFramework()
 	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
 	this->postShader = new Shader(POST_VERTEX_LOCATION, POST_FRAGMENT_LOCATION);
-	this->shadowShader = new Shader(SHADOW_VERTEX_LOCATION, SHADOW_FRAGMENT_LOCATION);
 
 	this->baseTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
 	this->baseDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
@@ -292,11 +290,6 @@ GTexture* OGLFramework::createTexture(std::string filepath)
 	return new OGLTexture(filepath);
 }
 
-GShadowMap* OGLFramework::createShadowMap(uint32_t size)
-{
-	return new OGLShadowMap(size);
-}
-
 void OGLFramework::setDefaultTexture()
 {
 	GFramework::defaultTex->useTexture();
@@ -310,10 +303,10 @@ void OGLFramework::loadCamUniforms(Camera& camera)
 	glUniform3fv(glGetUniformLocation(GFramework::activeShader, "cam.dir"), 1, &camera.dir.x);
 }
 
-void OGLFramework::loadModelUniforms(Model& mod, bool material)
+void OGLFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool material)
 {
-	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.mat"), 1, false, &mod.modelMatrix[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.invMat"), 1, false, &mod.invModelMatrix[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.mat"), 1, false, &mod.getModelMatrix(pData)[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.invMat"), 1, false, &mod.getInvModelMatrix(pData)[0].x);
 	if (material)
 	{
 		glUniform1f(glGetUniformLocation(GFramework::activeShader, "mat.shininess"), mod.mat.shininess);
@@ -377,10 +370,6 @@ void OGLFramework::prepareShader(ShaderType type)
 		glUseProgram(postShader->id);
 		GFramework::activeShader = postShader->id;
 		glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
-		break;
-	case SHADER_SHADOW:
-		glUseProgram(shadowShader->id);
-		GFramework::activeShader = shadowShader->id;
 		break;
 	default: ;
 	}

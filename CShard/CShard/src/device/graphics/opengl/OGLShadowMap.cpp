@@ -26,7 +26,7 @@ OGLShadowMap::OGLShadowMap(uint32_t size)
 
 void OGLShadowMap::render(uint32_t index, glm::vec3 lightPos)
 {
-	GFramework::shadowMapCam.move(lightPos);
+	//GFramework::shadowMapCam.move(lightPos);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	OGLFramework* ogl = (OGLFramework*)GFramework::get();
@@ -45,10 +45,10 @@ void OGLShadowMap::render(uint32_t index, glm::vec3 lightPos)
 		
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		GFramework::shadowMapCam.lookAt(camDirection.target);
-		GFramework::shadowMapCam.changeWorldUp(camDirection.up);
+		//GFramework::shadowMapCam.lookAt(camDirection.target);
+		//GFramework::shadowMapCam.changeWorldUp(camDirection.up);
 
-		Engine::renderShadow();
+		//Engine::renderShadow();
 		
 		ogl->prepareShader(SHADER_BASE);
 		glActiveTexture(GL_TEXTURE10 + index);

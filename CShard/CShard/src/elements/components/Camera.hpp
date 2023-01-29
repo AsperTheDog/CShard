@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <glm.hpp>
 
 class Camera
@@ -17,6 +18,9 @@ public:
 	void changeWorldUp(glm::vec3 worldUp);
 	void changeLense(float FOV, float nearP = -1, float farP = -1);
 	void updateAspectRatio(float aspectRatio);
+	
+	void serialize(std::ofstream& wf);
+	void deserialize(std::ifstream& wf);
 
 	glm::vec3 pos{};
 	glm::vec3 dir{};

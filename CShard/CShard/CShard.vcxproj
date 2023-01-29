@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp" />
+    <ClCompile Include="src\device\graphics\vulkan\VKMesh.cpp" />
+    <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\device\graphics\opengl\OGLShadowMap.cpp" />
     <ClCompile Include="src\device\graphics\GShadowMap.cpp" />
     <ClCompile Include="src\elements\components\Light.cpp" />
@@ -40,11 +44,12 @@
     <ClCompile Include="src\ide\ImGuiManager.cpp" />
     <ClCompile Include="src\device\graphics\GFramework.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp" />
-    <ClCompile Include="src\device\graphics\vulkan\VKMesh.cpp" />
-    <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp" />
+    <ClInclude Include="src\device\graphics\vulkan\VKMesh.hpp" />
+    <ClInclude Include="src\device\graphics\vulkan\VKTexture.hpp" />
+    <ClInclude Include="src\ResourceManager.hpp" />
     <ClInclude Include="src\Config.hpp" />
     <ClInclude Include="src\device\graphics\opengl\OGLShadowMap.hpp" />
     <ClInclude Include="src\device\graphics\GShadowMap.hpp" />
@@ -76,10 +81,7 @@
     <ClInclude Include="src\elements\components\Camera.hpp" />
     <ClInclude Include="src\ide\ImGuiManager.hpp" />
     <ClInclude Include="src\device\graphics\GFramework.hpp" />
-    <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\DiagnosticsWindow.hpp" />
-    <ClInclude Include="src\device\graphics\vulkan\VKMesh.hpp" />
-    <ClInclude Include="src\device\graphics\vulkan\VKTexture.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\back.frag" />

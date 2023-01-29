@@ -6,6 +6,7 @@
 
 #include "../../device/graphics/GTexture.hpp"
 #include "../../device/graphics/GMesh.hpp"
+#include "../../ResourceManager.hpp"
 
 class AssetWindow
 {
@@ -26,7 +27,7 @@ public:
 						std::string path = {meshBuff};
 						try
 						{
-							Engine::addMesh(path);
+							ResourceManager::addMesh(path);
 						}
 						catch (std::runtime_error)
 						{
@@ -39,7 +40,7 @@ public:
 					ImGui::TableSetupColumn("ID##Mesh", ImGuiTableColumnFlags_WidthFixed);
 				    ImGui::TableSetupColumn("Path##Mesh", ImGuiTableColumnFlags_WidthStretch);
 				    ImGui::TableHeadersRow();
-				    for (auto& mesh : Engine::meshes)
+				    for (auto& mesh : ResourceManager::meshes)
 				    {
 				        ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
@@ -59,7 +60,7 @@ public:
 						std::string path = {texBuff};
 						try
 						{
-							Engine::addTexture(path);
+							ResourceManager::addTexture(path);
 						}
 						catch (std::runtime_error)
 						{
@@ -71,7 +72,7 @@ public:
 					ImGui::TableSetupColumn("ID##Tex", ImGuiTableColumnFlags_WidthFixed);
 				    ImGui::TableSetupColumn("Path##Tex", ImGuiTableColumnFlags_WidthStretch);
 				    ImGui::TableHeadersRow();
-				    for (auto& tex : Engine::textures)
+				    for (auto& tex : ResourceManager::textures)
 				    {
 				        ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);

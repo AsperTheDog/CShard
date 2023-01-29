@@ -18,23 +18,8 @@ public:
 	static void run();
 	static void shutDown();
 	static void compileProject(const std::string& name);
-	static void loadProject(std::string filename);
+	static void loadProject(const std::string& filename);
 	static void resetProject();
-	static uint32_t addObject();
-	static uint32_t addMesh(std::string& filepath);
-	static uint32_t addTexture(std::string& filepath);
-	static void removeObject(uint32_t id);
-	static GameObject* getObject(uint32_t id);
-	static bool isValidMesh(uint32_t id);
-	static GMesh* getMesh(uint32_t id);
-	static bool isValidTexture(uint32_t id);
-	static GTexture* getTexture(uint32_t id);
-	static void clone(uint32_t index);
-	static void renderShadow();
-
-	inline static std::unordered_map<uint32_t, GameObject> sceneObjects{};
-	inline static std::unordered_map<uint32_t, GMesh*> meshes{};
-	inline static std::unordered_map<uint32_t, GTexture*> textures{};
 	inline static Camera* activeCam;
 
 	inline static bool isIDE = false;

@@ -1,13 +1,21 @@
 #include "Collider.hpp"
 
-Collider::Collider() : Collider({COLLIDE_SPHERE, {1.f}}){}
-
-Collider::Collider(ColliderData data) : hasCollided(false)
+Collider::Collider()
 {
-
+	
 }
 
 void Collider::testCollisions()
 {
 	
+}
+
+void Collider::serialize(std::ofstream& wf)
+{
+	wf.write((char*) &hasCollided, sizeof(hasCollided));
+}
+
+void Collider::deserialize(std::ifstream& wf)
+{
+	wf.read((char*) &hasCollided, sizeof(hasCollided));
 }

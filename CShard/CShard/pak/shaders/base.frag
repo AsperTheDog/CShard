@@ -6,7 +6,6 @@ layout (location = 2) in vec3 normal;
 
 layout(binding = 0) uniform sampler2D tex;
 
-
 layout (location = 0) out vec4 outColor;
 
 struct PointLight { 
@@ -32,24 +31,6 @@ uniform PointLight pLights[20];
 uniform Camera cam;
 uniform Material mat;
 uniform uint lightNum;
-uniform samplerCubeShadow shadowMaps[20];
-
-#define EPSILON 0.1
-#define zFar 100000.0
-#define zNear 0.1
-
-float getShadow(uint index, vec3 lightDir)
-{
-    float z_b  = texture(shadowMaps[index], vec4(-lightDir, 1.0));
-    float z_n = 2.0 * z_b - 1.0;
-    float depth = 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
-    float dist = length(lightDir);
-    
-    if (depth >= dist)
-        return 0.1;
-    else
-        return 1.0;
-}
 
 vec3 CalcPointLight(uint index, vec3 normal, vec3 camDir)
 {
@@ -61,8 +42,6 @@ vec3 CalcPointLight(uint index, vec3 normal, vec3 camDir)
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 halfV = normalize(lightDir + camDir);
     float spec = pow(max(dot(normal, halfV), 0.0), mat.shininess * 4);
-    
-    float shadowContr = getShadow(index, light.position - pos);
 
     float distance = length(light.position - pos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -73,7 +52,7 @@ vec3 CalcPointLight(uint index, vec3 normal, vec3 camDir)
     vec3 diffuse = (light.color * diff * color) * attenuation;
     vec3 specular = (light.color * spec * color) * attenuation;
 
-    return (ambient + shadowContr * (diffuse + specular));
+    return (ambient + diffuse + specular);
 }
 
 void main() {

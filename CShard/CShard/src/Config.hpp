@@ -16,6 +16,3 @@
 
 #define BACK_VERTEX_LOCATION "pak/shaders/quad.vert"
 #define BACK_FRAGMENT_LOCATION "pak/shaders/back.frag"
-
-#define SHADOW_VERTEX_LOCATION "pak/shaders/shadow.vert"
-#define SHADOW_FRAGMENT_LOCATION "pak/shaders/shadow.frag"

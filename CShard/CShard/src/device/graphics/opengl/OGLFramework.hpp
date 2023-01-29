@@ -41,11 +41,10 @@ public:
 
 	GMesh* createMesh(std::string filepath) override;
 	GTexture* createTexture(std::string filepath) override;
-	GShadowMap* createShadowMap(uint32_t size) override;
 
 	void setDefaultTexture() override;
 	void loadCamUniforms(Camera& camera) override;
-	void loadModelUniforms(Model& mod, bool material) override;
+	void loadModelUniforms(Model& mod, PhysicalData& pData, bool material) override;
 	void setPostUniforms() override;
 	uint32_t getImGuiTexture() override;
 	void resizeImGuiTextures();

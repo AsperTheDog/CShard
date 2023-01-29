@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 
+#include <fstream>
 #include <iostream>
 
 #include "../device/graphics/GFramework.hpp"
@@ -15,6 +16,58 @@ Component::Component() : type(COMPONENT_SCRIPT)
 
 Component::Component(ComponentType type) : type(type)
 {
+}
+
+void Component::serialize(std::ofstream& wf)
+{
+	wf.write((char*) &type, sizeof(type));
+	switch (type)
+	{
+	case COMPONENT_CAMERA: 
+		value.cam.serialize(wf);
+		break;
+	case COMPONENT_COLLIDER: 
+		value.coll.serialize(wf);
+		break;
+	case COMPONENT_MODEL: 
+		value.mod.serialize(wf);
+		break;
+	case COMPONENT_SCRIPT: 
+		value.scr.serialize(wf);
+		break;
+	case COMPONENT_LIGHT: 
+		value.li.serialize(wf);
+		break;
+	case COMPONENT_BACKGROUND: 
+		value.back.serialize(wf);
+		break;
+	}
+}
+
+void Component::deserialize(std::ifstream& wf)
+{
+	wf.read((char*) &type, sizeof(type));
+	switch (type)
+	{
+	case COMPONENT_CAMERA: 
+		value.cam.deserialize(wf);
+		break;
+	case COMPONENT_COLLIDER: 
+		value.coll.deserialize(wf);
+		break;
+	case COMPONENT_MODEL: 
+		value.mod.deserialize(wf);
+		break;
+	case COMPONENT_SCRIPT: 
+		value.scr.deserialize(wf);
+		break;
+	case COMPONENT_LIGHT: 
+		value.li.deserialize(wf);
+		break;
+	case COMPONENT_BACKGROUND: 
+		value.back.deserialize(wf);
+		break;
+	}
 }
 
 GameObject::GameObject(const std::string& name)
@@ -87,55 +140,33 @@ void GameObject::processScript()
 
 void GameObject::processBackground()
 {
-	if (!show) return;
+	if (!show || !hasBackground) return;
 	GFramework::get()->prepareShader(SHADER_BACKGROUND);
-	for (auto& comp : components) 
-	{
-		if (comp.type == COMPONENT_BACKGROUND) comp.value.back.render();
-	}
+	components[0].value.back.render();
 }
 
 void GameObject::processLights()
 {
-	if (!show) return;
-	uint32_t index = 0;
+	if (!show || lightCount == 0) return;
+	GFramework::get()->prepareShader(SHADER_BASE);
+
 	for (auto& comp : components)
 	{
 		if (comp.type != COMPONENT_LIGHT) continue;
 	
-		comp.value.li.reloadShadowMap(index, this->modelData);
-		GFramework::get()->prepareShader(SHADER_BASE);
 		GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
-		++index;
 	}
 }
 
-void GameObject::processRender()
+void GameObject::processModels()
 {
 	if (!show) return;
 	GFramework::get()->prepareShader(SHADER_BASE);
 	for (auto& comp : components) 
 	{
-		if (comp.type == COMPONENT_MODEL)
-		{
-			comp.value.mod.calculateMatrix(modelData);
-			comp.value.mod.render(true);
-		}
-	}
-
-	modelData.changed = false;
-}
-
-void GameObject::processShadow()
-{
-	if (!show) return;
-	for (auto& comp : components) 
-	{
-		if (comp.type == COMPONENT_MODEL && comp.value.mod.castShadows)
-		{
-			comp.value.mod.calculateMatrix(modelData);
-			comp.value.mod.render(false);
-		}
+		if (comp.type != COMPONENT_MODEL) continue;
+		
+		comp.value.mod.render(modelData, true);
 	}
 
 	modelData.changed = false;

@@ -8,6 +8,9 @@ class Background
 public:
 	void render();
 	void setTexture();
+	
+	void serialize(std::ofstream& wf);
+	void deserialize(std::ifstream& wf);
 
 	int tempTexID{};
 private:

@@ -57,6 +57,10 @@ public:
 	inline static bool pasted = false;
 
 private:
+	static void showCreateModal();
+	static void showLoadModal();
+	static void showSaveModal();
+	static void showExitModal();
 
 	inline static char nameBuff[MAX_OBJ_NAME_LENGTH];
 	inline static bool showSaveWin = false;
@@ -65,4 +69,3 @@ private:
 	inline static std::vector<WindowData> windowCalls{};
 	inline static ImGuiIO* io{};
 };
-

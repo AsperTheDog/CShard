@@ -22,7 +22,7 @@ public:
 			ImGui::End();
 			return;
 		}
-		GameObject* obj = Engine::getObject(ObjectWindow::selectedObject);
+		GameObject* obj = ResourceManager::getObject(ObjectWindow::selectedObject);
 		if (!obj) {
 			ImGui::End();
 			return;
@@ -64,45 +64,39 @@ public:
 				if (copiedAttr == i - obj->components.begin()) copiedAttr = -1;
 				if (i == obj->components.end()) break;
 			}
+			ImGui::SameLine();
 			switch(i->type)
 			{
 			case COMPONENT_CAMERA:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Camera Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showCamera(i->value.cam, uniqueID);
 				break;
 			case COMPONENT_COLLIDER:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Collider Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showCollider(i->value.coll, uniqueID);
 				break;
 			case COMPONENT_MODEL:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Model Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showModel(i->value.mod, uniqueID);
 				break;
 			case COMPONENT_SCRIPT:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Script Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showScript(i->value.scr, uniqueID);
 				break;
 			case COMPONENT_BACKGROUND:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("Background Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showBackground(i->value.back, uniqueID);
 				break;
 			case COMPONENT_LIGHT:
-				ImGui::SameLine();
 				if (ImGui::Selectable(("LightSource Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = i - obj->components.begin();
+					selectedAttr = (int)(i - obj->components.begin());
 				showLightSource(i->value.li, uniqueID);
 				break;
-			default: ;
 			}
 			ImGui::Separator();
 			ImGui::Separator();
@@ -187,7 +181,7 @@ private:
 			mod.changeTexture();
 
 		ImGui::Checkbox(("Cull backface##mod" + uniqueID).c_str(), &mod.cullFace);
-		ImGui::Checkbox(("Cast shadows##mod" + uniqueID).c_str(), &mod.castShadows);
+		//ImGui::Checkbox(("Cast shadows##mod" + uniqueID).c_str(), &mod.castShadows);
 	}
 
 	static void showScript(Script& scr, std::string& uniqueID)

@@ -73,3 +73,27 @@ void Camera::updateAspectRatio(float aspectRatio)
 	this->aspectRatio = aspectRatio;
 	hasChangedProj = true;
 }
+
+void Camera::serialize(std::ofstream& wf)
+{
+	wf.write((char*) &pos, sizeof(pos));
+	wf.write((char*) &dir, sizeof(dir));
+	wf.write((char*) &worldUp, sizeof(worldUp));
+	wf.write((char*) &FOV, sizeof(FOV));
+	wf.write((char*) &nearPlane, sizeof(nearPlane));
+	wf.write((char*) &farPlane, sizeof(farPlane));
+}
+
+void Camera::deserialize(std::ifstream& wf)
+{
+	wf.read((char*) &pos, sizeof(pos));
+	wf.read((char*) &dir, sizeof(dir));
+	wf.read((char*) &worldUp, sizeof(worldUp));
+	wf.read((char*) &FOV, sizeof(FOV));
+	wf.read((char*) &nearPlane, sizeof(nearPlane));
+	wf.read((char*) &farPlane, sizeof(farPlane));
+
+	this->right = glm::cross(dir, worldUp);
+	hasChangedProj = true;
+	hasChangedView = true;
+}

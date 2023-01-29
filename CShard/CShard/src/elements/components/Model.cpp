@@ -2,6 +2,7 @@
 
 #include "../../device/graphics/GFramework.hpp"
 #include "../../Engine.hpp"
+#include "../../ResourceManager.hpp"
 
 #include "../../device/graphics/GTexture.hpp"
 #include "../../device/graphics/GMesh.hpp"
@@ -9,21 +10,21 @@
 #include <gtx/transform.hpp>
 
 Model::Model()
-	: meshID(0), textureID(0), data({}), mat{0, 1}
+	: meshID(0), textureID(0), mat{0, 1}
 {
 }
 
-void Model::render(bool material)
+void Model::render(PhysicalData& pData, bool material)
 {
-	GFramework::get()->loadModelUniforms(*this, material);
+	GFramework::get()->loadModelUniforms(*this, pData, material);
 
-	if (Engine::isValidTexture(textureID))
-		Engine::getTexture(textureID)->useTexture();
+	if (ResourceManager::isValidTexture(textureID))
+		ResourceManager::getTexture(textureID)->useTexture();
 	else
 		GFramework::get()->setDefaultTexture();
 
-	if (Engine::isValidMesh(meshID))
-		Engine::getMesh(meshID)->render(cullFace);
+	if (ResourceManager::isValidMesh(meshID))
+		ResourceManager::getMesh(meshID)->render(cullFace);
 }
 
 void Model::changePosition(glm::vec3 pos)
@@ -54,22 +55,50 @@ void Model::changeTexture()
 	this->textureID = tempTexID;
 }
 
+glm::mat4 Model::getModelMatrix(PhysicalData& pData)
+{
+	if (pData.changed || data.changed) calculateMatrix(pData);
+	return modelMatrix;
+}
+
+glm::mat4 Model::getInvModelMatrix(PhysicalData& pData)
+{
+	if (pData.changed || data.changed) calculateMatrix(pData);
+	return invModelMatrix;
+}
+
 void Model::calculateMatrix(PhysicalData& pData)
 {
-	if (!pData.changed && !data.changed) return;
-
 	modelMatrix = glm::mat4(1);
-	modelMatrix = glm::translate(modelMatrix, pData.pos);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.x), {1, 0, 0});
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.y), {0, 1, 0});
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(pData.rot.z), {0, 0, 1});
+	modelMatrix = glm::translate(modelMatrix, pData.pos + data.pos);
+	glm::vec3 finalRot = pData.rot + data.rot;
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(finalRot.x), {1, 0, 0});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(finalRot.y), {0, 1, 0});
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(finalRot.z), {0, 0, 1});
 	modelMatrix = glm::scale(modelMatrix, pData.scale);
-	modelMatrix = glm::translate(modelMatrix, data.pos);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.x), {1, 0, 0});
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.y), {0, 1, 0});
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(data.rot.z), {0, 0, 1});
 	modelMatrix = glm::scale(modelMatrix, data.scale);
 	invModelMatrix = glm::transpose(glm::inverse(modelMatrix));
 
 	data.changed = false;
+}
+
+void Model::serialize(std::ofstream& wf)
+{
+	wf.write((char*) &meshID, sizeof(meshID));
+	wf.write((char*) &textureID, sizeof(textureID));
+	wf.write((char*) &data, sizeof(data));
+	wf.write((char*) &mat, sizeof(mat));
+	wf.write((char*) &cullFace, sizeof(cullFace));
+}
+
+void Model::deserialize(std::ifstream& wf)
+{
+	wf.read((char*) &meshID, sizeof(meshID));
+	wf.read((char*) &textureID, sizeof(textureID));
+	wf.read((char*) &data, sizeof(data));
+	wf.read((char*) &mat, sizeof(mat));
+	wf.read((char*) &cullFace, sizeof(cullFace));
+	tempMeshID = meshID;
+	tempTexID = textureID;
+	data.changed = true;
 }

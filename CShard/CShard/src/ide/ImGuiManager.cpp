@@ -115,126 +115,16 @@ void ImGuiManager::render()
 		
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-		if (showSaveWin) ImGui::OpenPopup("Add name");
-
-        if (ImGui::BeginPopupModal("Add name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Set a name for the project");
-            ImGui::Separator();
-			ImGui::InputText("##saveProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
-			ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-            if (ImGui::Button("OK", ImVec2(120, 0)))
-            {
-				Engine::compileProject(nameBuff);
-				showSaveWin = false;
-	            ImGui::CloseCurrentPopup();
-            }
-			ImGui::EndDisabled();
-		    ImGui::SetItemDefaultFocus();
-		    ImGui::SameLine();
-		    if (ImGui::Button("Cancel", ImVec2(120, 0)))
-		    {
-				showSaveWin = false;
-			    ImGui::CloseCurrentPopup();
-		    }
-		    ImGui::EndPopup();
-        }
+		showSaveModal();
 
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-		if (showLoadWin) ImGui::OpenPopup("Get name");
-
-        if (ImGui::BeginPopupModal("Get name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Insert the name of the project");
-            ImGui::Separator();
-			ImGui::InputText("##loadProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
-			ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-            if (ImGui::Button("OK", ImVec2(120, 0)))
-            {
-				Engine::loadProject(nameBuff);
-				showLoadWin = false;
-	            ImGui::CloseCurrentPopup();
-            }
-			ImGui::EndDisabled();
-		    ImGui::SetItemDefaultFocus();
-		    ImGui::SameLine();
-		    if (ImGui::Button("Cancel", ImVec2(120, 0)))
-		    {
-				showLoadWin = false;
-			    ImGui::CloseCurrentPopup();
-		    }
-		    ImGui::EndPopup();
-        }
+		showLoadModal();
 
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		showCreateModal();		
 
-		if (showNewWin) ImGui::OpenPopup("Save current");
-
-        if (ImGui::BeginPopupModal("Save current", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Do you want to save the current project?");
-            ImGui::Separator();
-			ImGui::InputText("##currProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
-			ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-            if (ImGui::Button("Save", ImVec2(90, 0)))
-            {
-				Engine::compileProject(nameBuff);
-				Engine::resetProject();
-				showNewWin = false;
-	            ImGui::CloseCurrentPopup();
-            }
-			ImGui::EndDisabled();
-		    ImGui::SameLine();
-			if (ImGui::Button("Don't save", ImVec2(90, 0)))
-            {
-				Engine::resetProject();
-				showNewWin = false;
-	            ImGui::CloseCurrentPopup();
-            }
-		    ImGui::SetItemDefaultFocus();
-		    ImGui::SameLine();
-		    if (ImGui::Button("Cancel", ImVec2(90, 0)))
-		    {
-				showNewWin = false;
-			    ImGui::CloseCurrentPopup();
-		    }
-		    ImGui::EndPopup();
-        }
-
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-	if (Engine::shouldQuit) ImGui::OpenPopup("Confirm quit");
-
-	if (ImGui::BeginPopupModal("Confirm quit", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-	{
-		ImGui::Text("Do you want to save before quitting?");
-		ImGui::Separator();
-		ImGui::InputText("##currProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
-		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-		if (ImGui::Button("Save", ImVec2(90, 0)))
-		{
-			Engine::compileProject(nameBuff);
-			Engine::confirmQuit = true;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndDisabled();
-		ImGui::SameLine();
-		if (ImGui::Button("Don't save", ImVec2(90, 0)))
-		{
-			Engine::confirmQuit = true;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(90, 0)))
-		{
-			Engine::shouldQuit = false;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
-	}
+	    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		showExitModal();
 
 	    ImGui::End();
 	}
@@ -296,6 +186,133 @@ void ImGuiManager::updateSceneCamPos()
 	if (movement != glm::vec3(0))
 		navigationCam.move(navigationCam.pos + glm::normalize(movement) * (Engine::dt * movementMult));
 }
+
+void ImGuiManager::showCreateModal()
+{
+	if (showNewWin) ImGui::OpenPopup("Save current");
+
+    if (ImGui::BeginPopupModal("Save current", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("Do you want to save the current project?");
+        ImGui::Separator();
+		ImGui::InputText("##currProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
+        if (ImGui::Button("Save", ImVec2(90, 0)))
+        {
+			Engine::compileProject(nameBuff);
+			Engine::resetProject();
+			showNewWin = false;
+            ImGui::CloseCurrentPopup();
+        }
+		ImGui::EndDisabled();
+	    ImGui::SameLine();
+		if (ImGui::Button("Don't save", ImVec2(90, 0)))
+        {
+			Engine::resetProject();
+			showNewWin = false;
+            ImGui::CloseCurrentPopup();
+        }
+	    ImGui::SetItemDefaultFocus();
+	    ImGui::SameLine();
+	    if (ImGui::Button("Cancel", ImVec2(90, 0)))
+	    {
+			showNewWin = false;
+		    ImGui::CloseCurrentPopup();
+	    }
+	    ImGui::EndPopup();
+    }
+}
+
+void ImGuiManager::showLoadModal()
+{
+	if (showLoadWin) ImGui::OpenPopup("Get name");
+
+    if (ImGui::BeginPopupModal("Get name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("Insert the name of the project");
+        ImGui::Separator();
+		ImGui::InputText("##loadProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
+        if (ImGui::Button("OK", ImVec2(120, 0)))
+        {
+			Engine::loadProject(nameBuff);
+			showLoadWin = false;
+            ImGui::CloseCurrentPopup();
+        }
+		ImGui::EndDisabled();
+	    ImGui::SetItemDefaultFocus();
+	    ImGui::SameLine();
+	    if (ImGui::Button("Cancel", ImVec2(120, 0)))
+	    {
+			showLoadWin = false;
+		    ImGui::CloseCurrentPopup();
+	    }
+	    ImGui::EndPopup();
+    }
+}
+
+void ImGuiManager::showSaveModal()
+{
+	if (showSaveWin) ImGui::OpenPopup("Add name");
+
+    if (ImGui::BeginPopupModal("Add name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("Set a name for the project");
+        ImGui::Separator();
+		ImGui::InputText("##saveProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
+        if (ImGui::Button("OK", ImVec2(120, 0)))
+        {
+			Engine::compileProject(nameBuff);
+			showSaveWin = false;
+            ImGui::CloseCurrentPopup();
+        }
+		ImGui::EndDisabled();
+	    ImGui::SetItemDefaultFocus();
+	    ImGui::SameLine();
+	    if (ImGui::Button("Cancel", ImVec2(120, 0)))
+	    {
+			showSaveWin = false;
+		    ImGui::CloseCurrentPopup();
+	    }
+	    ImGui::EndPopup();
+    }
+}
+
+void ImGuiManager::showExitModal()
+{
+	if (Engine::shouldQuit) ImGui::OpenPopup("Confirm quit");
+
+	if (ImGui::BeginPopupModal("Confirm quit", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Do you want to save before quitting?");
+		ImGui::Separator();
+		ImGui::InputText("##currProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
+		if (ImGui::Button("Save", ImVec2(90, 0)))
+		{
+			Engine::compileProject(nameBuff);
+			Engine::confirmQuit = true;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndDisabled();
+		ImGui::SameLine();
+		if (ImGui::Button("Don't save", ImVec2(90, 0)))
+		{
+			Engine::confirmQuit = true;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(90, 0)))
+		{
+			Engine::shouldQuit = false;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 
 void ImGuiManager::addImGuiWindows()
 {

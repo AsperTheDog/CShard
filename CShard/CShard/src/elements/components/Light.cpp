@@ -4,7 +4,7 @@
 Light::Light()
 	: constant(1.f), linear(0.14f), quadratic(0.07f), position{0.f}, color{1.f}
 {
-	shadowMap = GFramework::get()->createShadowMap(1024);
+
 }
 
 glm::vec3 Light::getLightpos(PhysicalData& parent)
@@ -12,7 +12,20 @@ glm::vec3 Light::getLightpos(PhysicalData& parent)
 	return this->position + parent.pos;
 }
 
-void Light::reloadShadowMap(uint32_t index, PhysicalData& parent)
+void Light::serialize(std::ofstream& wf)
 {
-	shadowMap->render(index, this->position + parent.pos);
+	wf.write((char*) &constant, sizeof(constant));
+	wf.write((char*) &linear, sizeof(linear));
+	wf.write((char*) &quadratic, sizeof(quadratic));
+	wf.write((char*) &position, sizeof(position));
+	wf.write((char*) &color, sizeof(color));
+}
+
+void Light::deserialize(std::ifstream& wf)
+{
+	wf.read((char*) &constant, sizeof(constant));
+	wf.read((char*) &linear, sizeof(linear));
+	wf.read((char*) &quadratic, sizeof(quadratic));
+	wf.read((char*) &position, sizeof(position));
+	wf.read((char*) &color, sizeof(color));
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+
 #include <string>
 #include <vector>
 #include "PhysicalData.hpp"
@@ -12,6 +12,8 @@
 #include "components/Light.hpp"
 #include "components/Model.hpp"
 #include "components/Script.hpp"
+
+class GameObject;
 
 enum ComponentType
 {
@@ -44,6 +46,9 @@ struct Component
 	Component();
 	explicit Component(ComponentType type);
 	~Component(){}
+
+	void serialize(std::ofstream& wf);
+	void deserialize(std::ifstream& wf);
 };
 
 class GameObject
@@ -58,8 +63,7 @@ public:
 	void processCollision();
 	void processScript();
 	void processBackground();
-	void processRender();
-	void processShadow();
+	void processModels();
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);

@@ -8,20 +8,14 @@
 #include "input/InputManager.hpp"
 #include "ide/ImGuiManager.hpp"
 
-#include "device/graphics/GTexture.hpp"
-#include "device/graphics/GMesh.hpp"
-
-#include "Config.hpp"
+#include "ResourceManager.hpp"
 
 void Engine::init(GLibraries lib, bool isIDE, char* initFileName)
 {
 	Engine::isIDE = isIDE;
-	Engine::sceneObjects = std::unordered_map<uint32_t, GameObject>();
-	Engine::meshes = std::unordered_map<uint32_t, GMesh*>();
-	Engine::textures = std::unordered_map<uint32_t, GTexture*>();
 
+	ResourceManager::init();
 	InputManager::init();
-
 	SDLFramework::init(lib);
 
 	GFramework::create(lib);
@@ -57,8 +51,6 @@ void Engine::run()
 
 void Engine::shutDown()
 {
-	for (auto mesh : meshes | std::views::values) delete mesh;
-	for (auto texture : textures | std::views::values) delete texture;
 	if (Engine::isIDE) ImGuiManager::destroy();
 	GFramework::deleteInstance();
 	SDLFramework::destroy();
@@ -71,54 +63,12 @@ void Engine::compileProject(const std::string& name)
 		SDLFramework::showErrorMessage("Could not save project", "Could not write to save file");
 		return;
 	}
-	wf.write((char*) &Engine::IDManager, sizeof(IDManager));
-	wf.write((char*) &ImGuiManager::navigationCam, sizeof(Camera));
-	uint32_t mappingNum = (uint32_t)InputManager::inputMappings.size();
-	wf.write((char*)&mappingNum, sizeof(mappingNum));
-	for (auto& map : InputManager::inputMappings)
-	{
-		uint32_t id = map.first;
-		wf.write((char*)&id, sizeof(id));
-		wf.write((char*)&map.second, sizeof(map.second));
-	}
-	uint32_t meshNum = (uint32_t)meshes.size();
-	wf.write((char*)&meshNum, sizeof(meshNum));
-	for (auto& mesh : meshes)
-	{
-		uint32_t id = mesh.first;
-		wf.write((char*)&id, sizeof(id));
-		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		strcpy_s(buff,  sizeof(buff), mesh.second->name.c_str());
-		wf.write(buff, MAX_ASSET_NAME_LENGTH);
-	}
-	uint32_t texNum = (uint32_t)textures.size();
-	wf.write((char*)&texNum, sizeof(texNum));
-	for (auto& tex : textures)
-	{
-		uint32_t id = tex.first;
-		wf.write((char*)&id, sizeof(id));
-		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		strcpy_s(buff, sizeof(buff), tex.second->name.c_str());
-		wf.write(buff, MAX_ASSET_NAME_LENGTH);
-	}
-	uint32_t objNum = (uint32_t)sceneObjects.size();
-	wf.write((char*)&objNum, sizeof(objNum));
-	for (auto& obj : sceneObjects) {
-		uint32_t id = obj.first;
-		wf.write((char*)&id, sizeof(id));
-		wf.write(obj.second.name, MAX_OBJ_NAME_LENGTH);
-		wf.write((char*)&obj.second.modelData, sizeof(obj.second.modelData));
-		uint32_t components = (uint32_t)obj.second.components.size();
-		wf.write((char*)&components, sizeof(components));
-		for (auto& comp : obj.second.components) {
-			wf.write((char*)&comp, sizeof(comp));
-		}
-	}
+	ResourceManager::save(wf);
 	
 	wf.close();
 }
 
-void Engine::loadProject(std::string filename)
+void Engine::loadProject(const std::string& filename)
 {
 	resetProject();
 	std::ifstream wf("pak/projects/" + filename + ".srdproj", std::ios::in | std::ios::binary);
@@ -126,67 +76,7 @@ void Engine::loadProject(std::string filename)
 		SDLFramework::showErrorMessage("Could not load project", "Could not read save file");
 		return;
 	}
-	wf.read((char*) &Engine::IDManager, sizeof(IDManager));
-	wf.read((char*) &ImGuiManager::navigationCam, sizeof(Camera));
-	uint32_t num = 0;
-	wf.read((char*)&num, sizeof(uint32_t));
-	InputManager::inputMappings.reserve(num);
-	for (uint32_t i = 0; i < num; i++)
-	{
-		std::pair<uint32_t, InputMapping> elem;
-		wf.read((char*)&elem.first, sizeof(elem));
-		InputManager::inputMappings.insert(elem);
-	}
-	wf.read((char*)&num, sizeof(uint32_t));
-	meshes.reserve(num);
-	for (uint32_t i = 0; i < num; i++)
-	{
-		std::pair<uint32_t, GMesh*> elem;
-		wf.read((char*)&elem.first, sizeof(elem.first));
-		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem.second = GFramework::get()->createMesh(buff);
-		meshes.insert(elem);
-	}
-	wf.read((char*)&num, sizeof(uint32_t));
-	textures.reserve(num);
-	for (uint32_t i = 0; i < num; i++)
-	{
-		std::pair<uint32_t, GTexture*> elem;
-		wf.read((char*)&elem.first, sizeof(elem.first));
-		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem.second = GFramework::get()->createTexture(buff);
-		textures.insert(elem);
-	}
-	wf.read((char*)&num, sizeof(uint32_t));
-	sceneObjects.reserve(num);
-	for (uint32_t i = 0; i < num; i++)
-	{
-		uint32_t id = 0;
-		wf.read((char*)&id, sizeof(id));
-		char buff[MAX_OBJ_NAME_LENGTH] = "";
-		wf.read(buff, MAX_OBJ_NAME_LENGTH);
-		GameObject obj{ buff };
-		wf.read((char*)&obj.modelData, sizeof(obj.modelData));
-		uint32_t components = 0;
-		wf.read((char*)&components, sizeof(components));
-		obj.components.reserve(components);
-		for (uint32_t j = 0; j < components; j++)
-		{
-			Component comp{};
-			wf.read((char*)&comp, sizeof(comp));
-			if (comp.type == COMPONENT_BACKGROUND) obj.hasBackground = true;
-			else if (comp.type == COMPONENT_LIGHT)
-			{
-				comp.value.li.shadowMap = GFramework::get()->createShadowMap(1024);
-				GFramework::lightSourceCount++;
-				obj.lightCount++;
-			}
-			obj.components.push_back(comp);
-		}
-		sceneObjects.emplace(id, obj);
-	}
+	ResourceManager::load(wf);
 
 	wf.close();
 }
@@ -194,91 +84,8 @@ void Engine::loadProject(std::string filename)
 void Engine::resetProject()
 {
 	InputManager::inputMappings.clear();
-	Engine::sceneObjects.clear();
-	Engine::meshes.clear();
-	Engine::textures.clear();
+	ResourceManager::reset();
 	GFramework::lightSourceCount = 0;
-}
-
-uint32_t Engine::addObject()
-{
-	IDManager++;
-	Engine::sceneObjects.emplace(IDManager, "Object " + std::to_string(IDManager));
-	return IDManager;
-}
-
-uint32_t Engine::addMesh(std::string& filepath)
-{
-	IDManager++;
-	Engine::meshes.emplace(IDManager, GFramework::get()->createMesh(filepath));
-	return IDManager;
-}
-
-uint32_t Engine::addTexture(std::string& filepath)
-{
-	IDManager++;
-	Engine::textures.emplace(IDManager, GFramework::get()->createTexture(filepath));
-	return IDManager;
-}
-
-void Engine::removeObject(uint32_t id)
-{
-	if (!sceneObjects.contains(id)) return;
-	GFramework::lightSourceCount -= sceneObjects.at(id).lightCount;
-	Engine::sceneObjects.erase(id);
-}
-
-GameObject* Engine::getObject(uint32_t id)
-{
-	if (!sceneObjects.contains(id)) return nullptr;
-	return &Engine::sceneObjects.at(id);
-}
-
-bool Engine::isValidMesh(uint32_t id)
-{
-	return meshes.contains(id);
-}
-
-GMesh* Engine::getMesh(uint32_t id)
-{
-	if (!isValidMesh(id)) return nullptr;
-	return meshes.at(id);
-}
-
-bool Engine::isValidTexture(uint32_t id)
-{
-	return textures.contains(id);
-}
-
-GTexture* Engine::getTexture(uint32_t id)
-{
-	if (!isValidTexture(id)) return nullptr;
-	return textures.at(id);
-}
-
-void Engine::clone(uint32_t index)
-{
-	if (!Engine::sceneObjects.contains(index)) return;
-	GameObject objToCopy = Engine::sceneObjects.at(index);
-	GameObject newObj{objToCopy.name};
-	newObj.modelData = objToCopy.modelData;
-	for (auto& comp : objToCopy.components)
-	{
-		Component newComp{};
-		memcpy(&newComp, &comp, sizeof(comp));
-		newObj.insertComponent(comp);
-	}
-	IDManager++;
-	Engine::sceneObjects.emplace(IDManager, newObj);
-}
-
-void Engine::renderShadow()
-{
-	GFramework::get()->loadCamUniforms(GFramework::shadowMapCam);
-	for (auto& obj : sceneObjects | std::views::values)
-	{
-		if (!obj.hasBackground) obj.processShadow();
-	}
 }
 
 void Engine::updateDeltaTime()
@@ -302,18 +109,11 @@ void Engine::render()
 	GFramework::get()->loadCamUniforms(*Engine::activeCam);
 
 	GFramework::get()->initRender();
-	for (auto& obj : sceneObjects | std::views::values)
-	{
-		if (obj.hasBackground) obj.processBackground();
-	}
-	for (auto& obj : sceneObjects | std::views::values)
-	{
-		if (!obj.hasBackground) obj.processLights();
-	}
-	for (auto& obj : sceneObjects | std::views::values)
-	{
-		if (!obj.hasBackground) obj.processRender();
-	}
+
+	ResourceManager::backgroundPass();
+	ResourceManager::lightPass();
+	ResourceManager::modelPass();
+
 	GFramework::get()->endRender();
 	if (Engine::isIDE) ImGuiManager::render();
 }

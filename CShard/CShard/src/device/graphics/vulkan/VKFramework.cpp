@@ -49,7 +49,7 @@ void VKFramework::loadCamUniforms(Camera& camera)
 {
 }
 
-void VKFramework::loadModelUniforms(Model& mod, bool material)
+void VKFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool material)
 {
 }
 
@@ -73,11 +73,6 @@ void VKFramework::setPostUniforms()
 
 void VKFramework::prepareShader(ShaderType type)
 {
-}
-
-GShadowMap* VKFramework::createShadowMap(uint32_t size)
-{
-	return nullptr;
 }
 
 void VKFramework::resizeWindow()

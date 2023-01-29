@@ -47,13 +47,12 @@ public:
 
 	virtual void setDefaultTexture() = 0;
 	virtual void loadCamUniforms(Camera& camera) = 0;
-	virtual void loadModelUniforms(Model& mod, bool material) = 0;
+	virtual void loadModelUniforms(Model& mod, PhysicalData& pData, bool material) = 0;
 	virtual void loadLightUniforms(Light& light, PhysicalData&) = 0;
 	virtual void setPostUniforms() = 0;
 	virtual uint32_t getImGuiTexture() = 0;
 
 	virtual void prepareShader(ShaderType type) = 0;
-	virtual GShadowMap* createShadowMap(uint32_t size) = 0;
 
 	static GTexture* defaultTex;
 	static BackGMesh* fullQuadMesh;
@@ -67,8 +66,7 @@ public:
 	inline static FilmGrain filmGrain{};
 	inline static bool postEffectsActive = false;
 	inline static uint32_t activeShader = 0;
-
-	inline static Camera shadowMapCam{};
+	
 protected:
 	inline static glm::uvec2 viewPortSize{1920, 1080};
 	static std::string loadShaderSrc(const std::string& file);

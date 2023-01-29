@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include <vec3.hpp>
 
 #include "../PhysicalData.hpp"
@@ -11,7 +12,9 @@ public:
 	Light();
 
 	glm::vec3 getLightpos(PhysicalData& parent);
-	void reloadShadowMap(uint32_t index, PhysicalData& parent);
+	
+	void serialize(std::ofstream& wf);
+	void deserialize(std::ifstream& wf);
 
 	float constant;
     float linear;
@@ -19,7 +22,5 @@ public:
 
 	glm::vec3 position;
 	glm::vec3 color;
-
-	GShadowMap* shadowMap = nullptr;
 };
 
