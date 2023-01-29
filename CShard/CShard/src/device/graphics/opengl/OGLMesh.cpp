@@ -2,12 +2,28 @@
 
 #include <iostream>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#define TINYOBJLOADER_USE_MAPBOX_EARCUT
+#include <tiny_obj_loader.h>
+
 #include "OGLFramework.hpp"
 
-OGLMesh::OGLMesh(const std::string& filepath): GMesh(filepath)
+OGLMesh::OGLMesh(const std::string& filepath)
 {
-	uint32_t program = ((OGLFramework*)GFramework::get())->getBaseShader()->id;
+	commit(filepath);
+}
 
+OGLMesh::~OGLMesh()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+}
+
+void OGLMesh::commit(const std::string& filepath)
+{
+	extractData(filepath);
+	name = filepath;
 	glCreateVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -20,24 +36,17 @@ OGLMesh::OGLMesh(const std::string& filepath): GMesh(filepath)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
 	//GLuint attribLoc = glGetAttribLocation(program, "position");
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, coords)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, pos)));
 	glEnableVertexAttribArray(0);
 
 	//attribLoc = glGetAttribLocation(program, "texCoords");
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, texUV)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, texCoords)));
 	glEnableVertexAttribArray(1);
 
 	//attribLoc = glGetAttribLocation(program, "normal");
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, normal)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, norm)));
 	glEnableVertexAttribArray(2);
 	this->indexNum = (uint32_t)indices.size();
-}
-
-OGLMesh::~OGLMesh()
-{
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
 }
 
 void OGLMesh::render(bool culling)
@@ -48,10 +57,63 @@ void OGLMesh::render(bool culling)
 	if (!culling) glEnable(GL_CULL_FACE);
 }
 
-BackOGLMesh::BackOGLMesh()
+void OGLMesh::extractData(const std::string& filename)
 {
-	OGLFramework* glFram = ((OGLFramework*)GFramework::get());
-	GLuint program = glFram->backgroundShader->id;
+	tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string warn, err;
+
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename.c_str())) {
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, ("pak/resources/obj/" + filename).c_str()))
+        {
+	        throw std::runtime_error("Could not load file");
+        }
+    }
+
+	for (const auto& shape : shapes) {
+	    for (const auto& index : shape.mesh.indices) {
+	        Vertex vertex{};
+			vertex.pos = {
+			    attrib.vertices[3 * index.vertex_index + 0],
+			    attrib.vertices[3 * index.vertex_index + 1],
+			    attrib.vertices[3 * index.vertex_index + 2]
+			};
+			if (attrib.texcoords.size() <= 2U * (size_t)index.texcoord_index + 1U)
+				vertex.texCoords = {0, 0};
+			else
+				vertex.texCoords = {
+				    attrib.texcoords[2 * index.texcoord_index + 0],
+				    attrib.texcoords[2 * index.texcoord_index + 1]
+				};
+			if (attrib.normals.size() <= 3U * (size_t)index.normal_index + 2U)
+				vertex.norm = {0, 0, 0};
+			else
+				vertex.norm = {
+					attrib.normals[3 * index.normal_index + 0],
+					attrib.normals[3 * index.normal_index + 1],
+					attrib.normals[3 * index.normal_index + 2]
+				};
+	        vertices.push_back(vertex);
+	        indices.push_back((uint32_t)indices.size());
+	    }
+	}
+}
+
+OGLPostQuad::OGLPostQuad()
+{
+
+}
+
+OGLPostQuad::~OGLPostQuad()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+}
+
+void OGLPostQuad::commit()
+{
+	GLuint program = OGLFramework::getBackShader()->id;
 
 	BackVertex vertices[] = {
 		{glm::vec2(-1.f, -1.f)},
@@ -70,18 +132,11 @@ BackOGLMesh::BackOGLMesh()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	GLuint attribLoc = glGetAttribLocation(program, "position");
-	glVertexAttribPointer(attribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(BackVertex), (GLvoid*)(offsetof(BackVertex, coords)));
+	glVertexAttribPointer(attribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(BackVertex), (GLvoid*)(offsetof(BackVertex, pos)));
 	glEnableVertexAttribArray(attribLoc);
-
 }
 
-BackOGLMesh::~BackOGLMesh()
-{
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-}
-
-void BackOGLMesh::render()
+void OGLPostQuad::render()
 {
 	GLboolean depth = false;
 	glGetBooleanv(GL_DEPTH_TEST, &depth);

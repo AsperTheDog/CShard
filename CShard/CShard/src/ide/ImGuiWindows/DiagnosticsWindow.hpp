@@ -1,6 +1,5 @@
 #pragma once
 #include <imgui.h>
-#include "../../device/graphics/GFramework.hpp"
 
 class DiagnosticsWindow
 {
@@ -14,7 +13,7 @@ public:
 		ImGui::Text("\tLast: %f", 1.f / ImGui::GetIO().DeltaTime);
 		ImGui::Text("\tAverage: %f", ImGui::GetIO().Framerate);
 		ImGui::Separator();
-		ImGui::Text("Graphics library: %s", GFramework::type == OPENGL ? "OpenGL" : "Vulkan");
+		ImGui::Text("Graphics library: OpenGL");
 		ImGui::End();
 	}
 

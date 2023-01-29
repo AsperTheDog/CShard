@@ -8,7 +8,6 @@
 #include <backends/imgui_impl_sdl.h>
 
 #include "OGLMesh.hpp"
-#include "OGLShadowMap.hpp"
 #include "OGLTexture.hpp"
 #include "../../../ide/ImGuiManager.hpp"
 #include "../../../Engine.hpp"
@@ -131,7 +130,7 @@ namespace
 #undef CALLBACK_
 }
 
-OGLFramework::OGLFramework()
+void OGLFramework::create()
 {
     gl_context = SDL_GL_CreateContext(SDLFramework::getWindow());
 	SDL_GL_MakeCurrent(SDLFramework::getWindow(), gl_context);
@@ -169,32 +168,36 @@ OGLFramework::OGLFramework()
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
-	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
-	this->postShader = new Shader(POST_VERTEX_LOCATION, POST_FRAGMENT_LOCATION);
+	baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
+	backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
+	postShader = new Shader(POST_VERTEX_LOCATION, POST_FRAGMENT_LOCATION);
 
-	this->baseTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
-	this->baseDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
+	defaultTex.commit(DEFAULT_TEX_LOCATION);
+	fullQuadMesh.commit();
+
+	baseTexture.commit(COLOR, 1920, 1080);
+	baseDepth.commit(DEPTH, 1920, 1080);
 	glGenFramebuffers(1, &baseFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->baseTexture->texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, baseTexture.texture, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->baseDepth->texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, baseDepth.texture, 0);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		throw std::runtime_error(R"(BaseFramebuffer could not be completed)");
 	}
 
-	this->postTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
-	this->postDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
+	postTexture.commit(COLOR, 1920, 1080);
+	postDepth.commit(DEPTH, 1920, 1080);
+
 	glGenFramebuffers(1, &postFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->postTexture->texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, postTexture.texture, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->postDepth->texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, postDepth.texture, 0);
 	status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
@@ -212,12 +215,12 @@ void OGLFramework::initRender()
 		if (imGuiSize != viewPortSize)
 		{
 			viewPortSize = imGuiSize;
-			this->resizeImGuiTextures();
+			resizeImGuiTextures();
 			OGLFramework::resizeWindow();
 			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
 	}
-	glUniform1ui(glGetUniformLocation(this->baseShader->id, "lightNum"), lightSourceCount);
+	glUniform1ui(glGetUniformLocation(baseShader->id, "lightNum"), lightSourceCount);
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -226,11 +229,11 @@ void OGLFramework::initRender()
 void OGLFramework::endRender()
 {
 	prepareShader(SHADER_POST);
-	this->setPostUniforms();
+	setPostUniforms();
 	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, this->baseTexture->texture);
-	GFramework::fullQuadMesh->render();
+	glBindTexture(GL_TEXTURE_2D, baseTexture.texture);
+	fullQuadMesh.render();
 
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	lightCounter = 0;
@@ -272,83 +275,68 @@ void OGLFramework::renderImgui()
 
 OGLFramework::Shader* OGLFramework::getBaseShader()
 {
-	return this->baseShader;
+	return baseShader;
 }
 
 OGLFramework::Shader* OGLFramework::getBackShader()
 {
-	return this->backgroundShader;
-}
-
-GMesh* OGLFramework::createMesh(std::string filepath)
-{
-	return new OGLMesh(filepath);
-}
-
-GTexture* OGLFramework::createTexture(std::string filepath)
-{
-	return new OGLTexture(filepath);
+	return backgroundShader;
 }
 
 void OGLFramework::setDefaultTexture()
 {
-	GFramework::defaultTex->useTexture();
+	defaultTex.useTexture();
 }
 
 void OGLFramework::loadCamUniforms(Camera& camera)
 {
-	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "camMats.vMatrix"), 1, false, &camera.getViewMatrix()[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "camMats.pMatrix"), 1, false, &camera.getProjMatrix()[0].x);
-	glUniform3fv(glGetUniformLocation(GFramework::activeShader, "cam.pos"), 1, &camera.pos.x);
-	glUniform3fv(glGetUniformLocation(GFramework::activeShader, "cam.dir"), 1, &camera.dir.x);
+	glUniformMatrix4fv(glGetUniformLocation(activeShader, "camMats.vMatrix"), 1, false, &camera.getViewMatrix()[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(activeShader, "camMats.pMatrix"), 1, false, &camera.getProjMatrix()[0].x);
+	glUniform3fv(glGetUniformLocation(activeShader, "cam.pos"), 1, &camera.pos.x);
+	glUniform3fv(glGetUniformLocation(activeShader, "cam.dir"), 1, &camera.dir.x);
 }
 
 void OGLFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool material)
 {
-	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.mat"), 1, false, &mod.getModelMatrix(pData)[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.invMat"), 1, false, &mod.getInvModelMatrix(pData)[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.mat"), 1, false, &mod.getModelMatrix(pData)[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.invMat"), 1, false, &mod.getInvModelMatrix(pData)[0].x);
 	if (material)
 	{
-		glUniform1f(glGetUniformLocation(GFramework::activeShader, "mat.shininess"), mod.mat.shininess);
-		glUniform1f(glGetUniformLocation(GFramework::activeShader, "mat.emission"), mod.mat.emission);
+		glUniform1f(glGetUniformLocation(activeShader, "mat.shininess"), mod.mat.shininess);
+		glUniform1f(glGetUniformLocation(activeShader, "mat.emission"), mod.mat.emission);
 	}
 }
 
 void OGLFramework::setPostUniforms()
 {
-	glUniform1ui(glGetUniformLocation(GFramework::activeShader, "current"), postEffectsActive ? filmGrain.id : 0);
-	glUniform1f(glGetUniformLocation(GFramework::activeShader, "randomSeed"), filmGrain.nextNum);
-	glUniform1f(glGetUniformLocation(GFramework::activeShader, "grainIntensity"), filmGrain.intensity);
+	glUniform1ui(glGetUniformLocation(activeShader, "current"), postEffectsActive ? filmGrain.id : 0);
+	glUniform1f(glGetUniformLocation(activeShader, "randomSeed"), filmGrain.nextNum);
+	glUniform1f(glGetUniformLocation(activeShader, "grainIntensity"), filmGrain.intensity);
 	filmGrain.next();
-	glUniform1f(glGetUniformLocation(GFramework::activeShader, "mult"), postMult);
+	glUniform1f(glGetUniformLocation(activeShader, "mult"), postMult);
 }
 
 uint32_t OGLFramework::getImGuiTexture()
 {
-	return this->postTexture->texture;
+	return postTexture.texture;
 }
 
 void OGLFramework::resizeImGuiTextures()
 {
-	this->baseTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
-	this->baseDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
-	this->postTexture->resize(viewPortSize.x, viewPortSize.y, nullptr);
-	this->postDepth->resize(viewPortSize.x, viewPortSize.y, nullptr);
-}
-
-GCubeTexture* OGLFramework::createCubeTexture(uint32_t width, uint32_t height)
-{
-	return new OGLCubeTexture(width, height);
+	baseTexture.resize(viewPortSize.x, viewPortSize.y, nullptr);
+	baseDepth.resize(viewPortSize.x, viewPortSize.y, nullptr);
+	postTexture.resize(viewPortSize.x, viewPortSize.y, nullptr);
+	postDepth.resize(viewPortSize.x, viewPortSize.y, nullptr);
 }
 
 void OGLFramework::loadLightUniforms(Light& light, PhysicalData& parent)
 {
 	glm::vec3 pos = light.getLightpos(parent);
-	glUniform1f(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].constant").c_str()), light.constant);
-	glUniform1f(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].linear").c_str()), light.linear);
-	glUniform1f(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].quadratic").c_str()), light.quadratic);
-	glUniform3fv(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].position").c_str()), 1, &pos.x);
-	glUniform3fv(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].color").c_str()), 1, &light.color.x);
+	glUniform1f(glGetUniformLocation(activeShader, ("pLights[" + std::to_string(lightCounter) + "].constant").c_str()), light.constant);
+	glUniform1f(glGetUniformLocation(activeShader, ("pLights[" + std::to_string(lightCounter) + "].linear").c_str()), light.linear);
+	glUniform1f(glGetUniformLocation(activeShader, ("pLights[" + std::to_string(lightCounter) + "].quadratic").c_str()), light.quadratic);
+	glUniform3fv(glGetUniformLocation(activeShader, ("pLights[" + std::to_string(lightCounter) + "].position").c_str()), 1, &pos.x);
+	glUniform3fv(glGetUniformLocation(activeShader, ("pLights[" + std::to_string(lightCounter) + "].color").c_str()), 1, &light.color.x);
 	lightCounter++;
 }
 
@@ -356,19 +344,19 @@ void OGLFramework::prepareShader(ShaderType type)
 {
 	switch (type)
 	{
-	case SHADER_BACKGROUND:
+	case SHADER_BACK:
 		glUseProgram(backgroundShader->id);
-		GFramework::activeShader = backgroundShader->id;
+		activeShader = backgroundShader->id;
 		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
 		break;
 	case SHADER_BASE:
 		glUseProgram(baseShader->id);
-		GFramework::activeShader = baseShader->id;
+		activeShader = baseShader->id;
 		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
 		break;
 	case SHADER_POST:
 		glUseProgram(postShader->id);
-		GFramework::activeShader = postShader->id;
+		activeShader = postShader->id;
 		glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
 		break;
 	default: ;
@@ -398,7 +386,7 @@ uint32_t OGLFramework::Shader::loadShader(GLenum type, const std::string& file)
 	GLint success;
 
 	uint32_t shaderID = glCreateShader(type);
-	std::string src = GFramework::loadShaderSrc(file);
+	std::string src = loadShaderSrc(file);
 	const GLchar* shSrc = src.c_str();
 	glShaderSource(shaderID, 1, &shSrc, nullptr);
 	glCompileShader(shaderID);
@@ -433,4 +421,27 @@ void OGLFramework::Shader::linkProgram(uint32_t vs, uint32_t fs)
 		glDeleteShader(fs);
 		throw std::runtime_error("Error linking program");
 	}
+}
+
+std::string OGLFramework::loadShaderSrc(const std::string& file)
+{
+	std::string src;
+    std::fstream inFile;
+
+    inFile.open(file);
+    if (inFile.is_open())
+    {
+        std::string temp;
+        while (std::getline(inFile, temp))
+            src += temp + "\n";
+    }
+    else
+    {
+        SDLFramework::showErrorMessage(
+            "Could not load shader data", 
+            "Make sure the pak folder is not missing in the program folder");
+    	throw std::exception("Error loading shader");
+    }
+    inFile.close();
+    return src;
 }

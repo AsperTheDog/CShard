@@ -1,8 +1,13 @@
 #pragma once
 #include <string>
 
-#include "../GTexture.hpp"
 #include "../GraphicsHeader.hpp"
+
+enum TexType
+{
+	COLOR,
+	DEPTH
+};
 
 enum TextureOptions
 {
@@ -14,44 +19,51 @@ enum TextureOptions
 	MREPEAT = GL_MIRRORED_REPEAT
 };
 
-class OGLTexture final : public GTexture
+class OGLTexture final
 {
 public:
+	OGLTexture() = default;
 	explicit OGLTexture(
-		const std::string& path, 
+		const std::string& path,
 		TextureOptions min = MIPLINEAR,
-		TextureOptions mag = LINEAR, 
-		TextureOptions wrapS = REPEAT, 
+		TextureOptions mag = LINEAR,
+		TextureOptions wrapS = REPEAT,
 		TextureOptions wrapT = MREPEAT);
-	~OGLTexture() override;
-	
-	void useTexture() override;
-	void renderAsBackground() override;
+	~OGLTexture();
+
+	void commit(
+		const std::string& path,
+		TextureOptions min = MIPLINEAR,
+		TextureOptions mag = LINEAR,
+		TextureOptions wrapS = REPEAT,
+		TextureOptions wrapT = MREPEAT);
+	void useTexture();
+	void renderAsBackground();
 
 	uint32_t texture{};
+	std::string name;
 };
 
-class OGLEmptyTexture final : public GEmptyTexture
+class OGLEmptyTexture final
 {
 public:
+	OGLEmptyTexture() = default;
 	OGLEmptyTexture(
-		TexType type, uint32_t width, uint32_t height, 
+		TexType type, uint32_t width, uint32_t height,
 		TextureOptions min = LINEAR,
-		TextureOptions mag = LINEAR, 
-		TextureOptions wrapS = REPEAT, 
+		TextureOptions mag = LINEAR,
+		TextureOptions wrapS = REPEAT,
 		TextureOptions wrapT = REPEAT);
-	~OGLEmptyTexture() override;
+	~OGLEmptyTexture();
 
-	void resize(uint32_t width, uint32_t height, char* data) override;
-
-	uint32_t texture{};
-};
-
-class OGLCubeTexture final : public GCubeTexture
-{
-public:
-	explicit OGLCubeTexture(uint32_t width, uint32_t height);
-	~OGLCubeTexture() override;
+	void commit(
+		TexType type, uint32_t width, uint32_t height,
+		TextureOptions min = LINEAR,
+		TextureOptions mag = LINEAR,
+		TextureOptions wrapS = REPEAT,
+		TextureOptions wrapT = REPEAT);
+	void resize(uint32_t width, uint32_t height, char* data);
 
 	uint32_t texture{};
+	TexType type{};
 };

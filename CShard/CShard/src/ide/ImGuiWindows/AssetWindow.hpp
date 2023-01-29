@@ -4,9 +4,9 @@
 
 #include "../../Engine.hpp"
 
-#include "../../device/graphics/GTexture.hpp"
-#include "../../device/graphics/GMesh.hpp"
 #include "../../ResourceManager.hpp"
+#include "../../device/graphics/opengl/OGLMesh.hpp"
+#include "../../device/graphics/opengl/OGLTexture.hpp"
 
 class AssetWindow
 {
@@ -46,7 +46,7 @@ public:
 						ImGui::TableSetColumnIndex(0);
 						ImGui::Text("%d", mesh.first);
 						ImGui::TableSetColumnIndex(1);
-						ImGui::Text(mesh.second->name.c_str());
+						ImGui::Text(mesh.second.name.c_str());
 				    }
 				    ImGui::EndTable();
 					ImGui::EndTabItem();
@@ -62,7 +62,7 @@ public:
 						{
 							ResourceManager::addTexture(path);
 						}
-						catch (std::runtime_error)
+						catch (std::runtime_error&)
 						{
 							SDLFramework::showErrorMessage("Could not load texture", "Make sure the path is correct");
 						}
@@ -78,7 +78,7 @@ public:
 						ImGui::TableSetColumnIndex(0);
 						ImGui::Text("%d", tex.first);
 						ImGui::TableSetColumnIndex(1);
-						ImGui::Text(tex.second->name.c_str());
+						ImGui::Text(tex.second.name.c_str());
 				    }
 				    ImGui::EndTable();
 					ImGui::EndTabItem();

@@ -18,9 +18,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\device\graphics\GFramework.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ide\ImGuiManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,13 +51,7 @@
     <ClCompile Include="src\elements\components\Script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\device\graphics\GMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\device\graphics\opengl\OGLMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\device\graphics\GTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\device\graphics\opengl\OGLTexture.cpp">
@@ -72,29 +63,11 @@
     <ClCompile Include="src\elements\components\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\device\graphics\GShadowMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\device\graphics\opengl\OGLShadowMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\device\graphics\vulkan\VKFramework.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\device\graphics\vulkan\VKMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\device\graphics\vulkan\VKTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\device\graphics\GFramework.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ide\ImGuiManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -111,9 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\device\window\SDLFramework.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\device\graphics\GUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\device\graphics\opengl\OGLFramework.hpp">
@@ -143,13 +113,7 @@
     <ClInclude Include="src\elements\components\Script.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\device\graphics\GMesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\device\graphics\opengl\OGLMesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\device\graphics\GTexture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\device\graphics\opengl\OGLTexture.hpp">
@@ -173,12 +137,6 @@
     <ClInclude Include="src\elements\components\Light.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\device\graphics\GShadowMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\device\graphics\opengl\OGLShadowMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Config.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -189,15 +147,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ResourceManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\device\graphics\vulkan\VKFramework.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\device\graphics\vulkan\VKMesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\device\graphics\vulkan\VKTexture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

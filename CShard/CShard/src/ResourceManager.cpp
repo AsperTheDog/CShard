@@ -4,19 +4,19 @@
 #include <ranges>
 
 #include "elements/GameObject.hpp"
-#include "device/graphics/GFramework.hpp"
 #include "ide/ImGuiManager.hpp"
 #include "input/InputManager.hpp"
 
-#include "device/graphics/GTexture.hpp"
-#include "device/graphics/GMesh.hpp"
+#include "device/graphics/opengl/OGLFramework.hpp"
+#include "device/graphics/opengl/OGLMesh.hpp"
+#include "device/graphics/opengl/OGLTexture.hpp"
 
 
 void ResourceManager::init()
 {
 	sceneObjects = std::unordered_map<uint32_t, GameObject>();
-	meshes = std::unordered_map<uint32_t, GMesh*>();
-	textures = std::unordered_map<uint32_t, GTexture*>();
+	meshes = std::unordered_map<uint32_t, OGLMesh>();
+	textures = std::unordered_map<uint32_t, OGLTexture>();
 }
 
 void ResourceManager::reset()
@@ -42,25 +42,25 @@ void ResourceManager::load(std::ifstream& wf)
 	ResourceManager::meshes.reserve(num);
 	for (uint32_t i = 0; i < num; i++)
 	{
-		std::pair<uint32_t, GMesh*> elem;
-		wf.read((char*)&elem.first, sizeof(elem.first));
-		meshIDCount = std::max(elem.first, meshIDCount);
+		uint32_t id = 0;
+		wf.read((char*)&id, sizeof(id));
+		auto elem = meshes.emplace(id, OGLMesh()).first;
+		meshIDCount = std::max(elem->first, meshIDCount);
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
 		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem.second = GFramework::get()->createMesh(buff);
-		ResourceManager::meshes.insert(elem);
+		elem->second.commit(buff);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	ResourceManager::textures.reserve(num);
 	for (uint32_t i = 0; i < num; i++)
 	{
-		std::pair<uint32_t, GTexture*> elem;
-		wf.read((char*)&elem.first, sizeof(elem.first));
-		texIDCount = std::max(elem.first, texIDCount);
+		uint32_t id = 0;
+		wf.read((char*)&id, sizeof(id));
+		auto elem = textures.emplace(id, OGLTexture()).first;
+		texIDCount = std::max(elem->first, texIDCount);
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
 		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem.second = GFramework::get()->createTexture(buff);
-		ResourceManager::textures.insert(elem);
+		elem->second.commit(buff);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	ResourceManager::sceneObjects.reserve(num);
@@ -105,7 +105,7 @@ void ResourceManager::save(std::ofstream& wf)
 		uint32_t id = mesh.first;
 		wf.write((char*)&id, sizeof(id));
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		strcpy_s(buff,  sizeof(buff), mesh.second->name.c_str());
+		strcpy_s(buff,  sizeof(buff), mesh.second.name.c_str());
 		wf.write(buff, MAX_ASSET_NAME_LENGTH);
 	}
 	uint32_t texNum = (uint32_t)ResourceManager::textures.size();
@@ -115,7 +115,7 @@ void ResourceManager::save(std::ofstream& wf)
 		uint32_t id = tex.first;
 		wf.write((char*)&id, sizeof(id));
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		strcpy_s(buff, sizeof(buff), tex.second->name.c_str());
+		strcpy_s(buff, sizeof(buff), tex.second.name.c_str());
 		wf.write(buff, MAX_ASSET_NAME_LENGTH);
 	}
 	uint32_t objNum = (uint32_t)ResourceManager::sceneObjects.size();
@@ -167,21 +167,23 @@ uint32_t ResourceManager::addObject()
 uint32_t ResourceManager::addMesh(std::string& filepath)
 {
 	meshIDCount++;
-	meshes.emplace(meshIDCount, GFramework::get()->createMesh(filepath));
+	auto elem = meshes.emplace(meshIDCount, OGLMesh()).first;
+	elem->second.commit(filepath);
 	return meshIDCount;
 }
 
 uint32_t ResourceManager::addTexture(std::string& filepath)
 {
 	texIDCount++;
-	textures.emplace(texIDCount, GFramework::get()->createTexture(filepath));
+	auto elem = textures.emplace(texIDCount, OGLTexture()).first;
+	elem->second.commit(filepath);
 	return texIDCount;
 }
 
 void ResourceManager::removeObject(uint32_t id)
 {
 	if (!sceneObjects.contains(id)) return;
-	GFramework::lightSourceCount -= sceneObjects.at(id).lightCount;
+	OGLFramework::lightSourceCount -= sceneObjects.at(id).lightCount;
 	sceneObjects.erase(id);
 }
 
@@ -196,10 +198,10 @@ bool ResourceManager::isValidMesh(uint32_t id)
 	return meshes.contains(id);
 }
 
-GMesh* ResourceManager::getMesh(uint32_t id)
+OGLMesh* ResourceManager::getMesh(uint32_t id)
 {
 	if (!isValidMesh(id)) return nullptr;
-	return meshes.at(id);
+	return &meshes.at(id);
 }
 
 bool ResourceManager::isValidTexture(uint32_t id)
@@ -207,10 +209,10 @@ bool ResourceManager::isValidTexture(uint32_t id)
 	return textures.contains(id);
 }
 
-GTexture* ResourceManager::getTexture(uint32_t id)
+OGLTexture* ResourceManager::getTexture(uint32_t id)
 {
 	if (!isValidTexture(id)) return nullptr;
-	return textures.at(id);
+	return &textures.at(id);
 }
 
 void ResourceManager::clone(uint32_t index)

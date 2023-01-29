@@ -31,7 +31,7 @@ void ImGuiManager::init()
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
-    GFramework::get()->loadImGuiBackends();
+    OGLFramework::loadImGuiBackends();
 	navigationCam = Camera();
 	keyDowns.emplace(SDLK_w, false);
 	keyDowns.emplace(SDLK_a, false);
@@ -43,7 +43,7 @@ void ImGuiManager::init()
 
 void ImGuiManager::newFrame()
 {
-    GFramework::get()->loadImGuiFrame();
+    OGLFramework::loadImGuiFrame();
 }
 
 void ImGuiManager::render()
@@ -129,7 +129,7 @@ void ImGuiManager::render()
 	    ImGui::End();
 	}
     ImGui::Render();
-    GFramework::get()->renderImgui();
+    OGLFramework::renderImgui();
 }
 
 void ImGuiManager::update()
@@ -147,7 +147,7 @@ void ImGuiManager::update()
 
 void ImGuiManager::destroy()
 {
-    GFramework::get()->destroyImGui();
+    OGLFramework::destroyImGui();
 }
 
 ImGuiIO* ImGuiManager::getIO()

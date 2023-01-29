@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 
-#include "device/graphics/GUtils.hpp"
 #include "elements/GameObject.hpp"
 #include "elements/components/Camera.hpp"
 
@@ -14,7 +13,7 @@ class Engine
 public:
 	Engine() = delete;
 
-	static void init(GLibraries lib, bool isIDE, char* initFileName = nullptr);
+	static void init(bool isIDE, char* initFileName = nullptr);
 	static void run();
 	static void shutDown();
 	static void compileProject(const std::string& name);

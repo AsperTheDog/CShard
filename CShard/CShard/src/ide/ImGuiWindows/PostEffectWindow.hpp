@@ -1,8 +1,6 @@
 #pragma once
-#include <cstdint>
 
 #include "imgui.h"
-#include "../../device/graphics/GFramework.hpp"
 
 class PostEffectWindow
 {
@@ -12,11 +10,11 @@ public:
 		if (!*isOpen) return;
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
 		ImGui::Begin("Post Effects", isOpen, windowFlags);
-		ImGui::Checkbox("Activate Post Effects", &GFramework::postEffectsActive);
-		ImGui::DragFloat("Color multiplier", &GFramework::postMult, 0.01f, 0.f, 1.f);
+		ImGui::Checkbox("Activate Post Effects", &OGLFramework::postEffectsActive);
+		ImGui::DragFloat("Color multiplier", &OGLFramework::postMult, 0.01f, 0.f, 1.f);
 		ImGui::Separator();
 		ImGui::Text("Film Grain");
-		ImGui::DragFloat("Intensity", &GFramework::filmGrain.intensity, 0.01f, 0.01f, 1.f);
+		ImGui::DragFloat("Intensity", &OGLFramework::filmGrain.intensity, 0.01f, 0.01f, 1.f);
 		ImGui::End();
 	}
 

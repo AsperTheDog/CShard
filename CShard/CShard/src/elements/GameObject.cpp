@@ -2,8 +2,7 @@
 
 #include <fstream>
 #include <iostream>
-
-#include "../device/graphics/GFramework.hpp"
+#include "../device/graphics/opengl/OGLFramework.hpp"
 
 ComponentUnion::ComponentUnion()
 {
@@ -94,7 +93,7 @@ void GameObject::addComponent(Component& comp)
 	case COMPONENT_LIGHT:
 		comp.value.li = Light();
 		lightCount++;
-		GFramework::lightSourceCount++;
+		OGLFramework::lightSourceCount++;
 		break;
 	case COMPONENT_BACKGROUND: 
 		comp.value.back = Background();
@@ -109,7 +108,7 @@ void GameObject::insertComponent(Component& comp)
 	if (comp.type == COMPONENT_LIGHT)
 	{
 		lightCount++;
-		GFramework::lightSourceCount++;
+		OGLFramework::lightSourceCount++;
 	}
 	else if (comp.type == COMPONENT_BACKGROUND) 
 		hasBackground = true;
@@ -123,7 +122,7 @@ std::vector<Component>::iterator GameObject::removeComponent(std::vector<Compone
 	if (it->type == COMPONENT_BACKGROUND) hasBackground = false;
 	else if (it->type == COMPONENT_LIGHT) {
 		lightCount--;
-		GFramework::lightSourceCount--;
+		OGLFramework::lightSourceCount--;
 	}
 	return this->components.erase(it);
 }
@@ -141,27 +140,27 @@ void GameObject::processScript()
 void GameObject::processBackground()
 {
 	if (!show || !hasBackground) return;
-	GFramework::get()->prepareShader(SHADER_BACKGROUND);
+	OGLFramework::prepareShader(SHADER_BACK);
 	components[0].value.back.render();
 }
 
 void GameObject::processLights()
 {
 	if (!show || lightCount == 0) return;
-	GFramework::get()->prepareShader(SHADER_BASE);
+	OGLFramework::prepareShader(SHADER_BASE);
 
 	for (auto& comp : components)
 	{
 		if (comp.type != COMPONENT_LIGHT) continue;
 	
-		GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
+		OGLFramework::loadLightUniforms(comp.value.li, this->modelData);
 	}
 }
 
 void GameObject::processModels()
 {
 	if (!show) return;
-	GFramework::get()->prepareShader(SHADER_BASE);
+	OGLFramework::prepareShader(SHADER_BASE);
 	for (auto& comp : components) 
 	{
 		if (comp.type != COMPONENT_MODEL) continue;
@@ -193,5 +192,5 @@ void GameObject::changeScale(glm::vec3 scale)
 void GameObject::toggleActive()
 {
 	show = !show;
-	GFramework::lightSourceCount += (show ? 1 : -1) * lightCount;
+	OGLFramework::lightSourceCount += (show ? 1 : -1) * lightCount;
 }
