@@ -13,9 +13,9 @@ Model::Model()
 {
 }
 
-void Model::render()
+void Model::render(bool material)
 {
-	GFramework::get()->loadModelUniforms(*this);
+	GFramework::get()->loadModelUniforms(*this, material);
 
 	if (Engine::isValidTexture(textureID))
 		Engine::getTexture(textureID)->useTexture();

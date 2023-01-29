@@ -14,7 +14,8 @@ class Model
 public:
 	explicit Model();
 
-	void render();
+	void render(bool material);
+	void renderForShadows();
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
@@ -33,6 +34,7 @@ public:
 	glm::mat4 modelMatrix{};
 	glm::mat4 invModelMatrix{};
 	bool cullFace = true;
+	bool castShadows = true;
 private:
 };
 

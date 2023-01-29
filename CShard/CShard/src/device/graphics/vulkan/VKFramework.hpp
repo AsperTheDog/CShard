@@ -8,7 +8,7 @@ public:
 
 	void initRender() override;
 	void endRender() override;
-	void resizeWindow(int width, int height) override;
+	void resizeWindow() override;
 
 	void loadImGuiBackends() override;
 	void loadImGuiFrame() override;
@@ -20,10 +20,12 @@ public:
 
 	void setDefaultTexture() override;
 	void loadCamUniforms(Camera& camera) override;
-	void loadModelUniforms(Model& mod) override;
+	void loadModelUniforms(Model& mod, bool material) override;
 	uint32_t getImGuiTexture() override;
 	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
 	void loadLightUniforms(Light& light, PhysicalData&) override;
 	void setPostUniforms() override;
+	void prepareShader(ShaderType type) override;
+	GShadowMap* createShadowMap(uint32_t size) override;
 };
 

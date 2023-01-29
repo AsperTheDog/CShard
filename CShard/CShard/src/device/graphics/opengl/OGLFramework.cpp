@@ -8,6 +8,7 @@
 #include <backends/imgui_impl_sdl.h>
 
 #include "OGLMesh.hpp"
+#include "OGLShadowMap.hpp"
 #include "OGLTexture.hpp"
 #include "../../../ide/ImGuiManager.hpp"
 #include "../../../Engine.hpp"
@@ -143,11 +144,12 @@ OGLFramework::OGLFramework()
 
 	{
 		glm::ivec2 size = SDLFramework::getSize();
-		OGLFramework::resizeWindow(size.x, size.y);
+		OGLFramework::resizeWindow();
 	}
 
 	glDebugMessageCallback((GLDEBUGPROC)openGLDebugCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, false);
 	glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, 0, nullptr, false);
 
 #ifndef NDEBUG
@@ -171,6 +173,7 @@ OGLFramework::OGLFramework()
 	this->baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	this->backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
 	this->postShader = new Shader(POST_VERTEX_LOCATION, POST_FRAGMENT_LOCATION);
+	this->shadowShader = new Shader(SHADOW_VERTEX_LOCATION, SHADOW_FRAGMENT_LOCATION);
 
 	this->baseTexture = new OGLEmptyTexture(COLOR, 1920, 1080);
 	this->baseDepth = new OGLEmptyTexture(DEPTH, 1920, 1080);
@@ -212,7 +215,7 @@ void OGLFramework::initRender()
 		{
 			viewPortSize = imGuiSize;
 			this->resizeImGuiTextures();
-			OGLFramework::resizeWindow(viewPortSize.x, viewPortSize.y);
+			OGLFramework::resizeWindow();
 			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
 	}
@@ -224,13 +227,13 @@ void OGLFramework::initRender()
 
 void OGLFramework::endRender()
 {
+	prepareShader(SHADER_POST);
 	this->setPostUniforms();
-
 	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
-	
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, this->baseTexture->texture);
 	GFramework::fullQuadMesh->render();
+
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	lightCounter = 0;
 }
@@ -289,6 +292,11 @@ GTexture* OGLFramework::createTexture(std::string filepath)
 	return new OGLTexture(filepath);
 }
 
+GShadowMap* OGLFramework::createShadowMap(uint32_t size)
+{
+	return new OGLShadowMap(size);
+}
+
 void OGLFramework::setDefaultTexture()
 {
 	GFramework::defaultTex->useTexture();
@@ -296,30 +304,30 @@ void OGLFramework::setDefaultTexture()
 
 void OGLFramework::loadCamUniforms(Camera& camera)
 {
-	glUseProgram(this->baseShader->id);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "camMats.vMatrix"), 1, false, &camera.getViewMatrix()[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "camMats.pMatrix"), 1, false, &camera.getProjMatrix()[0].x);
-	glUniform3fv(glGetUniformLocation(this->baseShader->id, "cam.pos"), 1, &camera.pos.x);
-	glUniform3fv(glGetUniformLocation(this->baseShader->id, "cam.dir"), 1, &camera.dir.x);
+	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "camMats.vMatrix"), 1, false, &camera.getViewMatrix()[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "camMats.pMatrix"), 1, false, &camera.getProjMatrix()[0].x);
+	glUniform3fv(glGetUniformLocation(GFramework::activeShader, "cam.pos"), 1, &camera.pos.x);
+	glUniform3fv(glGetUniformLocation(GFramework::activeShader, "cam.dir"), 1, &camera.dir.x);
 }
 
-void OGLFramework::loadModelUniforms(Model& mod)
+void OGLFramework::loadModelUniforms(Model& mod, bool material)
 {
-	glUseProgram(this->baseShader->id);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "model.mat"), 1, false, &mod.modelMatrix[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(this->baseShader->id, "model.invMat"), 1, false, &mod.invModelMatrix[0].x);
-	glUniform1f(glGetUniformLocation(this->baseShader->id, "mat.shininess"), mod.mat.shininess);
-	glUniform1f(glGetUniformLocation(this->baseShader->id, "mat.emission"), mod.mat.emission);
+	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.mat"), 1, false, &mod.modelMatrix[0].x);
+	glUniformMatrix4fv(glGetUniformLocation(GFramework::activeShader, "model.invMat"), 1, false, &mod.invModelMatrix[0].x);
+	if (material)
+	{
+		glUniform1f(glGetUniformLocation(GFramework::activeShader, "mat.shininess"), mod.mat.shininess);
+		glUniform1f(glGetUniformLocation(GFramework::activeShader, "mat.emission"), mod.mat.emission);
+	}
 }
 
 void OGLFramework::setPostUniforms()
 {
-	glUseProgram(this->postShader->id);
-	glUniform1ui(glGetUniformLocation(this->postShader->id, "current"), postEffectsActive ? filmGrain.id : 0);
-	glUniform1f(glGetUniformLocation(this->postShader->id, "randomSeed"), filmGrain.nextNum);
-	glUniform1f(glGetUniformLocation(this->postShader->id, "grainIntensity"), filmGrain.intensity);
+	glUniform1ui(glGetUniformLocation(GFramework::activeShader, "current"), postEffectsActive ? filmGrain.id : 0);
+	glUniform1f(glGetUniformLocation(GFramework::activeShader, "randomSeed"), filmGrain.nextNum);
+	glUniform1f(glGetUniformLocation(GFramework::activeShader, "grainIntensity"), filmGrain.intensity);
 	filmGrain.next();
-	glUniform1f(glGetUniformLocation(this->postShader->id, "mult"), postMult);
+	glUniform1f(glGetUniformLocation(GFramework::activeShader, "mult"), postMult);
 }
 
 uint32_t OGLFramework::getImGuiTexture()
@@ -343,18 +351,44 @@ GCubeTexture* OGLFramework::createCubeTexture(uint32_t width, uint32_t height)
 void OGLFramework::loadLightUniforms(Light& light, PhysicalData& parent)
 {
 	glm::vec3 pos = light.getLightpos(parent);
-	glUseProgram(this->baseShader->id);
-	glUniform1f(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].constant").c_str()), light.constant);
-	glUniform1f(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].linear").c_str()), light.linear);
-	glUniform1f(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].quadratic").c_str()), light.quadratic);
-	glUniform3fv(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].position").c_str()), 1, &pos.x);
-	glUniform3fv(glGetUniformLocation(this->baseShader->id, ("pLights[" + std::to_string(lightCounter) + "].color").c_str()), 1, &light.color.x);
+	glUniform1f(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].constant").c_str()), light.constant);
+	glUniform1f(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].linear").c_str()), light.linear);
+	glUniform1f(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].quadratic").c_str()), light.quadratic);
+	glUniform3fv(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].position").c_str()), 1, &pos.x);
+	glUniform3fv(glGetUniformLocation(GFramework::activeShader, ("pLights[" + std::to_string(lightCounter) + "].color").c_str()), 1, &light.color.x);
 	lightCounter++;
 }
 
-void OGLFramework::resizeWindow(int width, int height)
+void OGLFramework::prepareShader(ShaderType type)
 {
-	glViewport(0, 0, width, height);
+	switch (type)
+	{
+	case SHADER_BACKGROUND:
+		glUseProgram(backgroundShader->id);
+		GFramework::activeShader = backgroundShader->id;
+		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
+		break;
+	case SHADER_BASE:
+		glUseProgram(baseShader->id);
+		GFramework::activeShader = baseShader->id;
+		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
+		break;
+	case SHADER_POST:
+		glUseProgram(postShader->id);
+		GFramework::activeShader = postShader->id;
+		glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
+		break;
+	case SHADER_SHADOW:
+		glUseProgram(shadowShader->id);
+		GFramework::activeShader = shadowShader->id;
+		break;
+	default: ;
+	}
+}
+
+void OGLFramework::resizeWindow()
+{
+	glViewport(0, 0, viewPortSize.x, viewPortSize.y);
 }
 
 OGLFramework::Shader::Shader(const std::string& vertex, const std::string& fragment)

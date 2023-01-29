@@ -18,6 +18,8 @@ BackGMesh* GFramework::fullQuadMesh;
 void GFramework::create(GLibraries lib)
 {
     GFramework::type = lib;
+    GFramework::shadowMapCam.updateAspectRatio(1.f);
+    GFramework::shadowMapCam.changeLense(90.f);
 	switch(lib)
 	{
 	case OPENGL:

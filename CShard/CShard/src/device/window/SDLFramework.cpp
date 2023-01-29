@@ -127,7 +127,7 @@ std::vector<SDL_Event> SDLFramework::getEvents(std::unordered_set<uint32_t>& sub
             int width, height;
             SDL_GetWindowSize(SDLFramework::getWindow(), &width, &height);
             aspectRatio = (float)width / (float)height;
-	        GFramework::get()->resizeWindow(width, height);
+	        GFramework::get()->resizeWindow();
         }
         if (subscribedTypes.contains(event.type))
 			events.push_back(event);

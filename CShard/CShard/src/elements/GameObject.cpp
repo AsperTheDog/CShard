@@ -41,13 +41,13 @@ void GameObject::addComponent(Component& comp)
 	case COMPONENT_LIGHT:
 		comp.value.li = Light();
 		lightCount++;
+		GFramework::lightSourceCount++;
 		break;
 	case COMPONENT_BACKGROUND: 
 		comp.value.back = Background();
 		hasBackground = true;
 		break;
 	}
-	GFramework::lightSourceCount += lightCount;
 	this->components.push_back(comp);
 }
 
@@ -85,26 +85,56 @@ void GameObject::processScript()
 
 }
 
+void GameObject::processBackground()
+{
+	if (!show) return;
+	GFramework::get()->prepareShader(SHADER_BACKGROUND);
+	for (auto& comp : components) 
+	{
+		if (comp.type == COMPONENT_BACKGROUND) comp.value.back.render();
+	}
+}
+
 void GameObject::processLights()
 {
 	if (!show) return;
+	uint32_t index = 0;
 	for (auto& comp : components)
 	{
-		if (comp.type == COMPONENT_LIGHT)
-			GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
+		if (comp.type != COMPONENT_LIGHT) continue;
+	
+		comp.value.li.reloadShadowMap(index, this->modelData);
+		GFramework::get()->prepareShader(SHADER_BASE);
+		GFramework::get()->loadLightUniforms(comp.value.li, this->modelData);
+		++index;
 	}
 }
 
 void GameObject::processRender()
 {
 	if (!show) return;
+	GFramework::get()->prepareShader(SHADER_BASE);
 	for (auto& comp : components) 
 	{
-		if (comp.type == COMPONENT_BACKGROUND) comp.value.back.render();
-		else if (comp.type == COMPONENT_MODEL)
+		if (comp.type == COMPONENT_MODEL)
 		{
 			comp.value.mod.calculateMatrix(modelData);
-			comp.value.mod.render();
+			comp.value.mod.render(true);
+		}
+	}
+
+	modelData.changed = false;
+}
+
+void GameObject::processShadow()
+{
+	if (!show) return;
+	for (auto& comp : components) 
+	{
+		if (comp.type == COMPONENT_MODEL && comp.value.mod.castShadows)
+		{
+			comp.value.mod.calculateMatrix(modelData);
+			comp.value.mod.render(false);
 		}
 	}
 

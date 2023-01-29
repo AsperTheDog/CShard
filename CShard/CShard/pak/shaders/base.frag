@@ -6,6 +6,7 @@ layout (location = 2) in vec3 normal;
 
 layout(binding = 0) uniform sampler2D tex;
 
+
 layout (location = 0) out vec4 outColor;
 
 struct PointLight { 
@@ -31,10 +32,29 @@ uniform PointLight pLights[20];
 uniform Camera cam;
 uniform Material mat;
 uniform uint lightNum;
+uniform samplerCubeShadow shadowMaps[20];
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 camDir)
+#define EPSILON 0.1
+#define zFar 100000.0
+#define zNear 0.1
+
+float getShadow(uint index, vec3 lightDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    float z_b  = texture(shadowMaps[index], vec4(-lightDir, 1.0));
+    float z_n = 2.0 * z_b - 1.0;
+    float depth = 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
+    float dist = length(lightDir);
+    
+    if (depth >= dist)
+        return 0.1;
+    else
+        return 1.0;
+}
+
+vec3 CalcPointLight(uint index, vec3 normal, vec3 camDir)
+{
+    PointLight light = pLights[index];
+    vec3 lightDir = normalize(light.position - pos);
     vec3 reflectDir = reflect(-lightDir, normal);
     
     float amb = mat.emission;
@@ -42,7 +62,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 camDir)
     vec3 halfV = normalize(lightDir + camDir);
     float spec = pow(max(dot(normal, halfV), 0.0), mat.shininess * 4);
     
-    float distance = length(light.position - fragPos);
+    float shadowContr = getShadow(index, light.position - pos);
+
+    float distance = length(light.position - pos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     
     vec3 color = texture(tex, texCoords).xyz;
@@ -51,7 +73,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 camDir)
     vec3 diffuse = (light.color * diff * color) * attenuation;
     vec3 specular = (light.color * spec * color) * attenuation;
 
-    return (ambient + diffuse + specular);
+    return (ambient + shadowContr * (diffuse + specular));
 }
 
 void main() {
@@ -62,7 +84,7 @@ void main() {
     vec3 result = vec3(0.0, 0.0, 0.0);
     vec4 amb = texture(tex, texCoords) * mat.emission;
 
-    for(int i = 0; i < lightNum; i++)
-        result += CalcPointLight(pLights[i], norm, pos, viewDir);
+    for(uint i = 0; i < lightNum; i++)
+        result += CalcPointLight(i, norm, viewDir);
     outColor = max(vec4(result, alpha), amb);
 }

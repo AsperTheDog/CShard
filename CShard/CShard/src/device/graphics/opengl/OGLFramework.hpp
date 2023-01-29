@@ -29,7 +29,7 @@ public:
 
 	void initRender() override;
 	void endRender() override;
-	void resizeWindow(int width, int height) override;
+	void resizeWindow() override;
 
 	void loadImGuiBackends() override;
 	void loadImGuiFrame() override;
@@ -41,19 +41,22 @@ public:
 
 	GMesh* createMesh(std::string filepath) override;
 	GTexture* createTexture(std::string filepath) override;
+	GShadowMap* createShadowMap(uint32_t size) override;
 
 	void setDefaultTexture() override;
 	void loadCamUniforms(Camera& camera) override;
-	void loadModelUniforms(Model& mod) override;
+	void loadModelUniforms(Model& mod, bool material) override;
 	void setPostUniforms() override;
 	uint32_t getImGuiTexture() override;
 	void resizeImGuiTextures();
 	GCubeTexture* createCubeTexture(uint32_t width, uint32_t height) override;
 	void loadLightUniforms(Light& light, PhysicalData& parent) override;
+	void prepareShader(ShaderType type) override;
 
 	Shader* baseShader = nullptr;
 	Shader* backgroundShader = nullptr;
 	Shader* postShader = nullptr;
+	Shader* shadowShader = nullptr;
 private:
 	uint16_t lightCounter = 0;
 	SDL_GLContext gl_context = nullptr;

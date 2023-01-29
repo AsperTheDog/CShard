@@ -120,10 +120,7 @@ void Engine::compileProject(const std::string& name)
 
 void Engine::loadProject(std::string filename)
 {
-	InputManager::inputMappings.clear();
-	Engine::sceneObjects.clear();
-	Engine::meshes.clear();
-	Engine::textures.clear();
+	resetProject();
 	std::ifstream wf("pak/projects/" + filename + ".srdproj", std::ios::in | std::ios::binary);
 	if (!wf) {
 		SDLFramework::showErrorMessage("Could not load project", "Could not read save file");
@@ -182,6 +179,7 @@ void Engine::loadProject(std::string filename)
 			if (comp.type == COMPONENT_BACKGROUND) obj.hasBackground = true;
 			else if (comp.type == COMPONENT_LIGHT)
 			{
+				comp.value.li.shadowMap = GFramework::get()->createShadowMap(1024);
 				GFramework::lightSourceCount++;
 				obj.lightCount++;
 			}
@@ -199,6 +197,7 @@ void Engine::resetProject()
 	Engine::sceneObjects.clear();
 	Engine::meshes.clear();
 	Engine::textures.clear();
+	GFramework::lightSourceCount = 0;
 }
 
 uint32_t Engine::addObject()
@@ -273,6 +272,15 @@ void Engine::clone(uint32_t index)
 	Engine::sceneObjects.emplace(IDManager, newObj);
 }
 
+void Engine::renderShadow()
+{
+	GFramework::get()->loadCamUniforms(GFramework::shadowMapCam);
+	for (auto& obj : sceneObjects | std::views::values)
+	{
+		if (!obj.hasBackground) obj.processShadow();
+	}
+}
+
 void Engine::updateDeltaTime()
 {
 	uint64_t now = SDLFramework::getWindowTime();
@@ -290,12 +298,13 @@ void Engine::event()
 
 void Engine::render()
 {
+	GFramework::get()->prepareShader(SHADER_BASE);
 	GFramework::get()->loadCamUniforms(*Engine::activeCam);
 
 	GFramework::get()->initRender();
 	for (auto& obj : sceneObjects | std::views::values)
 	{
-		if (obj.hasBackground) obj.processRender();
+		if (obj.hasBackground) obj.processBackground();
 	}
 	for (auto& obj : sceneObjects | std::views::values)
 	{

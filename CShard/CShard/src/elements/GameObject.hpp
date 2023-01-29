@@ -4,6 +4,8 @@
 #include <vector>
 #include "PhysicalData.hpp"
 
+#include "../Config.hpp"
+
 #include "components/Background.hpp"
 #include "components/Camera.hpp"
 #include "components/Collider.hpp"
@@ -55,7 +57,9 @@ public:
 
 	void processCollision();
 	void processScript();
+	void processBackground();
 	void processRender();
+	void processShadow();
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
@@ -63,7 +67,7 @@ public:
 	void processLights();
 	void toggleActive();
 
-	char name[20]{};
+	char name[MAX_OBJ_NAME_LENGTH]{};
 	std::vector<Component> components;
 	uint32_t lightCount = 0;
 	bool hasBackground = false;
