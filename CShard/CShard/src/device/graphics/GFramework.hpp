@@ -52,7 +52,7 @@ public:
 
 	static void setDefaultTexture();
 	static void loadCamUniforms(Camera& camera);
-	static void loadModelUniforms(Model& mod, PhysicalData& pData, bool material);
+	static void loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pData, bool material);
 	static void setPostUniforms();
 	static uint32_t getImGuiTexture();
 	static void resizeImGuiTextures();

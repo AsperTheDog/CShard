@@ -1,4 +1,5 @@
 #include "Script.hpp"
+#include "../../engine/Config.hpp"
 
 Script::Script()
 {
@@ -6,12 +7,12 @@ Script::Script()
 
 void Script::serialize(std::ofstream& wf)
 {
-	uint8_t tmp = 0;
-	wf.write((char*) &tmp, sizeof(uint8_t));
+	wf.write((char*) &type, sizeof(type));
+	wf.write((char*) &scriptID, sizeof(scriptID));
 }
 
 void Script::deserialize(std::ifstream& wf)
 {
-	uint8_t tmp;
-	wf.read((char*) &tmp, sizeof(uint8_t));
+	wf.read((char*) &type, sizeof(type));
+	wf.read((char*) &scriptID, sizeof(scriptID));
 }

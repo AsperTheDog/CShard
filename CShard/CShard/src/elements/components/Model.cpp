@@ -10,9 +10,9 @@ Model::Model()
 {
 }
 
-void Model::render(PhysicalData& pData, bool material)
+void Model::render(PhysicalData& pData, bool material, Camera& cam)
 {
-	GFramework::loadModelUniforms(*this, pData, material);
+	GFramework::loadModelUniforms(cam, *this, pData, material);
 
 	if (ResourceManager::isValidTexture(textureID))
 		ResourceManager::getTexture(textureID)->useTexture();

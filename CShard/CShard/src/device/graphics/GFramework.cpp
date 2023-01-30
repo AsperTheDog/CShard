@@ -290,16 +290,16 @@ void GFramework::setDefaultTexture()
 
 void GFramework::loadCamUniforms(Camera& camera)
 {
-	glUniformMatrix4fv(glGetUniformLocation(activeShader, "camMats.vMatrix"), 1, false, &camera.getViewMatrix()[0].x);
-	glUniformMatrix4fv(glGetUniformLocation(activeShader, "camMats.pMatrix"), 1, false, &camera.getProjMatrix()[0].x);
 	glUniform3fv(glGetUniformLocation(activeShader, "cam.pos"), 1, &camera.pos.x);
 	glUniform3fv(glGetUniformLocation(activeShader, "cam.dir"), 1, &camera.dir.x);
 }
 
-void GFramework::loadModelUniforms(Model& mod, PhysicalData& pData, bool material)
+void GFramework::loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pData, bool material)
 {
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.mat"), 1, false, &mod.getModelMatrix(pData)[0].x);
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.invMat"), 1, false, &mod.getInvModelMatrix(pData)[0].x);
+	glm::mat4 mvpMat = camera.getProjMatrix() * camera.getViewMatrix() * mod.getModelMatrix(pData);
+	glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVPmat"), 1, false, &mvpMat[0].x);
 	if (material)
 	{
 		glUniform1f(glGetUniformLocation(activeShader, "mat.shininess"), mod.mat.shininess);

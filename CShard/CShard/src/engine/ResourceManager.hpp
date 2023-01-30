@@ -16,7 +16,7 @@ public:
 
 	static void backgroundPass();
 	static void lightPass();
-	static void modelPass();
+	static void modelPass(Camera& cam);
 
 	static uint32_t addObject();
 	static uint32_t addMesh(std::string& filepath);

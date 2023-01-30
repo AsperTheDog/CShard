@@ -195,7 +195,7 @@ void ImGuiManager::showCreateModal()
     {
         ImGui::Text("Do you want to save the current project?");
         ImGui::Separator();
-		ImGui::InputText("##currProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::InputText("##currProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
         if (ImGui::Button("Save", ImVec2(90, 0)))
         {
@@ -231,7 +231,7 @@ void ImGuiManager::showLoadModal()
     {
         ImGui::Text("Insert the name of the project");
         ImGui::Separator();
-		ImGui::InputText("##loadProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::InputText("##loadProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
         if (ImGui::Button("OK", ImVec2(120, 0)))
         {
@@ -259,7 +259,7 @@ void ImGuiManager::showSaveModal()
     {
         ImGui::Text("Set a name for the project");
         ImGui::Separator();
-		ImGui::InputText("##saveProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::InputText("##saveProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
         if (ImGui::Button("OK", ImVec2(120, 0)))
         {
@@ -287,7 +287,7 @@ void ImGuiManager::showExitModal()
 	{
 		ImGui::Text("Do you want to save before quitting?");
 		ImGui::Separator();
-		ImGui::InputText("##currProjectName", nameBuff, MAX_OBJ_NAME_LENGTH);
+		ImGui::InputText("##currProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
 		if (ImGui::Button("Save", ImVec2(90, 0)))
 		{

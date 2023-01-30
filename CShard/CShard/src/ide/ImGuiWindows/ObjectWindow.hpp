@@ -32,7 +32,7 @@ public:
 			}
 
 			ImGui::SameLine();
-			char buf[MAX_OBJ_NAME_LENGTH + 6];
+			char buf[MAX_PATH_NAME_LENGTH + 6];
 			sprintf_s(buf, "%d: %s", objElem.first, objElem.second.name);
 			if (objElem.second.hasBackground) 
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(50,255,50,255));

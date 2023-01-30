@@ -66,8 +66,8 @@ void ResourceManager::load(std::ifstream& wf)
 		uint32_t id = 0;
 		wf.read((char*)&id, sizeof(id));
 		objIDCount = std::max(id, objIDCount);
-		char buff[MAX_OBJ_NAME_LENGTH] = "";
-		wf.read(buff, MAX_OBJ_NAME_LENGTH);
+		char buff[MAX_PATH_NAME_LENGTH] = "";
+		wf.read(buff, MAX_PATH_NAME_LENGTH);
 		GameObject obj{ buff };
 		wf.read((char*)&obj.modelData, sizeof(obj.modelData));
 		obj.modelData.changed = true;
@@ -120,7 +120,7 @@ void ResourceManager::save(std::ofstream& wf)
 	for (auto& obj : ResourceManager::sceneObjects) {
 		uint32_t id = obj.first;
 		wf.write((char*)&id, sizeof(id));
-		wf.write(obj.second.name, MAX_OBJ_NAME_LENGTH);
+		wf.write(obj.second.name, MAX_PATH_NAME_LENGTH);
 		wf.write((char*)&obj.second.modelData, sizeof(obj.second.modelData));
 		uint32_t components = (uint32_t)obj.second.components.size();
 		wf.write((char*)&components, sizeof(components));
@@ -146,11 +146,11 @@ void ResourceManager::lightPass()
 	}
 }
 
-void ResourceManager::modelPass()
+void ResourceManager::modelPass(Camera& cam)
 {
 	for (auto& obj : sceneObjects | std::views::values)
 	{
-		if (!obj.hasBackground) obj.processModels();
+		if (!obj.hasBackground) obj.processModels(cam);
 	}
 }
 

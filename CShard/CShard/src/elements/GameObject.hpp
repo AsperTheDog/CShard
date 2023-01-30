@@ -63,7 +63,7 @@ public:
 	void processCollision();
 	void processScript();
 	void processBackground();
-	void processModels();
+	void processModels(Camera& cam);
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);
@@ -71,7 +71,7 @@ public:
 	void processLights();
 	void toggleActive();
 
-	char name[MAX_OBJ_NAME_LENGTH]{};
+	char name[MAX_PATH_NAME_LENGTH]{};
 	std::vector<Component> components;
 	uint32_t lightCount = 0;
 	bool hasBackground = false;

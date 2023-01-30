@@ -157,7 +157,7 @@ void GameObject::processLights()
 	}
 }
 
-void GameObject::processModels()
+void GameObject::processModels(Camera& cam)
 {
 	if (!show) return;
 	GFramework::prepareShader(SHADER_BASE);
@@ -165,7 +165,7 @@ void GameObject::processModels()
 	{
 		if (comp.type != COMPONENT_MODEL) continue;
 		
-		comp.value.mod.render(modelData, true);
+		comp.value.mod.render(modelData, true, cam);
 	}
 
 	modelData.changed = false;

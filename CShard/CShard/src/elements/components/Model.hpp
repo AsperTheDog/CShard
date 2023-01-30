@@ -3,6 +3,7 @@
 #include <glm.hpp>
 
 #include "../PhysicalData.hpp"
+#include "Camera.hpp"
 
 struct Material
 {
@@ -15,7 +16,7 @@ class Model
 public:
 	explicit Model();
 
-	void render(PhysicalData& pData, bool material);
+	void render(PhysicalData& pData, bool material, Camera& cam);
 
 	void changePosition(glm::vec3 pos);
 	void changeRotation(glm::vec3 rot);

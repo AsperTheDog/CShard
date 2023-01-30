@@ -27,7 +27,7 @@ public:
 			ImGui::End();
 			return;
 		}
-		ImGui::InputText(("Object name##" + std::to_string(ObjectWindow::selectedObject)).c_str(), obj->name, MAX_OBJ_NAME_LENGTH);
+		ImGui::InputText(("Object name##" + std::to_string(ObjectWindow::selectedObject)).c_str(), obj->name, MAX_PATH_NAME_LENGTH);
 		glm::vec3 pos{obj->modelData.pos};
 		glm::vec3 rot{obj->modelData.rot};
 		glm::vec3 scale{obj->modelData.scale};
