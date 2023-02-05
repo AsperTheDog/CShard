@@ -126,18 +126,21 @@ private:
 	{
 		glm::vec3 tempVec = cam.pos;
 		ImGui::InputFloat3(("Position##cam" + uniqueID).c_str(), &tempVec.x);
-		if (tempVec != cam.pos) cam.move(tempVec);
+		if (tempVec != cam.pos) 
+			cam.move(tempVec);
 
 		tempVec = cam.dir;
-		ImGui::InputFloat3(("Direction##cam" + uniqueID).c_str(), &cam.dir.x);
-		if (tempVec != cam.dir) cam.lookAt(tempVec);
+		ImGui::InputFloat3(("Direction##cam" + uniqueID).c_str(), &tempVec.x);
+		if (tempVec != cam.dir) 
+			cam.lookAt(tempVec);
 		ImGui::SameLine();
 		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
 			cam.lookAt(glm::normalize(cam.dir));
 
 		tempVec = cam.worldUp;
-		ImGui::InputFloat3(("WorldUp##cam" + uniqueID).c_str(), &cam.worldUp.x);
-		if (tempVec != cam.pos) cam.move(tempVec);
+		ImGui::InputFloat3(("WorldUp##cam" + uniqueID).c_str(), &tempVec.x);
+		if (tempVec != cam.worldUp)
+			cam.changeWorldUp(tempVec);
 		ImGui::SameLine();
 		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
 			cam.changeWorldUp(glm::normalize(cam.worldUp));

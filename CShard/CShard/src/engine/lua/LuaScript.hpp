@@ -11,14 +11,15 @@ public:
 
 	void commit(const std::string& source)
 	{
-		std::ifstream wf("pak/resources/scripts/" + source + ".lua", std::ios::in);
-		if (!wf) {
-			throw std::runtime_error("Could not find script");
-		}
-		std::ostringstream ss;
-		ss << wf.rdbuf();
-		this->source = ss.str();
-		wf.close();
+		//std::ifstream wf("pak/resources/scripts/" + source + ".lua", std::ios::in);
+		//if (!wf) {
+		//	throw std::runtime_error("Could not find script");
+		//}
+		//std::ostringstream ss;
+		//ss << wf.rdbuf();
+		//this->source = ss.str();
+		//wf.close();
+		this->source = "pak/resources/scripts/" + source + ".lua";
 		name = source;
 	}
 
@@ -33,7 +34,8 @@ private:
 
 	static bool execLua(const std::string& filename, lua_State* st)
 	{
-		int r = luaL_dostring(st, filename.c_str());
+		//int r = luaL_dostring(st, filename.c_str());
+		int r = luaL_dofile(st, filename.c_str());
 		if (r != LUA_OK)
 		{
 			throw std::runtime_error(lua_tostring(st, -1));

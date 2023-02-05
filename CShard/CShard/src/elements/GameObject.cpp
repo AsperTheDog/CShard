@@ -169,7 +169,7 @@ void GameObject::processBackground()
 {
 	if (!show || !hasBackground) return;
 	GFramework::prepareShader(SHADER_BACK);
-	components[0].value.back.render();
+	components[0].value.back.render(this->modelData);
 }
 
 void GameObject::processLights()

@@ -60,13 +60,13 @@ void Texture::useTexture()
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
-void Texture::renderAsBackground()
+void Texture::renderAsBackground(PhysicalData& parent)
 {
 	this->useTexture();
 
 	GLuint program = GFramework::getBackShader()->id;
 	glUseProgram(program);
-	glm::mat4 invPV = glm::inverse(Engine::activeCam->getProjMatrix() * Engine::activeCam->getViewMatrix());
+	glm::mat4 invPV = glm::inverse(Engine::activeCam->getProjMatrix() * Engine::activeCam->getViewMatrix(parent));
 	glUniformMatrix4fv(glGetUniformLocation(program, "invPV"), 1, false, &invPV[0].x);
 	glUniform3fv(glGetUniformLocation(program, "camPos"), 1, &Engine::activeCam->pos.x);
 

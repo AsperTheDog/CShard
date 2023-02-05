@@ -16,16 +16,17 @@ Camera::Camera()
 	this->changeLense(100.f, 0.1f, 100000.f);
 }
 
-glm::mat4 Camera::getViewMatrix()
+glm::mat4 Camera::getViewMatrix(PhysicalData& parent)
 {
-	if (hasChangedView) this->updateViewMatrix();
+	if (hasChangedView) this->updateViewMatrix(parent);
 	hasChangedView = false;
 	return this->viewMatrix;
 }
 
-void Camera::updateViewMatrix()
+void Camera::updateViewMatrix(PhysicalData& parent)
 {
-	this->viewMatrix = glm::lookAt(this->pos, this->pos + this->dir, this->worldUp);
+	glm::vec3 pos = parent.pos + this->pos;
+	this->viewMatrix = glm::lookAt(pos, pos + this->dir, this->worldUp);
 }
 
 glm::mat4 Camera::getProjMatrix()

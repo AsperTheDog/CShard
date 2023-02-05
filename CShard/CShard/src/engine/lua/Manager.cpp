@@ -137,6 +137,7 @@ namespace CSLua
 
 	void Manager::registerFunctions()
 	{
+		CSLua::Vec3::registerFuncs(L);
 		CSLua::LuaCam::registerFuncs(L);
 		CSLua::LuaColl::registerFuncs(L);
 		CSLua::LuaLi::registerFuncs(L);

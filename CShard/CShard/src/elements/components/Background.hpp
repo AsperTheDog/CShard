@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
 
+struct PhysicalData;
 class GTexture;
 
 class Background
 {
 public:
-	void render();
+	void render(PhysicalData& parent);
 	void setTexture();
 	
 	void serialize(std::ofstream& wf);

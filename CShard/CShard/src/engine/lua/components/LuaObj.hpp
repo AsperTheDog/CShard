@@ -37,7 +37,7 @@ namespace CSLua
 
 		static int getComponent(lua_State* L)
 		{
-			GameObject* obj = (GameObject*)lua_touserdata(L, -2);
+			GameObject* obj = *(GameObject**)lua_touserdata(L, -2);
 			uint32_t id = (uint32_t)lua_tonumber(L, -1);
 
 			Component* comp = obj->getComponent(id);

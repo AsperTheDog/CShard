@@ -74,11 +74,11 @@ public:
 	inline static FilmGrain filmGrain{};
 	inline static bool postEffectsActive = false;
 	inline static uint32_t activeShader = 0;
-
+	
+	inline static glm::uvec2 viewPortSize{1920, 1080};
 private:
 	static std::string loadShaderSrc(const std::string& file);
 
-	inline static glm::uvec2 viewPortSize{1920, 1080};
 	inline static uint16_t lightCounter = 0;
 	inline static SDL_GLContext gl_context = nullptr;
 	inline static EmptyTexture baseTexture{};

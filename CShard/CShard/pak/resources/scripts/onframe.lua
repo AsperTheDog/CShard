@@ -1,1 +1,0 @@
-print("This script is called every frame")

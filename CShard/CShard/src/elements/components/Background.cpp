@@ -18,7 +18,7 @@ void Background::deserialize(std::ifstream& wf)
 	wf.read((char*) &texID, sizeof(texID));
 }
 
-void Background::render()
+void Background::render(PhysicalData& parent)
 {
-	if (ResourceManager::isValidTexture(texID)) ResourceManager::getTexture(texID)->renderAsBackground();
+	if (ResourceManager::isValidTexture(texID)) ResourceManager::getTexture(texID)->renderAsBackground(parent);
 }

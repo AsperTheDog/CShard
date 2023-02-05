@@ -3,13 +3,15 @@
 #include <fstream>
 #include <glm.hpp>
 
+struct PhysicalData;
+
 class Camera
 {
 public:
 	Camera();
-
-	glm::mat4 getViewMatrix();
-	void updateViewMatrix();
+	
+	glm::mat4 getViewMatrix(PhysicalData& parent);
+	void updateViewMatrix(PhysicalData& parent);
 	glm::mat4 getProjMatrix();
 	void updateProjMatrix();
 
@@ -31,9 +33,9 @@ public:
 	float nearPlane{};
 	float farPlane{};
 	float aspectRatio{};
-private:
 	bool hasChangedView = false;
 	bool hasChangedProj = false;
+private:
 	glm::mat4 viewMatrix{};
 	glm::mat4 projMatrix{};
 };

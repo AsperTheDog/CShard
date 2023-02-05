@@ -99,6 +99,7 @@ void Engine::resetProject()
 
 void Engine::startGame()
 {
+	if (isGameRunning) Engine::stopGame();
 	for (auto& comp : ResourceManager::sceneObjects)
 	{
 		comp.second.processScripts(comp.first, ScriptType::SCRIPT_INIT);
@@ -113,6 +114,7 @@ void Engine::stopGame()
 		comp.second.processScripts(comp.first, ScriptType::SCRIPT_DIE);
 	}
 	isGameRunning = false;
+	Engine::activeCam = &ImGuiManager::navigationCam;
 	CSLua::Manager::reset();
 }
 

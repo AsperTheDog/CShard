@@ -1,8 +1,7 @@
 #pragma once
-#include <cstdint>
-
 #include "lua.hpp"
 #include "Vec3.hpp"
+#include "../../../device/graphics/GFramework.hpp"
 
 namespace CSLua
 {
@@ -20,6 +19,8 @@ namespace CSLua
 			lua_setfield(L, -2, "move");
 			lua_pushcfunction(L, anchor);
 			lua_setfield(L, -2, "anchor");
+			lua_pushcfunction(L, setActive);
+			lua_setfield(L, -2, "setActive");
 
 			luaL_newmetatable(L, "CameraMT");
 
@@ -47,7 +48,7 @@ namespace CSLua
 		{
 			Camera* orig = *(Camera**)lua_touserdata(L, -2);
 			glm::vec3* newVec = (glm::vec3*)lua_touserdata(L, -1);
-			orig->lookAt(*newVec);
+			orig->lookAt(glm::normalize(*newVec - orig->pos));
 			return 1;
 		}
 
@@ -136,6 +137,7 @@ namespace CSLua
 		static int setActive(lua_State* L)
 		{
 			Camera* cam = *(Camera**)lua_touserdata(L, -1);
+			cam->updateAspectRatio((float)GFramework::viewPortSize.x / (float)GFramework::viewPortSize.y);
 			Engine::activeCam = cam;
 			return 1;
 		}

@@ -22,8 +22,8 @@ public:
 		ImGui::DragFloat("Near Plane##Guicam", &Engine::activeCam->nearPlane, 0.01f, 0.01f, 1);
 		ImGui::DragFloat("Far Plane##Guicam", &Engine::activeCam->farPlane, 100.f, 10.f, 1000000.f);
 		ImGui::DragFloat("Cam speed##GuiCam", &ImGuiManager::movementMult, 0.1f, 0.f, 20.f);
-		Engine::activeCam->updateProjMatrix();
-		Engine::activeCam->updateViewMatrix();
+		Engine::activeCam->hasChangedProj = true;
+		Engine::activeCam->hasChangedView = true;
 		ImGui::End();
 	}
 };

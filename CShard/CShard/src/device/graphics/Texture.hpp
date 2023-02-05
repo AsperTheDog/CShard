@@ -3,6 +3,8 @@
 
 #include "GraphicsHeader.hpp"
 
+struct PhysicalData;
+
 enum TexType
 {
 	COLOR,
@@ -38,7 +40,7 @@ public:
 		TextureOptions wrapS = REPEAT,
 		TextureOptions wrapT = MREPEAT);
 	void useTexture();
-	void renderAsBackground();
+	void renderAsBackground(PhysicalData& parent);
 
 	uint32_t texture{};
 	std::string name;

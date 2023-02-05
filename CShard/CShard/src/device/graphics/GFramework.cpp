@@ -298,7 +298,7 @@ void GFramework::loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pDa
 {
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.mat"), 1, false, &mod.getModelMatrix(pData)[0].x);
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "model.invMat"), 1, false, &mod.getInvModelMatrix(pData)[0].x);
-	glm::mat4 mvpMat = camera.getProjMatrix() * camera.getViewMatrix() * mod.getModelMatrix(pData);
+	glm::mat4 mvpMat = camera.getProjMatrix() * camera.getViewMatrix(pData) * mod.getModelMatrix(pData);
 	glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVPmat"), 1, false, &mvpMat[0].x);
 	if (material)
 	{

@@ -15,6 +15,7 @@ void Script::deserialize(std::ifstream& wf)
 	wf.read((char*) &type, sizeof(type));
 	wf.read((char*) &scriptID, sizeof(scriptID));
 	tempScrID = scriptID;
+	tempScrType = type;
 }
 
 void Script::setScript()
