@@ -8,7 +8,10 @@
 #include "../input/InputManager.hpp"
 #include "../ide/ImGuiManager.hpp"
 
+#include "../elements/components/Script.hpp"
+
 #include "ResourceManager.hpp"
+#include "lua/Manager.hpp"
 
 void Engine::init(bool isIDE, char* initFileName)
 {
@@ -17,6 +20,7 @@ void Engine::init(bool isIDE, char* initFileName)
 	ResourceManager::init();
 	InputManager::init();
 	SDLFramework::init();
+	CSLua::Manager::init();
 
 	GFramework::create();
 
@@ -31,6 +35,8 @@ void Engine::init(bool isIDE, char* initFileName)
 	{
 		activeCam = &defaultCam;
 	}
+
+	if (!Engine::isIDE) isGameRunning = true;
 }
 
 void Engine::run()
@@ -51,6 +57,7 @@ void Engine::run()
 
 void Engine::shutDown()
 {
+	if (Engine::isGameRunning) Engine::stopGame();
 	if (Engine::isIDE) ImGuiManager::destroy();
 	SDLFramework::destroy();
 }
@@ -63,7 +70,7 @@ void Engine::compileProject(const std::string& name)
 		return;
 	}
 	ResourceManager::save(wf);
-	
+
 	wf.close();
 }
 
@@ -85,6 +92,28 @@ void Engine::resetProject()
 	InputManager::inputMappings.clear();
 	ResourceManager::reset();
 	GFramework::lightSourceCount = 0;
+	bool wasGameRunning = isGameRunning;
+	Engine::stopGame();
+	if (wasGameRunning) Engine::startGame();
+}
+
+void Engine::startGame()
+{
+	for (auto& comp : ResourceManager::sceneObjects)
+	{
+		comp.second.processScripts(comp.first, ScriptType::SCRIPT_INIT);
+	}
+	isGameRunning = true;
+}
+
+void Engine::stopGame()
+{
+	for (auto& comp : ResourceManager::sceneObjects)
+	{
+		comp.second.processScripts(comp.first, ScriptType::SCRIPT_DIE);
+	}
+	isGameRunning = false;
+	CSLua::Manager::reset();
 }
 
 void Engine::updateDeltaTime()
@@ -99,7 +128,15 @@ void Engine::event()
 	if (isIDE)
 		ImGuiManager::update();
 
-	std::vector<uint32_t> inputs = InputManager::triggeredEvents(&Engine::shouldQuit, isIDE);
+	InputManager::triggeredEvents(&Engine::shouldQuit, isIDE);
+	if (isGameRunning)
+	{
+		for (auto& comp : ResourceManager::sceneObjects)
+		{
+			comp.second.processScripts(comp.first, ScriptType::SCRIPT_FRAME);
+		}
+	}
+
 }
 
 void Engine::render()

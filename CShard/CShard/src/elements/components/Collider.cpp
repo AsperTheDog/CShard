@@ -1,5 +1,4 @@
 #include "Collider.hpp"
-#include "../../engine/Config.hpp"
 
 Collider::Collider()
 {

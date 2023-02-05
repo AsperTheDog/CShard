@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\lua\Manager.cpp" />
     <ClCompile Include="src\engine\ResourceManager.cpp" />
     <ClCompile Include="src\elements\components\Light.cpp" />
     <ClCompile Include="src\elements\components\Background.cpp" />
@@ -38,6 +39,15 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\lua\components\LuaCam.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaColl.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaLi.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaMod.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaObj.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaPhys.hpp" />
+    <ClInclude Include="src\engine\lua\components\Vec3.hpp" />
+    <ClInclude Include="src\engine\lua\LuaScript.hpp" />
+    <ClInclude Include="src\engine\lua\Manager.hpp" />
     <ClInclude Include="src\engine\ResourceManager.hpp" />
     <ClInclude Include="src\engine\Config.hpp" />
     <ClInclude Include="src\device\graphics\PostEffects.hpp" />
@@ -54,7 +64,7 @@
     <ClInclude Include="src\elements\components\Model.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\AttributesWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\GameWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\SceneWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp" />
     <ClInclude Include="src\device\graphics\GFramework.hpp" />
     <ClInclude Include="src\device\window\SDLFramework.hpp" />
@@ -67,6 +77,9 @@
     <ClInclude Include="src\ide\ImGuiWindows\DiagnosticsWindow.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="pak\resources\scripts\onexit.lua" />
+    <None Include="pak\resources\scripts\onframe.lua" />
+    <None Include="pak\resources\scripts\oninit.lua" />
     <None Include="shaders\back.frag" />
     <None Include="shaders\back.vert" />
     <None Include="shaders\base.frag" />
@@ -133,13 +146,13 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/luacpp/luacppinterface/LuaCppInterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/Release/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/Release/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);$(SolutionDir)dependencies/luacpp/luacppinterface/$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -152,7 +165,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/luacpp/luacppinterface/LuaCppInterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -160,7 +173,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/$(Configuration)/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/Release/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);$(SolutionDir)dependencies/luacpp/luacppinterface/$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -170,15 +183,15 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/Release/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/Release/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);$(SolutionDir)dependencies/lua/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -189,7 +202,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -198,8 +211,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/$(Configuration)/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ImGui.lib;glew32s.lib;opengl32.lib;SDL2.lib;lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/ImGui/lib/$(Platform)/$(Configuration);$(SolutionDir)dependencies/glew/lib/Release/$(Platform);$(SolutionDir)dependencies/sdl/lib/$(Platform);$(SolutionDir)dependencies/lua/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

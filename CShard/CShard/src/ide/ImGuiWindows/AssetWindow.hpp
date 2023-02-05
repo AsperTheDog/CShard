@@ -27,7 +27,7 @@ public:
 						{
 							ResourceManager::addMesh(path);
 						}
-						catch (std::runtime_error)
+						catch (std::runtime_error&)
 						{
 							SDLFramework::showErrorMessage("Could not load mesh", "Make sure the path is correct");
 						}
@@ -81,6 +81,38 @@ public:
 				    ImGui::EndTable();
 					ImGui::EndTabItem();
                 }
+				if (ImGui::BeginTabItem("Scripts"))
+                {
+                    ImGui::InputText("Path##Scr", scrBuff, MAX_ASSET_NAME_LENGTH);
+					ImGui::SameLine();
+					if(ImGui::Button("Import##Scr"))
+					{
+						std::string path = {scrBuff};
+						try
+						{
+							ResourceManager::addScript(path);
+						}
+						catch (std::runtime_error&)
+						{
+							SDLFramework::showErrorMessage("Could not load script", "Make sure the path is correct");
+						}
+					}
+					ImGui::Separator();
+					ImGui::BeginTable("Script##Tex", 3, flags);
+					ImGui::TableSetupColumn("ID##Tex", ImGuiTableColumnFlags_WidthFixed);
+				    ImGui::TableSetupColumn("Path##Tex", ImGuiTableColumnFlags_WidthStretch);
+				    ImGui::TableHeadersRow();
+				    for (auto& scr : ResourceManager::scripts)
+				    {
+				        ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::Text("%d", scr.first);
+						ImGui::TableSetColumnIndex(1);
+						ImGui::Text(scr.second.name.c_str());
+				    }
+				    ImGui::EndTable();
+					ImGui::EndTabItem();
+                }
                 ImGui::EndTabBar();
             }
 		ImGui::End();
@@ -89,5 +121,6 @@ public:
 private:
 	inline static char meshBuff[MAX_ASSET_NAME_LENGTH] = "";
 	inline static char texBuff[MAX_ASSET_NAME_LENGTH] = "";
+	inline static char scrBuff[MAX_ASSET_NAME_LENGTH] = "";
 };
 

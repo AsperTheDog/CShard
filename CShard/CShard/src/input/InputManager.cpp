@@ -2,21 +2,6 @@
 
 #include "../device/window/SDLFramework.hpp"
 
-std::unordered_map<uint32_t, InputMapping> InputManager::inputMappings;
-std::unordered_set<uint32_t> InputManager::subscribedTypes;
-int32_t InputManager::x, InputManager::y;
-std::vector<ShardEvent> InputManager::inputTypes;
-std::unordered_map<ShardEvent, std::string> InputManager::inputTypeNames;
-const char* InputManager::inputNames[5] = {
-		"Keyboard down",
-		"Keyboard up",
-		"Mouse button down",
-		"Mouse button up",
-		"Mouse wheel"
-	};;
-std::unordered_map<std::string, int32_t> InputManager::keyboardKeys;
-std::unordered_map<int32_t, std::string> InputManager::keyboardKeyNames;
-
 bool InputManager::addMapping(uint32_t id, InputMapping value)
 {
 	if (InputManager::inputMappings.contains(id)) return false;
@@ -25,10 +10,10 @@ bool InputManager::addMapping(uint32_t id, InputMapping value)
 	return true;
 }
 
-std::vector<uint32_t> InputManager::triggeredEvents(bool* shouldClose, bool isIDE)
+void InputManager::triggeredEvents(bool* shouldClose, bool isIDE)
 {
 	std::vector<SDL_Event> SDLevents = SDLFramework::getEvents(subscribedTypes, isIDE);
-	std::vector<uint32_t> events{};
+	triggeredThisFrame.clear();
 	for (auto& event : SDLevents)
 	{
 		if (event.type == EVENT_MOUSEMOTION)
@@ -49,21 +34,20 @@ std::vector<uint32_t> InputManager::triggeredEvents(bool* shouldClose, bool isID
 
 			if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN)
 			{
-				if (event.key.keysym.sym == mapping.second.val.key) events.push_back(mapping.first);
+				if (event.key.keysym.sym == mapping.second.val.key) triggeredThisFrame.insert(mapping.first);
 			}
 			else if (event.type == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEBUTTONDOWN)
 			{
-				if (event.button.button == mapping.second.val.mbutton) events.push_back(mapping.first);
+				if (event.button.button == mapping.second.val.mbutton) triggeredThisFrame.insert(mapping.first);
 			}
 			else if (event.type == EVENT_MOUSEWHEEL)
 			{
 				int isFlipped = event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED;
 				bool direction = event.wheel.y * (isFlipped ? -1 : 1) > 0;
-				if (direction == mapping.second.val.wheelDir) events.push_back(mapping.first);
+				if (direction == mapping.second.val.wheelDir) triggeredThisFrame.insert(mapping.first);
 			}
 		}
 	}
-	return events;
 }
 
 void InputManager::getMouseMovement(int32_t& x, int32_t& y)

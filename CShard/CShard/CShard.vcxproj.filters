@@ -66,6 +66,9 @@
     <ClCompile Include="src\engine\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\lua\Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ide\ImGuiManager.hpp">
@@ -92,7 +95,7 @@
     <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ide\ImGuiWindows\GameWindow.hpp">
+    <ClInclude Include="src\ide\ImGuiWindows\SceneWindow.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp">
@@ -149,11 +152,41 @@
     <ClInclude Include="src\engine\ResourceManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\engine\lua\Manager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\LuaObj.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\LuaCam.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\LuaMod.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\LuaPhys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\LuaLi.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\LuaColl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\components\Vec3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\lua\LuaScript.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\base.vert" />
     <None Include="shaders\base.frag" />
     <None Include="shaders\back.vert" />
     <None Include="shaders\back.frag" />
+    <None Include="pak\resources\scripts\onframe.lua" />
+    <None Include="pak\resources\scripts\onexit.lua" />
+    <None Include="pak\resources\scripts\oninit.lua" />
   </ItemGroup>
 </Project>

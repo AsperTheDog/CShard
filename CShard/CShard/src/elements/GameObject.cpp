@@ -2,7 +2,11 @@
 
 #include <fstream>
 #include <iostream>
+#include <ranges>
+
 #include "../device/graphics/GFramework.hpp"
+#include "../engine/ResourceManager.hpp"
+#include "../engine/lua/Manager.hpp"
 
 ComponentUnion::ComponentUnion()
 {
@@ -100,7 +104,14 @@ void GameObject::addComponent(Component& comp)
 		hasBackground = true;
 		break;
 	}
-	this->components.push_back(comp);
+	this->components.emplace(compIdTracker, comp);
+	compIdTracker++;
+}
+
+Component* GameObject::getComponent(uint32_t id)
+{
+	if (!components.contains(id)) return nullptr;
+	return &components.at(id);
 }
 
 void GameObject::insertComponent(Component& comp)
@@ -113,18 +124,27 @@ void GameObject::insertComponent(Component& comp)
 	else if (comp.type == COMPONENT_BACKGROUND) 
 		hasBackground = true;
 
-	this->components.push_back(comp);
+	this->components.emplace(compIdTracker, comp);
+	compIdTracker++;
 }
 
-std::vector<Component>::iterator GameObject::removeComponent(std::vector<Component>::iterator it)
+void GameObject::insertComponent(uint32_t id, Component& comp)
 {
-	if (it == this->components.end()) return it;
-	if (it->type == COMPONENT_BACKGROUND) hasBackground = false;
-	else if (it->type == COMPONENT_LIGHT) {
-		lightCount--;
-		GFramework::lightSourceCount--;
+	if (comp.type == COMPONENT_LIGHT)
+	{
+		lightCount++;
+		GFramework::lightSourceCount++;
 	}
-	return this->components.erase(it);
+	else if (comp.type == COMPONENT_BACKGROUND) 
+		hasBackground = true;
+
+	this->components.emplace(id, comp);
+}
+
+void GameObject::removeComponent(uint32_t id)
+{
+	if (!components.contains(id)) return;
+	components.erase(id);
 }
 
 void GameObject::processCollision()
@@ -132,9 +152,17 @@ void GameObject::processCollision()
 	
 }
 
-void GameObject::processScript()
+void GameObject::processScripts(uint32_t objID, ScriptType type)
 {
-
+	for (auto& scr : components | std::views::values)
+	{
+		if (scr.type == COMPONENT_SCRIPT 
+			&& scr.value.scr.type == type 
+			&& ResourceManager::isValidScript(scr.value.scr.scriptID))
+		{
+			CSLua::Manager::runObjScript(objID, scr.value.scr.scriptID);
+		}
+	}
 }
 
 void GameObject::processBackground()
@@ -149,7 +177,7 @@ void GameObject::processLights()
 	if (!show || lightCount == 0) return;
 	GFramework::prepareShader(SHADER_BASE);
 
-	for (auto& comp : components)
+	for (auto& comp : components | std::views::values)
 	{
 		if (comp.type != COMPONENT_LIGHT) continue;
 	
@@ -161,7 +189,7 @@ void GameObject::processModels(Camera& cam)
 {
 	if (!show) return;
 	GFramework::prepareShader(SHADER_BASE);
-	for (auto& comp : components) 
+	for (auto& comp : components | std::views::values) 
 	{
 		if (comp.type != COMPONENT_MODEL) continue;
 		

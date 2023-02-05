@@ -6,7 +6,7 @@
 
 #include "ImGuiWindows/AssetWindow.hpp"
 #include "ImGuiWindows/AttributesWindow.hpp"
-#include "ImGuiWindows/GameWindow.hpp"
+#include "ImGuiWindows/SceneWindow.hpp"
 #include "ImGuiWindows/InputWindow.hpp"
 #include "ImGuiWindows/DiagnosticsWindow.hpp"
 #include "ImGuiWindows/GameOptionsWindow.hpp"
@@ -134,7 +134,7 @@ void ImGuiManager::render()
 
 void ImGuiManager::update()
 {
-	if (GameWindow::isFocused)
+	if (SceneWindow::isFocused)
 	{
 		if (SDLFramework::leftClick)
 			updateSceneCamDir();
@@ -318,7 +318,7 @@ void ImGuiManager::addImGuiWindows()
 {
 	ImGuiManager::addWindowCall(InputWindow::showWindow, "Input mappings", false);
 	ImGuiManager::addWindowCall(ObjectWindow::showWindow, "Object list", true);
-	ImGuiManager::addWindowCall(GameWindow::showWindow, "Game window", true);
+	ImGuiManager::addWindowCall(SceneWindow::showWindow, "Game window", true);
 	ImGuiManager::addWindowCall(AttributesWindow::showWindow, "Object attributes", true);
 	ImGuiManager::addWindowCall(AssetWindow::showWindow, "Assets", true);
 	ImGuiManager::addWindowCall(DiagnosticsWindow::showWindow, "Diagnostics", false);

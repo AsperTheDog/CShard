@@ -1,0 +1,1 @@
+print("This script is called when the game is stopped")

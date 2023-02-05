@@ -1,7 +1,7 @@
 #pragma once
 
+#include <map>
 #include <string>
-#include <vector>
 #include "PhysicalData.hpp"
 
 #include "../engine/Config.hpp"
@@ -57,11 +57,13 @@ public:
 	explicit GameObject(const std::string& name);
 
 	void addComponent(Component& comp);
+	Component* getComponent(uint32_t id);
 	void insertComponent(Component& comp);
-	std::vector<Component>::iterator removeComponent(std::vector<Component>::iterator it);
+	void insertComponent(uint32_t id, Component& comp);
+	void removeComponent(uint32_t id);
 
 	void processCollision();
-	void processScript();
+	void processScripts(uint32_t objID, ScriptType type);
 	void processBackground();
 	void processModels(Camera& cam);
 
@@ -72,13 +74,14 @@ public:
 	void toggleActive();
 
 	char name[MAX_PATH_NAME_LENGTH]{};
-	std::vector<Component> components;
+	std::map<uint32_t, Component> components;
 	uint32_t lightCount = 0;
 	bool hasBackground = false;
 	bool show = true;
 
 	PhysicalData modelData;
 private:
+	uint32_t compIdTracker = 0;
 };
 
 

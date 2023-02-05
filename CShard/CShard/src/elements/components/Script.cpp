@@ -1,7 +1,6 @@
 #include "Script.hpp"
-#include "../../engine/Config.hpp"
 
-Script::Script()
+Script::Script() : type(SCRIPT_INIT), scriptID(0)
 {
 }
 
@@ -15,4 +14,10 @@ void Script::deserialize(std::ifstream& wf)
 {
 	wf.read((char*) &type, sizeof(type));
 	wf.read((char*) &scriptID, sizeof(scriptID));
+	tempScrID = scriptID;
+}
+
+void Script::setScript()
+{
+	scriptID = tempScrID;
 }

@@ -45,7 +45,7 @@ glm::ivec2 SDLFramework::getSize()
     return {width, height};
 }
 
-void SDLFramework::showErrorMessage(std::string title, std::string text)
+void SDLFramework::showErrorMessage(const std::string& title, const std::string& text)
 {
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title.c_str(), text.c_str(), SDLFramework::getWindow());
 }

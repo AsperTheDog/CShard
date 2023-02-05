@@ -40,7 +40,7 @@ public:
 	static void init();
 
 	static bool addMapping(uint32_t id, InputMapping value);
-	static std::vector<uint32_t> triggeredEvents(bool* shouldClose, bool isIDE);
+	static void triggeredEvents(bool* shouldClose, bool isIDE);
 
 	static void getMouseMovement(int32_t& x, int32_t& y);
 	static void subscribeToEvent(ShardEvent event);
@@ -49,14 +49,21 @@ public:
 	static void removeMapping(uint32_t id);
 	static void ImGuiWindowCall(bool* isOpen);
 
-	static std::unordered_map<uint32_t, InputMapping> inputMappings;
-	static std::unordered_set<uint32_t> subscribedTypes;
-	static int32_t x, y;
+	inline static std::unordered_map<uint32_t, InputMapping> inputMappings;
+	inline static std::unordered_set<uint32_t> subscribedTypes;
+	inline static std::unordered_set<uint32_t> triggeredThisFrame;
+	inline static int32_t x, y;
 	
-	static std::vector<ShardEvent> inputTypes;
-	static std::unordered_map<ShardEvent, std::string> inputTypeNames;
-	static const char* inputNames[5];
-	static std::unordered_map<std::string, int32_t> keyboardKeys;
-	static std::unordered_map<int32_t, std::string> keyboardKeyNames;
+	inline static std::vector<ShardEvent> inputTypes;
+	inline static std::unordered_map<ShardEvent, std::string> inputTypeNames;
+	inline static const char* inputNames[5] = {
+		"Keyboard down",
+		"Keyboard up",
+		"Mouse button down",
+		"Mouse button up",
+		"Mouse wheel"
+	};
+	inline static std::unordered_map<std::string, int32_t> keyboardKeys;
+	inline static std::unordered_map<int32_t, std::string> keyboardKeyNames;
 };
 

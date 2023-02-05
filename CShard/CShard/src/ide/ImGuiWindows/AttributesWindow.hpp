@@ -2,6 +2,7 @@
 #include "ObjectWindow.hpp"
 
 #include "../../engine/ResourceManager.hpp"
+#include "../../engine/Engine.hpp"
 #include "../../device/graphics/GFramework.hpp"
 
 #include "../../elements/components/Camera.hpp"
@@ -39,13 +40,13 @@ public:
 		if (rot != obj->modelData.rot) obj->changeRotation(rot);
 		ImGui::Separator();
 		ImGui::BeginDisabled(obj->hasBackground);
-		ImGui::Combo("Input type", &tempType, componentNames, !obj->components.empty() ? 5 : 6);
+		ImGui::Combo("Input type", &tempCompype, componentNames, !obj->components.empty() ? 5 : 6);
 		ImGui::SameLine();
 		ImGui::EndDisabled();
-		ImGui::BeginDisabled(obj->hasBackground || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempType] == COMPONENT_LIGHT));
+		ImGui::BeginDisabled(obj->hasBackground || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempCompype] == COMPONENT_LIGHT));
 		if (ImGui::Button("Create"))
 		{
-			Component comp = Component(compTypes[tempType]);
+			Component comp = Component(compTypes[tempCompype]);
 			obj->addComponent(comp);
 		}
 		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
@@ -55,65 +56,68 @@ public:
 		ImGui::Separator();
 		ImGui::Separator();
 		ImGui::Separator();
-		for (auto i = obj->components.begin(); i != obj->components.end(); ++i)
+		uint32_t setToRemove = 0;
+		bool doRemove = false;
+		for (auto& comp : obj->components)
 		{
-			std::string uniqueID = std::to_string(i - obj->components.begin());
+			std::string uniqueID = std::to_string(comp.first);
 			if (ImGui::Button(("-##Comp" + uniqueID).c_str()))
 			{
-				i = obj->removeComponent(i);
-				if (copiedAttr == i - obj->components.begin()) copiedAttr = -1;
-				if (i == obj->components.end()) break;
+				setToRemove = comp.first;
+				doRemove = true;
 			}
 			ImGui::SameLine();
-			switch(i->type)
+			switch(comp.second.type)
 			{
 			case COMPONENT_CAMERA:
-				if (ImGui::Selectable(("Camera Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = (int)(i - obj->components.begin());
-				showCamera(i->value.cam, uniqueID);
+				if (ImGui::Selectable((uniqueID + ": Camera Component").c_str(), selectedAttr == comp.first))
+					selectedAttr = (int)(comp.first);
+				showCamera(comp.second.value.cam, uniqueID);
 				break;
 			case COMPONENT_COLLIDER:
-				if (ImGui::Selectable(("Collider Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = (int)(i - obj->components.begin());
-				showCollider(i->value.coll, uniqueID);
+				if (ImGui::Selectable((uniqueID + ": Collider Component").c_str(), selectedAttr == comp.first))
+					selectedAttr = (int)(comp.first);
+				showCollider(comp.second.value.coll, uniqueID);
 				break;
 			case COMPONENT_MODEL:
-				if (ImGui::Selectable(("Model Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = (int)(i - obj->components.begin());
-				showModel(i->value.mod, uniqueID);
+				if (ImGui::Selectable((uniqueID + ": Model Component").c_str(), selectedAttr == comp.first))
+					selectedAttr = (int)(comp.first);
+				showModel(comp.second.value.mod, uniqueID);
 				break;
 			case COMPONENT_SCRIPT:
-				if (ImGui::Selectable(("Script Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = (int)(i - obj->components.begin());
-				showScript(i->value.scr, uniqueID);
+				if (ImGui::Selectable((uniqueID + ": Script Component").c_str(), selectedAttr == comp.first))
+					selectedAttr = (int)(comp.first);
+				showScript(comp.second.value.scr, uniqueID);
 				break;
 			case COMPONENT_BACKGROUND:
-				if (ImGui::Selectable(("Background Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = (int)(i - obj->components.begin());
-				showBackground(i->value.back, uniqueID);
+				if (ImGui::Selectable((uniqueID + ": Background Component").c_str(), selectedAttr == comp.first))
+					selectedAttr = (int)(comp.first);
+				showBackground(comp.second.value.back, uniqueID);
 				break;
 			case COMPONENT_LIGHT:
-				if (ImGui::Selectable(("LightSource Component##" + uniqueID).c_str(), selectedAttr == i - obj->components.begin()))
-					selectedAttr = (int)(i - obj->components.begin());
-				showLightSource(i->value.li, uniqueID);
+				if (ImGui::Selectable((uniqueID + ": LightSource Component").c_str(), selectedAttr == comp.first))
+					selectedAttr = (int)(comp.first);
+				showLightSource(comp.second.value.li, uniqueID);
 				break;
 			}
 			ImGui::Separator();
 			ImGui::Separator();
 		}
-		if (ImGui::IsWindowFocused() && ImGuiManager::copied && selectedAttr >= 0)
+		if (doRemove)
+		{
+			obj->removeComponent(setToRemove);
+		}
+
+		if (ImGui::IsWindowFocused() && ImGuiManager::copied && selectedAttr >= 0U)
 		{
 			copiedAttr = selectedAttr;
 			ObjectWindow::copiedObj = -1;
 		}
-		if (ImGui::IsWindowFocused() && ImGuiManager::pasted && copiedAttr >= 0)
+		if (ImGui::IsWindowFocused() && ImGuiManager::pasted && copiedAttr >= 0U)
 		{
 			Component& comp = obj->components.at(copiedAttr);
-			Component newComp{};
-			memcpy(&newComp, &comp, sizeof(comp));
-			obj->insertComponent(newComp);
+			obj->insertComponent(comp);
 		}
-
 		ImGui::End();
 	}
 
@@ -186,6 +190,13 @@ private:
 
 	static void showScript(Script& scr, std::string& uniqueID)
 	{
+		ImGui::Combo(("Script type##scr" + uniqueID).c_str(), &scr.tempScrType, scriptTypes, 3);
+		scr.type = scrTypes[scr.tempScrType];
+		ImGui::InputInt(("Script##scr" + uniqueID).c_str(), &scr.tempScrID, 1);
+		scr.tempScrID = std::max(0, scr.tempScrID);
+		ImGui::SameLine();
+		if (ImGui::Button(("Reload##scr" + uniqueID).c_str()))
+			scr.setScript();
 	}
 
 	static void showBackground(Background& back, std::string& uniqueID)
@@ -207,7 +218,7 @@ private:
 		ImGui::DragFloat(("Quadratic##li" + uniqueID).c_str(), &li.quadratic, 0.01f, 0, 1);
 	}
 
-	inline static int tempType = 0;
+	inline static int tempCompype = 0;
 	inline static const char* componentNames[6] = {
 		"Camera",
 		"Collider",
@@ -224,7 +235,25 @@ private:
 		COMPONENT_LIGHT,
 		COMPONENT_BACKGROUND
 	};
+	inline static const char* scriptTypes[7] = {
+		"On Start",
+		"On Frame",
+		"On End",
+		"On Collision Enter",
+		"On Collision In",
+		"On Collision Exit",
+		"On Collision Out"
+	};
+	inline static constexpr ScriptType scrTypes[7] = {
+		SCRIPT_INIT,
+		SCRIPT_FRAME,
+		SCRIPT_DIE,
+		SCRIPT_COLLISION_ENTER,
+		SCRIPT_COLLISION_IN,
+		SCRIPT_COLLISION_EXIT,
+		SCRIPT_COLLISION_OUT
+	};
 
-	inline static int selectedAttr = -1;
-	inline static int copiedAttr = -1;
+	inline static uint32_t selectedAttr = 0;
+	inline static uint32_t copiedAttr = 0;
 };

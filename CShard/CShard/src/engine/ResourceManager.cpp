@@ -11,16 +11,22 @@
 
 void ResourceManager::init()
 {
-	sceneObjects = std::unordered_map<uint32_t, GameObject>();
-	meshes = std::unordered_map<uint32_t, Mesh>();
-	textures = std::unordered_map<uint32_t, Texture>();
+	sceneObjects = std::map<uint32_t, GameObject>();
+	meshes = std::map<uint32_t, Mesh>();
+	textures = std::map<uint32_t, Texture>();
+	scripts = std::map<uint32_t, LuaScript>();
 }
 
 void ResourceManager::reset()
 {
 	sceneObjects.clear();
+	objIDCount = 0;
 	meshes.clear();
+	meshIDCount = 0;
 	textures.clear();
+	texIDCount = 0;
+	scripts.clear();
+	scrIDCount = 0;
 }
 
 void ResourceManager::load(std::ifstream& wf)
@@ -36,7 +42,6 @@ void ResourceManager::load(std::ifstream& wf)
 		InputManager::inputMappings.insert(elem);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
-	ResourceManager::meshes.reserve(num);
 	for (uint32_t i = 0; i < num; i++)
 	{
 		uint32_t id = 0;
@@ -48,7 +53,6 @@ void ResourceManager::load(std::ifstream& wf)
 		elem->second.commit(buff);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
-	ResourceManager::textures.reserve(num);
 	for (uint32_t i = 0; i < num; i++)
 	{
 		uint32_t id = 0;
@@ -60,7 +64,17 @@ void ResourceManager::load(std::ifstream& wf)
 		elem->second.commit(buff);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
-	ResourceManager::sceneObjects.reserve(num);
+	for (uint32_t i = 0; i < num; i++)
+	{
+		uint32_t id = 0;
+		wf.read((char*)&id, sizeof(id));
+		auto elem = scripts.emplace(id, LuaScript()).first;
+		scrIDCount = std::max(elem->first, scrIDCount);
+		char buff[MAX_ASSET_NAME_LENGTH] = "";
+		wf.read(buff, MAX_ASSET_NAME_LENGTH);
+		elem->second.commit(buff);
+	}
+	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)
 	{
 		uint32_t id = 0;
@@ -73,12 +87,13 @@ void ResourceManager::load(std::ifstream& wf)
 		obj.modelData.changed = true;
 		uint32_t components = 0;
 		wf.read((char*)&components, sizeof(components));
-		obj.components.reserve(components);
 		for (uint32_t j = 0; j < components; j++)
 		{
+			uint32_t compID = 0;
+			wf.read((char*)&compID, sizeof(compID));
 			Component comp{};
 			comp.deserialize(wf);
-			obj.insertComponent(comp);
+			obj.insertComponent(compID, comp);
 		}
 		ResourceManager::sceneObjects.emplace(id, obj);
 	}
@@ -115,6 +130,16 @@ void ResourceManager::save(std::ofstream& wf)
 		strcpy_s(buff, sizeof(buff), tex.second.name.c_str());
 		wf.write(buff, MAX_ASSET_NAME_LENGTH);
 	}
+	uint32_t scrNum = (uint32_t)ResourceManager::scripts.size();
+	wf.write((char*)&scrNum, sizeof(scrNum));
+	for (auto& scr : ResourceManager::scripts)
+	{
+		uint32_t id = scr.first;
+		wf.write((char*)&id, sizeof(id));
+		char buff[MAX_ASSET_NAME_LENGTH] = "";
+		strcpy_s(buff, sizeof(buff), scr.second.name.c_str());
+		wf.write(buff, MAX_ASSET_NAME_LENGTH);
+	}
 	uint32_t objNum = (uint32_t)ResourceManager::sceneObjects.size();
 	wf.write((char*)&objNum, sizeof(objNum));
 	for (auto& obj : ResourceManager::sceneObjects) {
@@ -125,7 +150,8 @@ void ResourceManager::save(std::ofstream& wf)
 		uint32_t components = (uint32_t)obj.second.components.size();
 		wf.write((char*)&components, sizeof(components));
 		for (auto& comp : obj.second.components) {
-			comp.serialize(wf);
+			wf.write((char*) &comp.first, sizeof(comp.first));
+			comp.second.serialize(wf);
 		}
 	}
 }
@@ -165,7 +191,16 @@ uint32_t ResourceManager::addMesh(std::string& filepath)
 {
 	meshIDCount++;
 	auto elem = meshes.emplace(meshIDCount, Mesh()).first;
-	elem->second.commit(filepath);
+	try
+	{
+		elem->second.commit(filepath);
+	}
+	catch(std::runtime_error)
+	{
+		meshes.erase(meshIDCount);
+		meshIDCount--;
+		throw;
+	}
 	return meshIDCount;
 }
 
@@ -173,8 +208,34 @@ uint32_t ResourceManager::addTexture(std::string& filepath)
 {
 	texIDCount++;
 	auto elem = textures.emplace(texIDCount, Texture()).first;
-	elem->second.commit(filepath);
+	try
+	{
+		elem->second.commit(filepath);
+	}
+	catch(std::runtime_error)
+	{
+		textures.erase(texIDCount);
+		texIDCount--;
+		throw;
+	}
 	return texIDCount;
+}
+
+uint32_t ResourceManager::addScript(std::string& filepath)
+{
+	scrIDCount++;
+	auto elem = scripts.emplace(scrIDCount, LuaScript()).first;
+	try
+	{
+		elem->second.commit(filepath);
+	}
+	catch(std::runtime_error)
+	{
+		scripts.erase(scrIDCount);
+		scrIDCount--;
+		throw;
+	}
+	return scrIDCount;
 }
 
 void ResourceManager::removeObject(uint32_t id)
@@ -218,12 +279,21 @@ void ResourceManager::clone(uint32_t index)
 	GameObject objToCopy = sceneObjects.at(index);
 	GameObject newObj{objToCopy.name};
 	newObj.modelData = objToCopy.modelData;
-	for (auto& comp : objToCopy.components)
+	for (auto& comp : objToCopy.components | std::views::values)
 	{
-		Component newComp{};
-		memcpy(&newComp, &comp, sizeof(comp));
 		newObj.insertComponent(comp);
 	}
 	objIDCount++;
 	sceneObjects.emplace(objIDCount, newObj);
+}
+
+bool ResourceManager::isValidScript(uint32_t id)
+{
+	return scripts.contains(id);
+}
+
+LuaScript* ResourceManager::getScript(uint32_t id)
+{
+	if (!scripts.contains(id)) return nullptr;
+	return &scripts.at(id);
 }

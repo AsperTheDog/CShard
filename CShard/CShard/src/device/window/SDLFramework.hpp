@@ -16,7 +16,7 @@ public:
 	static void swapWindow();
 	static void destroy();
 	static glm::ivec2 getSize();
-	static void showErrorMessage(std::string title, std::string text);
+	static void showErrorMessage(const std::string& title, const std::string& text);
 	static uint64_t getWindowTime();
 
 	static float aspectRatio;

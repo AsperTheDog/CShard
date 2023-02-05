@@ -37,10 +37,10 @@ public:
 	PhysicalData data;
 	Material mat;
 	bool cullFace = true;
-
-private:
+	
 	uint32_t meshID;
 	uint32_t textureID;
+private:
 	glm::mat4 modelMatrix{};
 	glm::mat4 invModelMatrix{};
 };

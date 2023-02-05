@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <unordered_set>
 
 #include "../elements/GameObject.hpp"
 #include "../elements/components/Camera.hpp"
@@ -19,12 +19,15 @@ public:
 	static void compileProject(const std::string& name);
 	static void loadProject(const std::string& filename);
 	static void resetProject();
+	static void startGame();
+	static void stopGame();
 	inline static Camera* activeCam;
 
 	inline static bool isIDE = false;
 	inline static float dt = 0.f;
 	inline static bool shouldQuit = false;
 	inline static bool confirmQuit = false;
+	inline static bool isGameRunning = false;
 
 private:
 	static void updateDeltaTime();
