@@ -13,7 +13,7 @@ Reimplementation in C++ of the closed source Shard engine for the course Introdu
  - Post processing pipeline (currently only film grain is implemented)
 
 
-### Future features:
+### Future planned features:
   - Sound component to produce sound with spatial options
   - directional, spot and area lights
   - Shadows
