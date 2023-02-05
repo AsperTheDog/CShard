@@ -55,4 +55,5 @@
 !CShard/dependencies/sdl/lib/Win32/SDL2.lib
 !CShard/dependencies/glew/lib/Release/x64/glew32s.lib
 !CShard/dependencies/glew/lib/Release/Win32/glew32s.lib
+!CShard/dependencies/lua/lib/lua54.lib
 !CShard/CShard/pak/resources/obj/*.obj
