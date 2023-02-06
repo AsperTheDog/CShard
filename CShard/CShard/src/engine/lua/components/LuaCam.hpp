@@ -1,6 +1,6 @@
 #pragma once
 #include "lua.hpp"
-#include "Vec3.hpp"
+#include "LuaVec3.hpp"
 #include "../../../device/graphics/GFramework.hpp"
 
 namespace CSLua
@@ -58,17 +58,17 @@ namespace CSLua
 			const char* index = lua_tostring(L, -1);
 			if (strcmp(index, "pos") == 0)
 			{
-				Vec3::createUD(L, orig->pos);
+				LuaVec3::createUD(L, orig->pos);
 				return 1;
 			}
 			if (strcmp(index, "dir") == 0)
 			{
-				Vec3::createUD(L, orig->dir);
+				LuaVec3::createUD(L, orig->dir);
 				return 1;
 			}
 			if (strcmp(index, "up") == 0)
 			{
-				Vec3::createUD(L, orig->worldUp);
+				LuaVec3::createUD(L, orig->worldUp);
 				return 1;
 			}
 			if (strcmp(index, "fov") == 0)

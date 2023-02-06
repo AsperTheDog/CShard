@@ -45,7 +45,7 @@
     <ClInclude Include="src\engine\lua\components\LuaMod.hpp" />
     <ClInclude Include="src\engine\lua\components\LuaObj.hpp" />
     <ClInclude Include="src\engine\lua\components\LuaPhys.hpp" />
-    <ClInclude Include="src\engine\lua\components\Vec3.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaVec3.hpp" />
     <ClInclude Include="src\engine\lua\LuaScript.hpp" />
     <ClInclude Include="src\engine\lua\Manager.hpp" />
     <ClInclude Include="src\engine\ResourceManager.hpp" />

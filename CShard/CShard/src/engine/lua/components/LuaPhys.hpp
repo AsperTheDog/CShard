@@ -1,6 +1,6 @@
 #pragma once
 #include "lua.hpp"
-#include "Vec3.hpp"
+#include "LuaVec3.hpp"
 #include "../../../elements/PhysicalData.hpp"
 
 namespace CSLua
@@ -58,22 +58,22 @@ namespace CSLua
 			const char* index = lua_tostring(L, -1);
 			if (strcmp(index, "pos") == 0)
 			{
-				Vec3::createUD(L, orig->pos);
+				LuaVec3::createUD(L, orig->pos);
 				return 1;
 			}
 			if (strcmp(index, "rot") == 0)
 			{
-				Vec3::createUD(L, orig->rot);
+				LuaVec3::createUD(L, orig->rot);
 				return 1;
 			}
 			if (strcmp(index, "scale") == 0)
 			{
-				Vec3::createUD(L, orig->scale);
+				LuaVec3::createUD(L, orig->scale);
 				return 1;
 			}
 			if (strcmp(index, "albedo") == 0)
 			{
-				Vec3::createUD(L, orig->albedo);
+				LuaVec3::createUD(L, orig->albedo);
 				return 1;
 			}
 			lua_getglobal(L, "Transform");

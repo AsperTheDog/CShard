@@ -50,12 +50,12 @@ namespace CSLua
 			const char* index = lua_tostring(L, -1);
 			if (strcmp(index, "pos") == 0)
 			{
-				Vec3::createUD(L, orig->position);
+				LuaVec3::createUD(L, orig->position);
 				return 1;
 			}
 			if (strcmp(index, "color") == 0)
 			{
-				Vec3::createUD(L, orig->color);
+				LuaVec3::createUD(L, orig->color);
 				return 1;
 			}
 			if (strcmp(index, "constant") == 0)

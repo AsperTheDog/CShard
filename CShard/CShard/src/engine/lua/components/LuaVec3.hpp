@@ -10,7 +10,7 @@
 
 namespace CSLua
 {
-	class Vec3
+	class LuaVec3
 	{
 	public:
 		static void registerFuncs(lua_State* L)

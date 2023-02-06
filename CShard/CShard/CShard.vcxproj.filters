@@ -173,7 +173,7 @@
     <ClInclude Include="src\engine\lua\components\LuaColl.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\engine\lua\components\Vec3.hpp">
+    <ClInclude Include="src\engine\lua\components\LuaVec3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\engine\lua\LuaScript.hpp">
