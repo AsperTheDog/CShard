@@ -7,14 +7,14 @@ class PostEffectWindow
 public:
 	static void showWindow(bool* isOpen)
 	{
+		
 		if (!*isOpen) return;
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
-		ImGui::Begin("Post Effects", isOpen, windowFlags);
-		ImGui::Checkbox("Activate Post Effects", &GFramework::postEffectsActive);
-		ImGui::DragFloat("Color multiplier", &GFramework::postMult, 0.01f, 0.f, 1.f);
-		ImGui::Separator();
-		ImGui::Text("Film Grain");
-		ImGui::DragFloat("Intensity", &GFramework::filmGrain.intensity, 0.01f, 0.01f, 1.f);
+		ImGui::Begin("Post effects", isOpen, windowFlags);
+		for (uint32_t id = 0; id < GFramework::posts.size(); id++)
+		{
+			GFramework::posts.at(id)->showImGuiWindow(id);
+		}
 		ImGui::End();
 	}
 

@@ -98,18 +98,7 @@ void Mesh::extractData(const std::string& filename)
 	}
 }
 
-PostQuad::PostQuad()
-{
-
-}
-
-PostQuad::~PostQuad()
-{
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-}
-
-void PostQuad::commit()
+void PostQuad::init()
 {
 	GLuint program = GFramework::getBackShader()->id;
 

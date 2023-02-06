@@ -9,10 +9,8 @@ layout(binding = 1) uniform sampler2D render;
 
 in vec2 texCoord;
 
-uniform uint current;
-uniform float grainIntensity;
-uniform float randomSeed;
-uniform float mult;
+layout(location = 0) uniform float grainIntensity;
+layout(location = 1) uniform float randomSeed;
 
 // https://thebookofshaders.com/10/
 float random( vec2 p )
@@ -35,13 +33,6 @@ vec3 dithering(vec3 rgbSample)
 void main()
 {
 	vec3 color = texture(render, texCoord).rgb;
-	switch(current)
-	{
-	case 0:
-		break;
-	case 1:
-		color = dithering(color);
-		break;
-	}
-	fragmentColor = vec4(color * mult, 1.0);
+	color = dithering(color);
+	fragmentColor = vec4(color, 1.0);
 }

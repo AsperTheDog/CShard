@@ -70,7 +70,7 @@ void Texture::renderAsBackground(PhysicalData& parent)
 	glUniformMatrix4fv(glGetUniformLocation(program, "invPV"), 1, false, &invPV[0].x);
 	glUniform3fv(glGetUniformLocation(program, "camPos"), 1, &Engine::activeCam->pos.x);
 
-	GFramework::fullQuadMesh.render();
+	PostQuad::render();
 }
 
 void EmptyTexture::commit(

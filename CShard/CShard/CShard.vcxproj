@@ -39,6 +39,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\device\graphics\FrameBuffer.hpp" />
+    <ClInclude Include="src\device\graphics\Shader.hpp" />
     <ClInclude Include="src\engine\lua\components\LuaCam.hpp" />
     <ClInclude Include="src\engine\lua\components\LuaColl.hpp" />
     <ClInclude Include="src\engine\lua\components\LuaLi.hpp" />

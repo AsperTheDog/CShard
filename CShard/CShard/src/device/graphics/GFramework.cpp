@@ -9,6 +9,7 @@
 
 #include "Mesh.hpp"
 #include "Texture.hpp"
+#include "Shader.hpp"
 #include "../../ide/ImGuiManager.hpp"
 #include "../../engine/Engine.hpp"
 #include "../../elements/components/Light.hpp"
@@ -168,41 +169,20 @@ void GFramework::create()
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	baseShader = new Shader(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
-	backgroundShader = new Shader(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
-	postShader = new Shader(POST_VERTEX_LOCATION, POST_FRAGMENT_LOCATION);
+	baseShader.commit(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
+	backgroundShader.commit(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
+	
+	posts.push_back(new Atmospheric());
+	posts.push_back(new FilmGrain());
+	posts.push_back(new BlackFade());
+	posts.push_back(new DepthEffect());
+	posts.push_back(new Pixelate());
 
 	defaultTex.commit(DEFAULT_TEX_LOCATION);
-	fullQuadMesh.commit();
+	PostQuad::init();
 
-	baseTexture.commit(COLOR, 1920, 1080);
-	baseDepth.commit(DEPTH, 1920, 1080);
-	glGenFramebuffers(1, &baseFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, baseTexture.texture, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, baseDepth.texture, 0);
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if(status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		throw std::runtime_error(R"(BaseFramebuffer could not be completed)");
-	}
-
-	postTexture.commit(COLOR, 1920, 1080);
-	postDepth.commit(DEPTH, 1920, 1080);
-
-	glGenFramebuffers(1, &postFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, postTexture.texture, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, postDepth.texture, 0);
-	status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if(status != GL_FRAMEBUFFER_COMPLETE)
-	{
-		throw std::runtime_error(R"(PostFramebuffer could not be completed)");
-	}
+	baseFB.commit();
+	postFB1.commit();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -211,7 +191,7 @@ void GFramework::initRender()
 {
 	if (Engine::isIDE)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
+		baseFB.bind();
 		if (imGuiSize != viewPortSize)
 		{
 			viewPortSize = imGuiSize;
@@ -220,7 +200,11 @@ void GFramework::initRender()
 			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
 	}
-	glUniform1ui(glGetUniformLocation(baseShader->id, "lightNum"), lightSourceCount);
+
+	postPingPong.first = &baseFB;
+	postPingPong.second = &postFB1;
+
+	glUniform1ui(glGetUniformLocation(baseShader.id, "lightNum"), lightSourceCount);
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -228,13 +212,14 @@ void GFramework::initRender()
 
 void GFramework::endRender()
 {
-	prepareShader(SHADER_POST);
-	setPostUniforms();
-	glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, baseTexture.texture);
-	fullQuadMesh.render();
-
+	for (auto& post : posts)
+	{
+		if (post->doRender)
+		{
+			post->render(postPingPong.first, postPingPong.second, &baseFB.depth);
+			std::swap(postPingPong.first, postPingPong.second);
+		}
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	lightCounter = 0;
 }
@@ -273,14 +258,14 @@ void GFramework::renderImgui()
     }
 }
 
-GFramework::Shader* GFramework::getBaseShader()
+Shader* GFramework::getBaseShader()
 {
-	return baseShader;
+	return &baseShader;
 }
 
-GFramework::Shader* GFramework::getBackShader()
+Shader* GFramework::getBackShader()
 {
-	return backgroundShader;
+	return &backgroundShader;
 }
 
 void GFramework::setDefaultTexture()
@@ -307,26 +292,15 @@ void GFramework::loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pDa
 	}
 }
 
-void GFramework::setPostUniforms()
-{
-	glUniform1ui(glGetUniformLocation(activeShader, "current"), postEffectsActive ? filmGrain.id : 0);
-	glUniform1f(glGetUniformLocation(activeShader, "randomSeed"), filmGrain.nextNum);
-	glUniform1f(glGetUniformLocation(activeShader, "grainIntensity"), filmGrain.intensity);
-	filmGrain.next();
-	glUniform1f(glGetUniformLocation(activeShader, "mult"), postMult);
-}
-
 uint32_t GFramework::getImGuiTexture()
 {
-	return postTexture.texture;
+	return postPingPong.first->color.texture;
 }
 
 void GFramework::resizeImGuiTextures()
 {
-	baseTexture.resize(viewPortSize.x, viewPortSize.y, nullptr);
-	baseDepth.resize(viewPortSize.x, viewPortSize.y, nullptr);
-	postTexture.resize(viewPortSize.x, viewPortSize.y, nullptr);
-	postDepth.resize(viewPortSize.x, viewPortSize.y, nullptr);
+	baseFB.resize(viewPortSize.x, viewPortSize.y);
+	postFB1.resize(viewPortSize.x, viewPortSize.y);
 }
 
 void GFramework::loadLightUniforms(Light& light, PhysicalData& parent)
@@ -345,103 +319,19 @@ void GFramework::prepareShader(ShaderType type)
 	switch (type)
 	{
 	case SHADER_BACK:
-		glUseProgram(backgroundShader->id);
-		activeShader = backgroundShader->id;
-		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
+		glUseProgram(backgroundShader.id);
+		activeShader = backgroundShader.id;
+		baseFB.bind();
 		break;
 	case SHADER_BASE:
-		glUseProgram(baseShader->id);
-		activeShader = baseShader->id;
-		glBindFramebuffer(GL_FRAMEBUFFER, baseFBO);
+		glUseProgram(baseShader.id);
+		activeShader = baseShader.id;
+		baseFB.bind();
 		break;
-	case SHADER_POST:
-		glUseProgram(postShader->id);
-		activeShader = postShader->id;
-		glBindFramebuffer(GL_FRAMEBUFFER, postFBO);
-		break;
-	default: ;
 	}
 }
 
 void GFramework::resizeWindow()
 {
 	glViewport(0, 0, viewPortSize.x, viewPortSize.y);
-}
-
-GFramework::Shader::Shader(const std::string& vertex, const std::string& fragment)
-{
-	// create shaders then link them into a pipeline
-	uint32_t vs = loadShader(GL_VERTEX_SHADER, vertex);
-	uint32_t fs = loadShader(GL_FRAGMENT_SHADER, fragment);
-
-	GFramework::Shader::linkProgram(vs, fs);
-
-	// once the pipeline is done we don't need the shader objects anymore
-	glDeleteShader(vs);
-	glDeleteShader(fs);
-}
-
-uint32_t GFramework::Shader::loadShader(GLenum type, const std::string& file)
-{
-	GLint success;
-
-	uint32_t shaderID = glCreateShader(type);
-	std::string src = loadShaderSrc(file);
-	const GLchar* shSrc = src.c_str();
-	glShaderSource(shaderID, 1, &shSrc, nullptr);
-	glCompileShader(shaderID);
-
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		char infoLog[512];
-		glGetShaderInfoLog(shaderID, 512, nullptr, infoLog);
-		throw std::runtime_error("Error while compiling shader");
-	}
-
-	return shaderID;
-}
-
-void GFramework::Shader::linkProgram(uint32_t vs, uint32_t fs)
-{
-	GLint success;
-
-	this->id = glCreateProgram();
-	glAttachShader(this->id, vs);
-	glAttachShader(this->id, fs);
-
-	glLinkProgram(this->id);
-
-	glGetProgramiv(this->id, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		char infoLog[512];
-		glGetProgramInfoLog(this->id, 512, nullptr, infoLog);
-		glDeleteShader(vs);
-		glDeleteShader(fs);
-		throw std::runtime_error("Error linking program");
-	}
-}
-
-std::string GFramework::loadShaderSrc(const std::string& file)
-{
-	std::string src;
-    std::fstream inFile;
-
-    inFile.open(file);
-    if (inFile.is_open())
-    {
-        std::string temp;
-        while (std::getline(inFile, temp))
-            src += temp + "\n";
-    }
-    else
-    {
-        SDLFramework::showErrorMessage(
-            "Could not load shader data", 
-            "Make sure the pak folder is not missing in the program folder");
-    	throw std::exception("Error loading shader");
-    }
-    inFile.close();
-    return src;
 }

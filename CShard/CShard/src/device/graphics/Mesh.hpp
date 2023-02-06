@@ -43,13 +43,10 @@ struct PostVertex
 class PostQuad final
 {
 public:
-	explicit PostQuad();
-	~PostQuad();
-
-	void commit();
-	void render();
+	static void init();
+	static void render();
 
 private:
-	uint32_t VAO{};
-	uint32_t VBO{};
+	inline static uint32_t VAO{};
+	inline static uint32_t VBO{};
 };

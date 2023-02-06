@@ -1,8 +1,8 @@
 #pragma once
 
+#include "FrameBuffer.hpp"
 #include "Mesh.hpp"
 #include "Texture.hpp"
-#include "GraphicsHeader.hpp"
 
 #include "../window/SDLFramework.hpp"
 #include "PostEffects.hpp"
@@ -11,6 +11,7 @@
 #define GLMINOR 5
 
 
+class Shader;
 class Light;
 class Model;
 struct PhysicalData;
@@ -19,22 +20,12 @@ class Camera;
 enum ShaderType
 {
 	SHADER_BASE,
-	SHADER_BACK,
-	SHADER_POST
+	SHADER_BACK
 };
 
 class GFramework
 {
 public:
-	class Shader
-	{
-	public:
-		GLuint id{};
-
-		Shader(const std::string& vertex, const std::string& fragment);
-		static uint32_t loadShader(GLenum type, const std::string& file);
-		void linkProgram(uint32_t vs, uint32_t fs);
-	};
 
 	static void create();
 
@@ -53,38 +44,29 @@ public:
 	static void setDefaultTexture();
 	static void loadCamUniforms(Camera& camera);
 	static void loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pData, bool material);
-	static void setPostUniforms();
 	static uint32_t getImGuiTexture();
 	static void resizeImGuiTextures();
 	static void loadLightUniforms(Light& light, PhysicalData& parent);
 	static void prepareShader(ShaderType type);
 
-	inline static Shader* baseShader = nullptr;
-	inline static Shader* backgroundShader = nullptr;
-	inline static Shader* postShader = nullptr;
+	inline static Shader baseShader{};
+	inline static Shader backgroundShader{};
 
 	inline static Texture defaultTex{};
-	inline static PostQuad fullQuadMesh{};
 
 	inline static glm::uvec2 imGuiSize{1920, 1080};
 	inline static uint8_t lightSourceCount = 0;
 	inline static Light* lights[10];
-
-	inline static float postMult = 1.f;
-	inline static FilmGrain filmGrain{};
-	inline static bool postEffectsActive = false;
+	
 	inline static uint32_t activeShader = 0;
 	
 	inline static glm::uvec2 viewPortSize{1920, 1080};
+	inline static std::vector<PostProcess*> posts;
 private:
-	static std::string loadShaderSrc(const std::string& file);
-
 	inline static uint16_t lightCounter = 0;
 	inline static SDL_GLContext gl_context = nullptr;
-	inline static EmptyTexture baseTexture{};
-	inline static EmptyTexture baseDepth{};
-	inline static EmptyTexture postTexture{};
-	inline static EmptyTexture postDepth{};
-	inline static uint32_t baseFBO = 0;
-	inline static uint32_t postFBO = 0;
+
+	inline static FrameBuffer baseFB;
+	inline static FrameBuffer postFB1;
+	inline static std::pair<FrameBuffer*, FrameBuffer*> postPingPong;
 };
