@@ -4,7 +4,7 @@
 
 bool SphereCollider::testCollisions(PhysicalData pData, Collider* other, PhysicalData otherPData)
 {
-
+	return false;
 }
 
 void SphereCollider::serialize(std::ofstream& wf)
@@ -19,7 +19,7 @@ void SphereCollider::deserialize(std::ifstream& wf)
 
 bool OBBCollider::testCollisions(PhysicalData pData, Collider* other, PhysicalData otherPData)
 {
-
+	return false;
 }
 
 void OBBCollider::serialize(std::ofstream& wf)
@@ -34,7 +34,7 @@ void OBBCollider::deserialize(std::ifstream& wf)
 
 bool CapsuleCollider::testCollisions(PhysicalData pData, Collider* other, PhysicalData otherPData)
 {
-
+	return false;
 }
 
 void CapsuleCollider::serialize(std::ofstream& wf)
@@ -123,24 +123,12 @@ void ColliderStructure::init()
 
 void ColliderStructure::add(GameObject* obj, Component* coll)
 {
-	if (colliders.contains({coll, obj})) return;
-	colliders.insert({coll, obj});
-	for (auto& otherColl : colliders)
-	{
-		if (otherColl.coll == coll) continue;
-		lastColls.emplace({coll, otherColl.coll}, false);
-	}
+	colliders.push_back({coll, obj});
 }
 
 void ColliderStructure::remove(GameObject* obj, Component* coll)
 {
-	if (!colliders.contains({coll, obj})) return;
-	colliders.erase({coll, obj});
-	for (auto& otherColl : colliders)
-	{
-		if (otherColl.coll == coll) continue;
-		lastColls.erase({coll, otherColl.coll});
-	}
+	colliders.push_back({coll, obj});
 }
 
 void ColliderStructure::test()
@@ -154,22 +142,10 @@ void ColliderStructure::test()
 		{
 			PhysicalData newOtherData = coll.obj->modelData;
 			newOtherData.pos += coll.coll->value.coll.position;
-			bool before, now;
-			before = lastColls.at({collNode.coll, coll.coll});
-			now = collNode.coll->value.coll.testCollision(newData, &coll.coll->value.coll, newOtherData);
-			uint32_t script;
-			if (before)
-			{
-				if (now) script = collNode.coll->value.coll.insideScript;
-				else  script = collNode.coll->value.coll.exitScript;
-			}
-			else
-			{
-				if (now) script = collNode.coll->value.coll.enterScript;
-				else script = collNode.coll->value.coll.outsideScript;
-			}
-			CSLua::Manager::runCollideScript(collNode.obj, collNode.coll, coll.obj, coll.coll, script);
+			CSLua::Manager::runCollideScript(
+				collNode.obj, collNode.coll, 
+				coll.obj, coll.coll, 
+				collNode.coll->value.coll.enterScript);
 		}
-		
 	}
 }

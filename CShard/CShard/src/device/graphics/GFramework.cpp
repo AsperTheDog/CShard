@@ -165,7 +165,7 @@ void GFramework::create()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	baseShader.commit(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	backgroundShader.commit(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);

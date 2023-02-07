@@ -107,33 +107,5 @@ struct ColliderStructure
 
 	static void test();
 
-	inline static std::unordered_set<ColliderStructNode> colliders;
-	inline static std::unordered_map<ColliderInteraction, bool> lastColls;
-};
-
-template <class T>
-void hash_combine(std::size_t& s, const T& v)
-{
-	std::hash<T> h;
-	s ^= h(v) + 0x9e3779b9 + (s << 6) + (s >> 2);
-}
-
-template <>
-struct std::hash<ColliderInteraction>
-{
-	std::size_t operator()(const ColliderInteraction& s) const noexcept
-	{
-		std::size_t res = 0;
-		if (s.c1 > s.c2)
-		{
-			hash_combine(res, s.c1);
-			hash_combine(res, s.c2);
-		}
-		else
-		{
-			hash_combine(res, s.c2);
-			hash_combine(res, s.c1);
-		}
-		return res;
-	}
+	inline static std::vector<ColliderStructNode> colliders;
 };
