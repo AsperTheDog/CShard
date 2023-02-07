@@ -10,7 +10,7 @@ Reimplementation in C++ of the closed source Shard engine for the course Introdu
     - Background component, represents a skybox
     - Light component, represents a point light source
  - A fully functioning GUI that lets you hot import meshes, textures and scripts
- - Post processing pipeline (currently only film grain is implemented)
+ - Post processing pipeline (While the number, types and order of the effects are customizable, right now they are simply fixed functions)
 
 
 ### Future planned features:
