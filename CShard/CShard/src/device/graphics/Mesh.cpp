@@ -56,6 +56,18 @@ void Mesh::render(bool culling)
 	if (!culling) glEnable(GL_CULL_FACE);
 }
 
+void Mesh::renderAsCollider()
+{
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	GLboolean depth = false;
+	glGetBooleanv(GL_DEPTH_TEST, &depth);
+	glDisable(GL_DEPTH_TEST);
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, this->indexNum, GL_UNSIGNED_INT, nullptr);
+	if (depth) glEnable(GL_DEPTH_TEST);
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+}
+
 void Mesh::extractData(const std::string& filename)
 {
 	tinyobj::attrib_t attrib;

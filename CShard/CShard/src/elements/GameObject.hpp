@@ -62,7 +62,7 @@ public:
 	void insertComponent(uint32_t id, Component& comp);
 	void removeComponent(uint32_t id);
 
-	void processCollision();
+	static void processCollision();
 	void processScripts(uint32_t objID, ScriptType type);
 	void processBackground();
 	void processModels(Camera& cam);
@@ -74,7 +74,7 @@ public:
 	void toggleActive();
 
 	char name[MAX_PATH_NAME_LENGTH]{};
-	std::map<uint32_t, Component> components;
+	std::map<uint32_t, Component> components{};
 	uint32_t lightCount = 0;
 	bool hasBackground = false;
 	bool show = true;

@@ -6,7 +6,7 @@
 #include "../../device/graphics/GFramework.hpp"
 
 #include "../../elements/components/Camera.hpp"
-#include "../../elements/components/Collider.hpp"
+#include "../../elements/components/ColliderBase.hpp"
 #include "../../elements/components/Model.hpp"
 #include "../../elements/components/Script.hpp"
 #include "../../elements/components/Background.hpp"
@@ -154,7 +154,7 @@ private:
 			cam.changeLense(tempFOV, tempNP, tempFP);
 	}
 
-	static void showCollider(Collider& coll, std::string& uniqueID)
+	static void showCollider(ColliderBase& coll, std::string& uniqueID)
 	{
 		
 	}

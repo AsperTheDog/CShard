@@ -58,7 +58,7 @@ namespace CSLua
 			}
 			case COMPONENT_COLLIDER:
 			{
-				Collider** ud = (Collider**)lua_newuserdata(L, sizeof(Collider*));
+				ColliderBase** ud = (ColliderBase**)lua_newuserdata(L, sizeof(ColliderBase*));
 				*ud = &comp->value.coll;
 				LuaColl::getMetatable(L);
 				lua_setmetatable(L, -2);

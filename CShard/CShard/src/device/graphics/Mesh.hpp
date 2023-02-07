@@ -20,6 +20,8 @@ public:
 
 	void commit(const std::string& filepath);
 	void render(bool culling);
+
+	void renderAsCollider();
 	
 	std::string name;
 private:

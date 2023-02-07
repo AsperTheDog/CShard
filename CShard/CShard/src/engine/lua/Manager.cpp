@@ -79,27 +79,23 @@ namespace CSLua
 		}
 	}
 
-	void Manager::runCollideScript(uint32_t obj, uint32_t coll, uint32_t receiverObj, uint32_t receiverColl, uint32_t script)
+	void Manager::runCollideScript(GameObject* obj, Component* coll, GameObject* receiverObj, Component* receiverColl, uint32_t script)
 	{
-		GameObject* objPtr = ResourceManager::getObject(obj);
 		lua_getglobal(L, "obj");
 		GameObject** ud = (GameObject**)lua_touserdata(L, -1);
-		*ud = objPtr;
-
-		Component* compPtr = objPtr->getComponent(coll);
+		*ud = obj;
+		
 		lua_getglobal(L, "coll");
 		Component** ud2 = (Component**)lua_touserdata(L, -1);
-		*ud2 = compPtr;
-
-		GameObject* objPtr2 = ResourceManager::getObject(receiverObj);
+		*ud2 = coll;
+		
 		lua_getglobal(L, "obj2");
 		GameObject** ud3 = (GameObject**)lua_touserdata(L, -1);
-		*ud3 = objPtr2;
-
-		Component* compPtr2 = objPtr->getComponent(receiverColl);
+		*ud3 = receiverObj;
+		
 		lua_getglobal(L, "coll2");
 		Component** ud4 = (Component**)lua_touserdata(L, -1);
-		*ud4 = compPtr2;
+		*ud4 = receiverColl;
 
 		try {
 			if (!ResourceManager::isValidScript(script)) throw std::runtime_error("Tried to run invalid id script: " + std::to_string(script));
