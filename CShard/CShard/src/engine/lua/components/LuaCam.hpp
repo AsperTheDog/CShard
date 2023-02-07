@@ -73,17 +73,17 @@ namespace CSLua
 			}
 			if (strcmp(index, "fov") == 0)
 			{
-				lua_tonumber(L, orig->FOV);
+				lua_pushnumber(L, orig->FOV);
 				return 1;
 			}
 			if (strcmp(index, "near") == 0)
 			{
-				lua_tonumber(L, orig->nearPlane);
+				lua_pushnumber(L, orig->nearPlane);
 				return 1;
 			}
 			if (strcmp(index, "far") == 0)
 			{
-				lua_tonumber(L, orig->farPlane);
+				lua_pushnumber(L, orig->farPlane);
 				return 1;
 			}
 			lua_getglobal(L, "Camera");
@@ -115,17 +115,17 @@ namespace CSLua
 			}
 			if (strcmp(index, "fov") == 0)
 			{
-				orig->changeLense(lua_tonumber(L, -1));
+				orig->changeLense((float)lua_tonumber(L, -1));
 				return 1;
 			}
 			if (strcmp(index, "near") == 0)
 			{
-				orig->changeLense(orig->FOV, lua_tonumber(L, -1));
+				orig->changeLense(orig->FOV, (float)lua_tonumber(L, -1));
 				return 1;
 			}
 			if (strcmp(index, "far") == 0)
 			{
-				orig->changeLense(orig->FOV, orig->nearPlane, lua_tonumber(L, -1));
+				orig->changeLense(orig->FOV, orig->nearPlane, (float)lua_tonumber(L, -1));
 				return 1;
 			}
 			lua_getglobal(L, "Camera");

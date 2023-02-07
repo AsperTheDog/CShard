@@ -1,15 +1,13 @@
 #include "GFramework.hpp"
 
-#include <iostream>
 #include <SDL_syswm.h>
-
 #include <sstream>
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_sdl.h>
 
 #include "Mesh.hpp"
+#include "PostEffects.hpp"
 #include "Texture.hpp"
-#include "Shader.hpp"
 #include "../../ide/ImGuiManager.hpp"
 #include "../../engine/Engine.hpp"
 #include "../../elements/components/Light.hpp"
@@ -172,11 +170,11 @@ void GFramework::create()
 	baseShader.commit(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	backgroundShader.commit(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
 	
-	posts.push_back(new Atmospheric());
-	posts.push_back(new FilmGrain());
-	posts.push_back(new BlackFade());
-	posts.push_back(new DepthEffect());
-	posts.push_back(new Pixelate());
+	FilmGrain::commitShader();
+	Atmospheric::commitShader();
+	BlackFade::commitShader();
+	DepthEffect::commitShader();
+	Pixelate::commitShader();
 
 	defaultTex.commit(DEFAULT_TEX_LOCATION);
 	PostQuad::init();
@@ -212,14 +210,6 @@ void GFramework::initRender()
 
 void GFramework::endRender()
 {
-	for (auto& post : posts)
-	{
-		if (post->doRender)
-		{
-			post->render(postPingPong.first, postPingPong.second, &baseFB.depth);
-			std::swap(postPingPong.first, postPingPong.second);
-		}
-	}
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	lightCounter = 0;
 }

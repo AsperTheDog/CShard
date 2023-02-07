@@ -9,7 +9,6 @@
 #define GRID_MESH_LOCATION "pak/resources/obj/__grid.obj"
 
 #define POST_VERTEX_LOCATION "pak/shaders/quad.vert"
-#define NOTHING_FRAGMENT_LOCATION "pak/shaders/nothing.frag"
 #define GRAIN_FRAGMENT_LOCATION "pak/shaders/grain.frag"
 #define BLACK_FRAGMENT_LOCATION "pak/shaders/black.frag"
 #define ATMOS_FRAGMENT_LOCATION "pak/shaders/atmos.frag"

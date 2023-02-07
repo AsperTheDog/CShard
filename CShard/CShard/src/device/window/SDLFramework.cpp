@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <backends/imgui_impl_sdl.h>
 #include "../../ide/ImGuiManager.hpp"
-#include "../../engine/Engine.hpp"
 #include "../graphics/GFramework.hpp"
 
 SDL_WindowFlags SDLFramework::window_flags;

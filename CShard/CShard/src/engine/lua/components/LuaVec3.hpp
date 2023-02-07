@@ -187,7 +187,7 @@ namespace CSLua
 		{
 			glm::vec3* orig = (glm::vec3*)lua_touserdata(L, -1);
 			float length = glm::length(*orig);
-			lua_pushnumber(L, length);
+			lua_pushnumber(L, (lua_Number)length);
 			return 1;
 		}
 		static int normalize(lua_State* L)

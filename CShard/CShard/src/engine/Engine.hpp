@@ -1,10 +1,8 @@
 #pragma once
 
-#include <unordered_set>
-
-#include "../elements/GameObject.hpp"
 #include "../elements/components/Camera.hpp"
 
+class PostEffect;
 class GTexture;
 class GMesh;
 

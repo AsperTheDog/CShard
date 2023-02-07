@@ -75,12 +75,12 @@ namespace CSLua
 			const char* index = lua_tostring(L, -2);
 			if (strcmp(index, "mesh") == 0)
 			{
-				orig->tempMeshID = lua_tonumber(L, -1);
+				orig->tempMeshID = (int)lua_tonumber(L, -1);
 				return 1;
 			}
 			if (strcmp(index, "texture") == 0)
 			{
-				orig->tempTexID = lua_tonumber(L, -1);
+				orig->tempTexID = (int)lua_tonumber(L, -1);
 				return 1;
 			}
 			throw std::runtime_error("Tried to modify non existant or protected Model element");

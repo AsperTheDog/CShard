@@ -5,6 +5,7 @@
 #include <tiny_obj_loader.h>
 
 #include "GFramework.hpp"
+#include "Shader.hpp"
 
 Mesh::Mesh(const std::string& filepath)
 {

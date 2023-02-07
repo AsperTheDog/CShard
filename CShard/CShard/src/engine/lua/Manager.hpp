@@ -19,6 +19,7 @@ namespace CSLua
 
 	private:
 		static int lua_getObject(lua_State* L);
+		static int lua_getPost(lua_State* L);
 		static int lua_getdt(lua_State* L);
 		static int lua_checkInput(lua_State* L);
 

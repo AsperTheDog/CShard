@@ -5,6 +5,9 @@
 #include "../device/graphics/Texture.hpp"
 #include "../elements/GameObject.hpp"
 #include "lua/LuaScript.hpp"
+#include "../device/graphics/PostEffectTypes.hpp"
+
+class PostEffect;
 
 class ResourceManager
 {
@@ -32,11 +35,16 @@ public:
 	static void clone(uint32_t index);
 	static bool isValidScript(uint32_t id);
 	static LuaScript* getScript(uint32_t id);
+	static void addPostEffect(PostType post);
+	static void removePostEffect(uint32_t elem);
+	static void postPass();
+	static PostEffect* getPost(uint32_t pst);
 
 	inline static std::map<uint32_t, GameObject> sceneObjects{};
 	inline static std::map<uint32_t, Mesh> meshes{};
 	inline static std::map<uint32_t, Texture> textures{};
 	inline static std::map<uint32_t, LuaScript> scripts{};
+	inline static std::vector<PostEffect*> posts{};
 
 private:
 	inline static uint32_t meshIDCount = 0;

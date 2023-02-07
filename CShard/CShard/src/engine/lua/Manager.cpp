@@ -8,8 +8,8 @@
 #include "components/LuaMod.hpp"
 #include "components/LuaLi.hpp"
 #include "components/LuaObj.hpp"
-#include "components/LuaPhys.hpp"
 #include "../../input/InputManager.hpp"
+#include "components/LuaPost.hpp"
 
 namespace CSLua
 {
@@ -52,6 +52,8 @@ namespace CSLua
 		lua_setglobal(L, "getObject");
 		lua_pushcfunction(L, lua_getdt);
 		lua_setglobal(L, "getdt");
+		lua_pushcfunction(L, lua_getPost);
+		lua_setglobal(L, "getPost");
 	}
 
 	void Manager::reset()
@@ -111,12 +113,35 @@ namespace CSLua
 
 	int Manager::lua_getObject(lua_State* L)
 	{
-		uint32_t obj = lua_tonumber(L, -1);
+		uint32_t obj = (uint32_t)lua_tonumber(L, -1);
 		GameObject* objPtr = ResourceManager::getObject(obj);
+		if (!objPtr)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
 
 		GameObject** ex = (GameObject**)lua_newuserdata(L, sizeof(GameObject*));
 		*ex = objPtr;
 		CSLua::LuaObj::getMetatable(L);
+		lua_setmetatable(L, -2);
+
+		return 1;
+	}
+
+	int Manager::lua_getPost(lua_State* L)
+	{
+		uint32_t pst = (uint32_t)lua_tonumber(L, -1);
+		PostEffect* postPtr = ResourceManager::getPost(pst);
+		if (!postPtr)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+
+		PostEffect** ex = (PostEffect**)lua_newuserdata(L, sizeof(PostEffect*));
+		*ex = postPtr;
+		CSLua::LuaPost::getMetatable(L);
 		lua_setmetatable(L, -2);
 
 		return 1;
@@ -130,7 +155,7 @@ namespace CSLua
 
 	int Manager::lua_checkInput(lua_State* L)
 	{
-		uint32_t id = lua_tonumber(L, -1);
+		uint32_t id = (uint32_t)lua_tonumber(L, -1);
 		lua_pushboolean(L, InputManager::triggeredThisFrame.contains(id));
 		return 1;
 	}
@@ -144,5 +169,6 @@ namespace CSLua
 		CSLua::LuaMod::registerFuncs(L);
 		CSLua::LuaObj::registerFuncs(L);
 		CSLua::LuaPhys::registerFuncs(L);
+		CSLua::LuaPost::registerFuncs(L);
 	}
 }

@@ -151,6 +151,7 @@ void Engine::render()
 	ResourceManager::backgroundPass();
 	ResourceManager::lightPass();
 	ResourceManager::modelPass(*activeCam);
+	ResourceManager::postPass();
 
 	GFramework::endRender();
 	if (Engine::isIDE) ImGuiManager::render();

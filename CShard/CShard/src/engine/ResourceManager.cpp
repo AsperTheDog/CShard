@@ -1,12 +1,12 @@
 #include "ResourceManager.hpp"
 
-#include <fstream>
 #include <ranges>
 
 #include "../ide/ImGuiManager.hpp"
 #include "../input/InputManager.hpp"
 
 #include "../device/graphics/GFramework.hpp"
+#include "../device/graphics/PostEffects.hpp"
 
 
 void ResourceManager::init()
@@ -33,6 +33,37 @@ void ResourceManager::load(std::ifstream& wf)
 {
 	ImGuiManager::navigationCam.deserialize(wf);
 	uint32_t num = 0;
+	wf.read((char*)&num, sizeof(num));
+	for (uint32_t i = 0; i < num; i++)
+	{
+		PostType type;
+		wf.read((char*) &type, sizeof(type));
+		PostEffect* ptr;
+		switch (type)
+		{
+		case POST_FILMGRAIN:
+			ptr = new FilmGrain();
+			ptr->deserialize(wf);
+			break;
+		case POST_ATMOSPHERICFOG:
+			ptr = new Atmospheric();
+			ptr->deserialize(wf);
+			break;
+		case POST_FADETOBLACK:
+			ptr = new BlackFade();
+			ptr->deserialize(wf);
+			break;
+		case POST_DEPTHBUFFER:
+			ptr = new DepthEffect();
+			ptr->deserialize(wf);
+			break;
+		case POST_PIXELATE:
+			ptr = new Pixelate();
+			ptr->deserialize(wf);
+			break;
+		}
+		posts.push_back(ptr);
+	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	InputManager::inputMappings.reserve(num);
 	for (uint32_t i = 0; i < num; i++)
@@ -102,6 +133,12 @@ void ResourceManager::load(std::ifstream& wf)
 void ResourceManager::save(std::ofstream& wf)
 {
 	ImGuiManager::navigationCam.serialize(wf);
+	uint32_t postNum = (uint32_t)ResourceManager::posts.size();
+	wf.write((char*)&postNum, sizeof(postNum));
+	for (auto& post : ResourceManager::posts)
+	{
+		post->serialize(wf);
+	}
 	uint32_t mappingNum = (uint32_t)InputManager::inputMappings.size();
 	wf.write((char*)&mappingNum, sizeof(mappingNum));
 	for (auto& map : InputManager::inputMappings)
@@ -296,4 +333,51 @@ LuaScript* ResourceManager::getScript(uint32_t id)
 {
 	if (!scripts.contains(id)) return nullptr;
 	return &scripts.at(id);
+}
+
+
+void ResourceManager::addPostEffect(PostType post)
+{
+	switch (post)
+	{
+	case POST_FILMGRAIN:
+		posts.push_back(new FilmGrain());
+		break;
+	case POST_ATMOSPHERICFOG:
+		posts.push_back(new Atmospheric());
+		break;
+	case POST_FADETOBLACK:
+		posts.push_back(new BlackFade());
+		break;
+	case POST_DEPTHBUFFER:
+		posts.push_back(new DepthEffect());
+		break;
+	case POST_PIXELATE:
+		posts.push_back(new Pixelate());
+		break;
+	}
+}
+
+void ResourceManager::removePostEffect(uint32_t elem)
+{
+	if (elem >= posts.size()) return;
+	posts.erase(posts.begin() + elem);
+}
+
+void ResourceManager::postPass()
+{
+	for (auto& post : posts)
+	{
+		if (post->doRender)
+		{
+			post->render(GFramework::postPingPong.first, GFramework::postPingPong.second, &GFramework::baseFB.depth);
+			std::swap(GFramework::postPingPong.first, GFramework::postPingPong.second);
+		}
+	}
+}
+
+PostEffect* ResourceManager::getPost(uint32_t pst)
+{
+	if (pst >= posts.size()) return nullptr;
+	return posts.at(pst);
 }

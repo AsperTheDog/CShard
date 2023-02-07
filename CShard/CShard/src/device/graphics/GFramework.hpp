@@ -1,11 +1,8 @@
 #pragma once
 
 #include "FrameBuffer.hpp"
-#include "Mesh.hpp"
 #include "Texture.hpp"
-
-#include "../window/SDLFramework.hpp"
-#include "PostEffects.hpp"
+#include "Shader.hpp"
 
 #define GLMAYOR 4
 #define GLMINOR 5
@@ -61,12 +58,11 @@ public:
 	inline static uint32_t activeShader = 0;
 	
 	inline static glm::uvec2 viewPortSize{1920, 1080};
-	inline static std::vector<PostProcess*> posts;
-private:
-	inline static uint16_t lightCounter = 0;
-	inline static SDL_GLContext gl_context = nullptr;
+	inline static std::pair<FrameBuffer*, FrameBuffer*> postPingPong;
 
 	inline static FrameBuffer baseFB;
 	inline static FrameBuffer postFB1;
-	inline static std::pair<FrameBuffer*, FrameBuffer*> postPingPong;
+private:
+	inline static uint16_t lightCounter = 0;
+	inline static SDL_GLContext gl_context = nullptr;
 };
