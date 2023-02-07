@@ -11,6 +11,7 @@ Reimplementation in C++ of the closed source Shard engine for the course Introdu
     - Light component, represents a point light source
  - A fully functioning GUI that lets you hot import meshes, textures and scripts
  - Post processing pipeline (While the number, types and order of the effects are customizable, right now they are simply fixed functions)
+ - A complete LUA interface to make scripts with hot reload (even while the game is executing) and the ability to modify parameters of almost everything
 
 
 ### Future planned features:
@@ -18,12 +19,18 @@ Reimplementation in C++ of the closed source Shard engine for the course Introdu
   - directional, spot and area lights
   - Shadows
   - Hot reload of assets from disk
+  - Removing assets from project
+  - Loading screen, preventing the app from freezing
   - Customizable post processing shaders
   - Particle system
   - normal, height and bump mapping
   - In-Scene level editor
   - HUD component
   - Multi-texture models
+  - Temporary savestate to revert when the game finishes executing (scene must be saved when the player clicks "start" and restored when they click "stop")
+  - Input mapping modification from LUA scripts
+  - Creation and destruction of objects and components from LUA scripts
+  - WIKI
 
 # How to use
 
