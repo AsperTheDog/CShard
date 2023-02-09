@@ -154,7 +154,29 @@ private:
 
 	static void showCollider(Collider& coll, std::string& uniqueID)
 	{
-		
+		ImGui::InputFloat3(("Position##coll" + uniqueID).c_str(), &coll.position.x);
+		ImGui::InputInt(("On enter script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_ENTER], 1);
+		coll.tempScripts[SCRIPT_COLLISION_ENTER] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_ENTER]);
+		ImGui::SameLine();
+		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
+			coll.scripts[SCRIPT_COLLISION_ENTER] = coll.tempScripts[SCRIPT_COLLISION_ENTER];
+		ImGui::InputInt(("On exit script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_EXIT], 1);
+		coll.tempScripts[SCRIPT_COLLISION_EXIT] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_EXIT]);
+		ImGui::SameLine();
+		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
+			coll.scripts[SCRIPT_COLLISION_EXIT] = coll.tempScripts[SCRIPT_COLLISION_EXIT];
+		ImGui::InputInt(("On inside script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_IN], 1);
+		coll.tempScripts[SCRIPT_COLLISION_IN] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_IN]);
+		ImGui::SameLine();
+		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
+			coll.scripts[SCRIPT_COLLISION_IN] = coll.tempScripts[SCRIPT_COLLISION_IN];
+		ImGui::InputInt(("On outside script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_OUT], 1);
+		coll.tempScripts[SCRIPT_COLLISION_OUT] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_OUT]);
+		ImGui::SameLine();
+		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
+			coll.scripts[SCRIPT_COLLISION_OUT] = coll.tempScripts[SCRIPT_COLLISION_OUT];
+		ImGui::Checkbox(("Static##coll" + uniqueID).c_str(), &coll.isStatic);
+		ImGui::Checkbox(("Show##coll" + uniqueID).c_str(), &coll.draw);
 	}
 
 	static void showModel(Model& mod, std::string& uniqueID)

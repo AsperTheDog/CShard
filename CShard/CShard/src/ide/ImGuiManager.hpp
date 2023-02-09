@@ -12,6 +12,13 @@
 
 typedef void (*ImGuiWindowCall)(bool*);
 
+enum WindowGroup
+{
+	WINDOW_ADJUSTMENTS,
+	WINDOW_DEVELOPMENT,
+	WINDOW_DEBUG
+};
+
 enum SceneControls
 {
 	FORWARD = 'w',
@@ -28,9 +35,10 @@ public:
 		std::string name;
 		ImGuiWindowCall window;
 		bool isOpen;
+		WindowGroup group;
 
-		WindowData(std::string name, ImGuiWindowCall window, bool isOpen)
-		: name(std::move(name)), window(window), isOpen(isOpen){}
+		WindowData(std::string name, ImGuiWindowCall window, bool isOpen, WindowGroup group)
+		: name(std::move(name)), window(window), isOpen(isOpen), group(group){}
 	};
 
 	ImGuiManager() = delete;
@@ -43,10 +51,9 @@ public:
 	static ImGuiIO* getIO();
 
 	static void addImGuiWindows();
-	static void addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen);
+	static void addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen, WindowGroup group);
 	static void updateSceneCamDir();
 	static void updateSceneCamPos();
-
 
 	inline static Camera navigationCam{};
 	inline static glm::vec2 mousePos{};

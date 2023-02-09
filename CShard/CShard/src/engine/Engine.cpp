@@ -2,6 +2,7 @@
 
 #include <ranges>
 #include <fstream>
+#include <iostream>
 
 #include "../device/window/SDLFramework.hpp"
 #include "../device/graphics/GFramework.hpp"
@@ -46,7 +47,9 @@ void Engine::run()
 		if (Engine::isIDE) ImGuiManager::newFrame();
 
 		updateDeltaTime();
-		Engine::event();
+		for (auto& val : pipelineOrder) pipelineFuncs.at(val)();
+		if (isIDE)
+			ImGuiManager::update();
 		Engine::render();
 
 		if (confirmQuit) break;
@@ -69,6 +72,8 @@ void Engine::compileProject(const std::string& name)
 		SDLFramework::showErrorMessage("Could not save project", "Could not write to save file");
 		return;
 	}
+	wf.write((char*) pipelineOrder, sizeof(pipelineOrder));
+	ImGuiManager::navigationCam.serialize(wf);
 	ResourceManager::save(wf);
 
 	wf.close();
@@ -82,6 +87,8 @@ void Engine::loadProject(const std::string& filename)
 		SDLFramework::showErrorMessage("Could not load project", "Could not read save file");
 		return;
 	}
+	wf.read((char*) pipelineOrder, sizeof(pipelineOrder));
+	ImGuiManager::navigationCam.deserialize(wf);
 	ResourceManager::load(wf);
 
 	wf.close();
@@ -125,12 +132,21 @@ void Engine::updateDeltaTime()
 	prevDt = now;
 }
 
-void Engine::event()
+void Engine::updateInputs()
 {
-	if (isIDE)
-		ImGuiManager::update();
-
 	InputManager::triggeredEvents(&Engine::shouldQuit, isIDE);
+}
+
+void Engine::updateCollisions()
+{
+	if (isGameRunning)
+	{
+		CollisionStructure::testCollisions();
+	}
+}
+
+void Engine::executeScripts()
+{
 	if (isGameRunning)
 	{
 		for (auto& comp : ResourceManager::sceneObjects)
@@ -138,7 +154,6 @@ void Engine::event()
 			comp.second.processScripts(comp.first, ScriptType::SCRIPT_FRAME);
 		}
 	}
-
 }
 
 void Engine::render()

@@ -191,6 +191,9 @@
     <ClInclude Include="src\engine\lua\components\LuaPost.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ide\ImGuiWindows\PipelineWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\base.vert" />

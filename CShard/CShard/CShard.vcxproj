@@ -68,6 +68,7 @@
     <ClInclude Include="src\elements\components\Model.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\AttributesWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\PipelineWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\SceneWindow.hpp" />
     <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp" />
     <ClInclude Include="src\device\graphics\GFramework.hpp" />

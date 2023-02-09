@@ -61,8 +61,7 @@ public:
 	void insertComponent(Component& comp);
 	void insertComponent(uint32_t id, Component& comp);
 	void removeComponent(uint32_t id);
-
-	static void processCollision();
+	
 	void processScripts(uint32_t objID, ScriptType type);
 	void processBackground();
 	void processModels(Camera& cam);

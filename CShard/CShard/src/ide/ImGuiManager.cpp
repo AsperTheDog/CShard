@@ -10,28 +10,29 @@
 #include "ImGuiWindows/InputWindow.hpp"
 #include "ImGuiWindows/DiagnosticsWindow.hpp"
 #include "ImGuiWindows/GameOptionsWindow.hpp"
+#include "ImGuiWindows/PipelineWindow.hpp"
 #include "ImGuiWindows/PostEffectWindow.hpp"
 
 
 void ImGuiManager::init()
 {
 	IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    io = &ImGui::GetIO();
+	ImGui::CreateContext();
+	io = &ImGui::GetIO();
 
-    io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    ImGui::StyleColorsDark();
+	io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui::StyleColorsDark();
 
-    ImGuiStyle& style = ImGui::GetStyle();
-    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
 
-    GFramework::loadImGuiBackends();
+	GFramework::loadImGuiBackends();
 	navigationCam = Camera();
 	keyDowns.emplace(SDLK_w, false);
 	keyDowns.emplace(SDLK_a, false);
@@ -43,93 +44,120 @@ void ImGuiManager::init()
 
 void ImGuiManager::newFrame()
 {
-    GFramework::loadImGuiFrame();
+	GFramework::loadImGuiFrame();
 }
 
 void ImGuiManager::render()
 {
-    {
-	    bool p_open = true;
-	    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-	    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-	   
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	{
+		bool p_open = true;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-	    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-	        window_flags |= ImGuiWindowFlags_NoBackground;
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-	    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	    ImGui::Begin("DockSpace Demo", &p_open, window_flags);
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
 
-    	ImGui::PopStyleVar();
-	    ImGui::PopStyleVar(2);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace Demo", &p_open, window_flags);
 
-	    // Submit the DockSpace
-	    ImGuiIO& io = ImGui::GetIO();
-	    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	    {
-	        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-	        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-	    }
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
+
+		// Submit the DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
 
 		if (ImGui::BeginMenuBar())
-	    {
-	        if (ImGui::BeginMenu("File"))
-	        {
-	            //ImGui::MenuItem("Padding", NULL, &opt_padding);
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				//ImGui::MenuItem("Padding", NULL, &opt_padding);
 				if (ImGui::MenuItem("Save project", ""))
 					showSaveWin = true;
-				
+
 				if (ImGui::MenuItem("Open project", ""))
 					showLoadWin = true;
 
 				if (ImGui::MenuItem("New project", ""))
 					showNewWin = true;
-				
+
 				ImGui::Separator();
 				if (ImGui::MenuItem("Exit", ""))
 					Engine::shouldQuit = true;
-	            ImGui::EndMenu();
-	        }
-			if (ImGui::BeginMenu("Window"))
-			{
-				for (auto& windowCall : windowCalls)
-				{
-					if (ImGui::MenuItem(windowCall.name.c_str(), "", windowCall.isOpen))
-						windowCall.isOpen = !windowCall.isOpen;
-				}
 				ImGui::EndMenu();
 			}
-	        ImGui::EndMenuBar();
-	    }
 
-	    for (auto& windowCall : windowCalls) windowCall.window(&windowCall.isOpen);
+			if (ImGui::BeginMenu("Window"))
+			{
+				if (ImGui::BeginMenu("Development"))
+				{
+					for (auto& windowCall : windowCalls)
+					{
+						if (windowCall.group != WINDOW_DEVELOPMENT) continue;
+						if (ImGui::MenuItem(windowCall.name.c_str(), "", windowCall.isOpen))
+							windowCall.isOpen = !windowCall.isOpen;
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Extra"))
+				{
+					for (auto& windowCall : windowCalls)
+					{
+						if (windowCall.group != WINDOW_ADJUSTMENTS) continue;
+						if (ImGui::MenuItem(windowCall.name.c_str(), "", windowCall.isOpen))
+							windowCall.isOpen = !windowCall.isOpen;
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Debug"))
+				{
+					for (auto& windowCall : windowCalls)
+					{
+						if (windowCall.group != WINDOW_DEBUG) continue;
+						if (ImGui::MenuItem(windowCall.name.c_str(), "", windowCall.isOpen))
+							windowCall.isOpen = !windowCall.isOpen;
+					}
+					ImGui::EndMenu();
+				}
 
-		
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		for (auto& windowCall : windowCalls) windowCall.window(&windowCall.isOpen);
+
+
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		showSaveModal();
 
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		showLoadModal();
 
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-		showCreateModal();		
+		showCreateModal();
 
-	    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		showExitModal();
 
-	    ImGui::End();
+		ImGui::End();
 	}
-    ImGui::Render();
-    GFramework::renderImgui();
+	ImGui::Render();
+	GFramework::renderImgui();
 }
 
 void ImGuiManager::update()
@@ -147,17 +175,17 @@ void ImGuiManager::update()
 
 void ImGuiManager::destroy()
 {
-    GFramework::destroyImGui();
+	GFramework::destroyImGui();
 }
 
 ImGuiIO* ImGuiManager::getIO()
 {
-    return io;
+	return io;
 }
 
-void ImGuiManager::addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen)
+void ImGuiManager::addWindowCall(ImGuiWindowCall call, std::string name, bool defaultOpen, WindowGroup group)
 {
-	ImGuiManager::windowCalls.emplace_back(std::move(name), call, defaultOpen);
+	ImGuiManager::windowCalls.emplace_back(std::move(name), call, defaultOpen, group);
 }
 
 void ImGuiManager::updateSceneCamDir()
@@ -167,7 +195,7 @@ void ImGuiManager::updateSceneCamDir()
 	float rotation_speed = 0.001f;
 	glm::mat4 yaw = glm::rotate(rotation_speed * delta_x, navigationCam.worldUp);
 	glm::mat4 pitch = glm::rotate(
-		rotation_speed * delta_y, 
+		rotation_speed * delta_y,
 		glm::normalize(glm::cross(navigationCam.dir, navigationCam.worldUp)));
 	navigationCam.lookAt(glm::vec3(pitch * yaw * glm::vec4(navigationCam.dir, 0.0f)));
 	lastMousePos.x = mousePos.x;
@@ -176,7 +204,7 @@ void ImGuiManager::updateSceneCamDir()
 
 void ImGuiManager::updateSceneCamPos()
 {
-	glm::vec3 movement{0};
+	glm::vec3 movement{ 0 };
 	if (keyDowns.at(SDLK_w)) movement += navigationCam.dir;
 	if (keyDowns.at(SDLK_s)) movement -= navigationCam.dir;
 	if (keyDowns.at(SDLK_d)) movement += navigationCam.right;
@@ -191,92 +219,92 @@ void ImGuiManager::showCreateModal()
 {
 	if (showNewWin) ImGui::OpenPopup("Save current");
 
-    if (ImGui::BeginPopupModal("Save current", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::Text("Do you want to save the current project?");
-        ImGui::Separator();
+	if (ImGui::BeginPopupModal("Save current", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Do you want to save the current project?");
+		ImGui::Separator();
 		ImGui::InputText("##currProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-        if (ImGui::Button("Save", ImVec2(90, 0)))
-        {
+		if (ImGui::Button("Save", ImVec2(90, 0)))
+		{
 			Engine::compileProject(nameBuff);
 			Engine::resetProject();
 			showNewWin = false;
-            ImGui::CloseCurrentPopup();
-        }
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndDisabled();
-	    ImGui::SameLine();
+		ImGui::SameLine();
 		if (ImGui::Button("Don't save", ImVec2(90, 0)))
-        {
+		{
 			Engine::resetProject();
 			showNewWin = false;
-            ImGui::CloseCurrentPopup();
-        }
-	    ImGui::SetItemDefaultFocus();
-	    ImGui::SameLine();
-	    if (ImGui::Button("Cancel", ImVec2(90, 0)))
-	    {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(90, 0)))
+		{
 			showNewWin = false;
-		    ImGui::CloseCurrentPopup();
-	    }
-	    ImGui::EndPopup();
-    }
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void ImGuiManager::showLoadModal()
 {
 	if (showLoadWin) ImGui::OpenPopup("Get name");
 
-    if (ImGui::BeginPopupModal("Get name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::Text("Insert the name of the project");
-        ImGui::Separator();
+	if (ImGui::BeginPopupModal("Get name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Insert the name of the project");
+		ImGui::Separator();
 		ImGui::InputText("##loadProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-        if (ImGui::Button("OK", ImVec2(120, 0)))
-        {
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
 			Engine::loadProject(nameBuff);
 			showLoadWin = false;
-            ImGui::CloseCurrentPopup();
-        }
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndDisabled();
-	    ImGui::SetItemDefaultFocus();
-	    ImGui::SameLine();
-	    if (ImGui::Button("Cancel", ImVec2(120, 0)))
-	    {
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
 			showLoadWin = false;
-		    ImGui::CloseCurrentPopup();
-	    }
-	    ImGui::EndPopup();
-    }
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void ImGuiManager::showSaveModal()
 {
 	if (showSaveWin) ImGui::OpenPopup("Add name");
 
-    if (ImGui::BeginPopupModal("Add name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::Text("Set a name for the project");
-        ImGui::Separator();
+	if (ImGui::BeginPopupModal("Add name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Set a name for the project");
+		ImGui::Separator();
 		ImGui::InputText("##saveProjectName", nameBuff, MAX_PATH_NAME_LENGTH);
 		ImGui::BeginDisabled(strcmp(nameBuff, "") == 0);
-        if (ImGui::Button("OK", ImVec2(120, 0)))
-        {
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
 			Engine::compileProject(nameBuff);
 			showSaveWin = false;
-            ImGui::CloseCurrentPopup();
-        }
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndDisabled();
-	    ImGui::SetItemDefaultFocus();
-	    ImGui::SameLine();
-	    if (ImGui::Button("Cancel", ImVec2(120, 0)))
-	    {
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
 			showSaveWin = false;
-		    ImGui::CloseCurrentPopup();
-	    }
-	    ImGui::EndPopup();
-    }
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void ImGuiManager::showExitModal()
@@ -316,12 +344,13 @@ void ImGuiManager::showExitModal()
 
 void ImGuiManager::addImGuiWindows()
 {
-	ImGuiManager::addWindowCall(InputWindow::showWindow, "Input mappings", false);
-	ImGuiManager::addWindowCall(ObjectWindow::showWindow, "Object list", true);
-	ImGuiManager::addWindowCall(SceneWindow::showWindow, "Game window", true);
-	ImGuiManager::addWindowCall(AttributesWindow::showWindow, "Object attributes", true);
-	ImGuiManager::addWindowCall(AssetWindow::showWindow, "Assets", true);
-	ImGuiManager::addWindowCall(DiagnosticsWindow::showWindow, "Diagnostics", false);
-	ImGuiManager::addWindowCall(GameOptionsWindow::showWindow, "Game control", false);
-	ImGuiManager::addWindowCall(PostEffectWindow::showWindow, "Post Effects", false);
+	ImGuiManager::addWindowCall(InputWindow::showWindow, "Input mappings", false, WINDOW_DEVELOPMENT);
+	ImGuiManager::addWindowCall(ObjectWindow::showWindow, "Object list", true, WINDOW_DEVELOPMENT);
+	ImGuiManager::addWindowCall(SceneWindow::showWindow, "Game window", true, WINDOW_DEVELOPMENT);
+	ImGuiManager::addWindowCall(AttributesWindow::showWindow, "Object attributes", true, WINDOW_DEVELOPMENT);
+	ImGuiManager::addWindowCall(AssetWindow::showWindow, "Assets", true, WINDOW_DEVELOPMENT);
+	ImGuiManager::addWindowCall(DiagnosticsWindow::showWindow, "Diagnostics", false, WINDOW_DEBUG);
+	ImGuiManager::addWindowCall(GameOptionsWindow::showWindow, "Game control", false, WINDOW_ADJUSTMENTS);
+	ImGuiManager::addWindowCall(PostEffectWindow::showWindow, "Post Effects", false, WINDOW_ADJUSTMENTS);
+	ImGuiManager::addWindowCall(PipelineWindow::showWindow, "Pipeline", false, WINDOW_ADJUSTMENTS);
 }

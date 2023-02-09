@@ -88,7 +88,7 @@ void GameObject::addComponent(Component& comp)
 		break;
 	case COMPONENT_COLLIDER: 
 		comp.value.coll = Collider();
-		ColliderStructure::add(this, &comp);
+		CollisionStructure::addCollider(this, &comp);
 		break;
 	case COMPONENT_MODEL: 
 		comp.value.mod = Model();
@@ -126,7 +126,7 @@ void GameObject::insertComponent(Component& comp)
 	else if (comp.type == COMPONENT_BACKGROUND) 
 		hasBackground = true;
 	else if (comp.type == COMPONENT_COLLIDER)
-		ColliderStructure::add(this, &comp);
+		CollisionStructure::addCollider(this, &comp);
 	this->components.emplace(compIdTracker, comp);
 	compIdTracker++;
 }
@@ -141,7 +141,7 @@ void GameObject::insertComponent(uint32_t id, Component& comp)
 	else if (comp.type == COMPONENT_BACKGROUND) 
 		hasBackground = true;
 	else if (comp.type == COMPONENT_COLLIDER)
-		ColliderStructure::remove(this, &comp);
+		CollisionStructure::removeCollider(&comp);
 
 	this->components.emplace(id, comp);
 }
@@ -150,11 +150,6 @@ void GameObject::removeComponent(uint32_t id)
 {
 	if (!components.contains(id)) return;
 	components.erase(id);
-}
-
-void GameObject::processCollision()
-{
-	ColliderStructure::test();
 }
 
 void GameObject::processScripts(uint32_t objID, ScriptType type)

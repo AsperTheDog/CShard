@@ -31,7 +31,6 @@ void ResourceManager::reset()
 
 void ResourceManager::load(std::ifstream& wf)
 {
-	ImGuiManager::navigationCam.deserialize(wf);
 	uint32_t num = 0;
 	wf.read((char*)&num, sizeof(num));
 	for (uint32_t i = 0; i < num; i++)
@@ -132,7 +131,6 @@ void ResourceManager::load(std::ifstream& wf)
 
 void ResourceManager::save(std::ofstream& wf)
 {
-	ImGuiManager::navigationCam.serialize(wf);
 	uint32_t postNum = (uint32_t)ResourceManager::posts.size();
 	wf.write((char*)&postNum, sizeof(postNum));
 	for (auto& post : ResourceManager::posts)
@@ -266,7 +264,7 @@ uint32_t ResourceManager::addScript(std::string& filepath)
 	{
 		elem->second.commit(filepath);
 	}
-	catch(std::runtime_error)
+	catch(std::runtime_error&)
 	{
 		scripts.erase(scrIDCount);
 		scrIDCount--;

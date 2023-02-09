@@ -1,9 +1,9 @@
 #pragma once
 #include <fstream>
-#include <unordered_map>
 #include <unordered_set>
 #include <vec3.hpp>
 
+#include "Script.hpp"
 #include "../PhysicalData.hpp"
 
 struct Component;
@@ -20,7 +20,7 @@ enum ColliderType
 class SphereCollider final
 {
 public:
-	bool testCollisions(PhysicalData pData, Collider* other, PhysicalData otherPData);
+	bool testCollisions(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
 
@@ -30,7 +30,7 @@ public:
 class OBBCollider final
 {
 public:
-	bool testCollisions(PhysicalData pData, Collider* other, PhysicalData otherPData);
+	bool testCollisions(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
 
@@ -40,7 +40,7 @@ public:
 class CapsuleCollider final
 {
 public:
-	bool testCollisions(PhysicalData pData, Collider* other, PhysicalData otherPData);
+	bool testCollisions(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
 
@@ -57,55 +57,42 @@ struct Collider
 		CapsuleCollider cap;
 	};
 
-	uint32_t enterScript{};
-	uint32_t insideScript{};
-	uint32_t exitScript{};
-	uint32_t outsideScript{};
+	uint32_t scripts[4] = {0, 0, 0, 0};
+	int tempScripts[4] = {0, 0, 0, 0};
 
 	ColliderType type;
-	CollData data;
 	bool draw = false;
 	bool isStatic = true;
 	glm::vec3 position{ 0 };
+	CollData data;
+
 
 	Collider();
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
 
-	bool testCollision(PhysicalData pData, Collider* other, PhysicalData otherPData);
+	bool testCollision(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 };
 
-struct ColliderStructNode
+class CollisionNode
 {
-	Component* coll;
+public:
+	CollisionNode(GameObject* obj, Component* coll) : obj(obj), coll(coll){}
+	ScriptType updateCollisionHistory(Component* otherColl, bool isInside);
+
 	GameObject* obj;
+	Component* coll;
 
-	bool operator==(const ColliderStructNode& other) const
-	{
-		return this->coll == other.coll && this->obj == other.obj;
-	}
+	std::unordered_set<Component*> collsInside;
 };
 
-struct ColliderInteraction
+class CollisionStructure
 {
-	Component* c1;
-	Component* c2;
+public:
+	static void addCollider(GameObject* obj, Component* coll);
+	static void removeCollider(Component* coll);
 
-	bool operator==(const ColliderInteraction& other) const
-	{
-		return (c1 == other.c1 && c2 == other.c2) || (c2 == other.c1 && c1 == other.c2);
+	static void testCollisions();
 
-	}
-};
-
-struct ColliderStructure
-{
-	static void init();
-
-	static void add(GameObject* obj, Component* coll);
-	static void remove(GameObject* obj, Component* coll);
-
-	static void test();
-
-	inline static std::vector<ColliderStructNode> colliders;
+	inline static std::vector<CollisionNode> colliders;
 };
