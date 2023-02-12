@@ -106,9 +106,8 @@ struct Atmospheric final : PostEffect
 	void render(FrameBuffer* from, FrameBuffer* to, EmptyTexture* depth) override
 	{
 		glUseProgram(shader.id);
-		glUniform1f(glGetUniformLocation(shader.id, "startFog"), start);
-		glUniform1f(glGetUniformLocation(shader.id, "endFog"), end);
-		glUniform3fv(glGetUniformLocation(shader.id, "colorFog"), 1, &color.x);
+		glUniform1f(glGetUniformLocation(shader.id, "density"), density);
+		glUniform3fv(glGetUniformLocation(shader.id, "fogColor"), 1, &color.x);
 		PostEffect::render(from, to, depth);
 	}
 
@@ -116,6 +115,9 @@ struct Atmospheric final : PostEffect
 	{
 		std::string uniqueCode = std::to_string(id);
 		ImGui::Checkbox(("Active##Atmos" + uniqueCode).c_str(), &doRender);
+		ImGui::Separator();
+		ImGui::ColorPicker3(("Color##Fog" + uniqueCode).c_str(), &color.x);
+		ImGui::DragFloat(("Density##Fog" + uniqueCode).c_str(), &density, 0.01f, 0.f, 1.f);
 	}
 
 	const char* getName() override
@@ -127,7 +129,16 @@ struct Atmospheric final : PostEffect
 	{
 		PostType type = POST_ATMOSPHERICFOG;
 		wf.write((char*) &type, sizeof(type));
+		wf.write((char*) &density, sizeof(density));
+		wf.write((char*) &color, sizeof(color));
 		PostEffect::serialize(wf);
+	}
+
+	void deserialize(std::ifstream& wf) override
+	{
+		wf.read((char*) &density, sizeof(density));
+		wf.read((char*) &color, sizeof(color));
+		PostEffect::deserialize(wf);
 	}
 
 	PostType getType() override
@@ -135,9 +146,8 @@ struct Atmospheric final : PostEffect
 		return POST_ATMOSPHERICFOG;
 	}
 
-	float start;
-	float end;
-	glm::vec3 color;
+	float density = 0.f;
+	glm::vec3 color{1.f};
 private:
 	inline static Shader shader{};
 };

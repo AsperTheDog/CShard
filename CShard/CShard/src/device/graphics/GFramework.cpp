@@ -141,7 +141,7 @@ void GFramework::create()
     }
 
 	{
-		glm::ivec2 size = SDLFramework::getSize();
+		windowSize = SDLFramework::getSize();
 		GFramework::resizeWindow();
 	}
 
@@ -182,18 +182,18 @@ void GFramework::create()
 	baseFB.commit();
 	postFB1.commit();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	screen.id = 0;
+	screen.bind();
 }
 
 void GFramework::initRender()
 {
-	if (Engine::isIDE)
 	{
 		baseFB.bind();
-		if (imGuiSize != viewPortSize)
+		if (windowSize != viewPortSize)
 		{
-			viewPortSize = imGuiSize;
-			resizeImGuiTextures();
+			viewPortSize = windowSize;
+			resizeFBs();
 			GFramework::resizeWindow();
 			Engine::activeCam->updateAspectRatio((float)viewPortSize.x / (float)viewPortSize.y);
 		}
@@ -287,7 +287,7 @@ uint32_t GFramework::getImGuiTexture()
 	return postPingPong.first->color.texture;
 }
 
-void GFramework::resizeImGuiTextures()
+void GFramework::resizeFBs()
 {
 	baseFB.resize(viewPortSize.x, viewPortSize.y);
 	postFB1.resize(viewPortSize.x, viewPortSize.y);

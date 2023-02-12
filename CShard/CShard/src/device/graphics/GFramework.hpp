@@ -42,7 +42,7 @@ public:
 	static void loadCamUniforms(Camera& camera);
 	static void loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pData, bool material);
 	static uint32_t getImGuiTexture();
-	static void resizeImGuiTextures();
+	static void resizeFBs();
 	static void loadLightUniforms(Light& light, PhysicalData& parent);
 	static void prepareShader(ShaderType type);
 
@@ -51,7 +51,7 @@ public:
 
 	inline static Texture defaultTex{};
 
-	inline static glm::uvec2 imGuiSize{1920, 1080};
+	inline static glm::uvec2 windowSize{1920, 1080};
 	inline static uint8_t lightSourceCount = 0;
 	inline static Light* lights[10];
 	
@@ -59,7 +59,8 @@ public:
 	
 	inline static glm::uvec2 viewPortSize{1920, 1080};
 	inline static std::pair<FrameBuffer*, FrameBuffer*> postPingPong;
-
+	
+	inline static FrameBuffer screen;
 	inline static FrameBuffer baseFB;
 	inline static FrameBuffer postFB1;
 private:

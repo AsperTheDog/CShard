@@ -26,6 +26,9 @@ public:
 	static uint32_t addMesh(std::string& filepath);
 	static uint32_t addTexture(std::string& filepath);
 	static uint32_t addScript(std::string& filepath);
+	static void removeMesh(uint32_t id);
+	static void removeTexture(uint32_t id);
+	static void removeScript(uint32_t id);
 	static void removeObject(uint32_t id);
 	static GameObject* getObject(uint32_t id);
 	static bool isValidMesh(uint32_t id);

@@ -148,7 +148,6 @@ void GameObject::insertComponent(uint32_t id, Component& comp)
 
 void GameObject::removeComponent(uint32_t id)
 {
-	if (!components.contains(id)) return;
 	components.erase(id);
 }
 

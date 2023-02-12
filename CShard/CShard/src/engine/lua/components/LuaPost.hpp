@@ -67,14 +67,9 @@ namespace CSLua
 				((Atmospheric*)orig)->color = *col;
 				return 1;
 			}
-			if (strcmp(index, "forStart") == 0 && orig->getType() == POST_ATMOSPHERICFOG)
+			if (strcmp(index, "fogDensity") == 0 && orig->getType() == POST_ATMOSPHERICFOG)
 			{
-				((Atmospheric*)orig)->start = (float)lua_tonumber(L, -1);
-				return 1;
-			}
-			if (strcmp(index, "forEnd") == 0 && orig->getType() == POST_ATMOSPHERICFOG)
-			{
-				((Atmospheric*)orig)->end = (float)lua_tonumber(L, -1);
+				((Atmospheric*)orig)->density = (float)lua_tonumber(L, -1);
 				return 1;
 			}
 			lua_getglobal(L, "PostEffect");
@@ -119,15 +114,9 @@ namespace CSLua
 				else throw std::runtime_error("Tried to modify non existant or protected Post element");
 				return 1;
 			}
-			if (strcmp(index, "forStart") == 0)
+			if (strcmp(index, "fogDensity") == 0)
 			{
-				if (orig->getType() == POST_ATMOSPHERICFOG) ((Atmospheric*)orig)->start = (float)lua_tonumber(L, -1);
-				else throw std::runtime_error("Tried to modify non existant or protected Post element");
-				return 1;
-			}
-			if (strcmp(index, "forEnd") == 0)
-			{
-				if (orig->getType() == POST_ATMOSPHERICFOG) ((Atmospheric*)orig)->end = (float)lua_tonumber(L, -1);
+				if (orig->getType() == POST_ATMOSPHERICFOG) ((Atmospheric*)orig)->density = (float)lua_tonumber(L, -1);
 				else throw std::runtime_error("Tried to modify non existant or protected Post element");
 				return 1;
 			}

@@ -11,14 +11,6 @@ public:
 
 	void commit(const std::string& source)
 	{
-		//std::ifstream wf("pak/resources/scripts/" + source + ".lua", std::ios::in);
-		//if (!wf) {
-		//	throw std::runtime_error("Could not find script");
-		//}
-		//std::ostringstream ss;
-		//ss << wf.rdbuf();
-		//this->source = ss.str();
-		//wf.close();
 		this->source = "pak/resources/scripts/" + source + ".lua";
 		name = source;
 	}

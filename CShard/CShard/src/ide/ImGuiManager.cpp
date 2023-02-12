@@ -158,6 +158,10 @@ void ImGuiManager::render()
 	}
 	ImGui::Render();
 	GFramework::renderImgui();
+
+	SDLFramework::leftClick = false;
+	ImGuiManager::copied = false;
+	ImGuiManager::pasted = false;
 }
 
 void ImGuiManager::update()
@@ -168,9 +172,6 @@ void ImGuiManager::update()
 			updateSceneCamDir();
 		updateSceneCamPos();
 	}
-	SDLFramework::leftClick = false;
-	ImGuiManager::copied = false;
-	ImGuiManager::pasted = false;
 }
 
 void ImGuiManager::destroy()

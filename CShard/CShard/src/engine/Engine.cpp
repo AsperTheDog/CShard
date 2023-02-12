@@ -37,7 +37,7 @@ void Engine::init(bool isIDE, char* initFileName)
 		activeCam = &defaultCam;
 	}
 
-	if (!Engine::isIDE) isGameRunning = true;
+	if (!Engine::isIDE) Engine::startGame();
 }
 
 void Engine::run()
@@ -51,7 +51,8 @@ void Engine::run()
 		if (isIDE)
 			ImGuiManager::update();
 		Engine::render();
-
+		
+		if (!Engine::isIDE && Engine::shouldQuit) confirmQuit = true;
 		if (confirmQuit) break;
 
 		SDLFramework::swapWindow();

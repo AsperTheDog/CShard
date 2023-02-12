@@ -2,6 +2,7 @@
 
 #include <ranges>
 
+#include "Engine.hpp"
 #include "../ide/ImGuiManager.hpp"
 #include "../input/InputManager.hpp"
 
@@ -27,6 +28,7 @@ void ResourceManager::reset()
 	texIDCount = 0;
 	scripts.clear();
 	scrIDCount = 0;
+	posts.clear();
 }
 
 void ResourceManager::load(std::ifstream& wf)
@@ -273,6 +275,21 @@ uint32_t ResourceManager::addScript(std::string& filepath)
 	return scrIDCount;
 }
 
+void ResourceManager::removeMesh(uint32_t id)
+{
+	meshes.erase(id);
+}
+
+void ResourceManager::removeTexture(uint32_t id)
+{
+	textures.erase(id);
+}
+
+void ResourceManager::removeScript(uint32_t id)
+{
+	scripts.erase(id);
+}
+
 void ResourceManager::removeObject(uint32_t id)
 {
 	if (!sceneObjects.contains(id)) return;
@@ -364,11 +381,12 @@ void ResourceManager::removePostEffect(uint32_t elem)
 
 void ResourceManager::postPass()
 {
-	for (auto& post : posts)
+	for (uint32_t i = 0; i < posts.size(); ++i)
 	{
-		if (post->doRender)
+		if (posts[i]->doRender)
 		{
-			post->render(GFramework::postPingPong.first, GFramework::postPingPong.second, &GFramework::baseFB.depth);
+			if (!(Engine::isIDE) && i == posts.size() - 1) GFramework::postPingPong.second = &GFramework::screen;
+			posts[i]->render(GFramework::postPingPong.first, GFramework::postPingPong.second, &GFramework::baseFB.depth);
 			std::swap(GFramework::postPingPong.first, GFramework::postPingPong.second);
 		}
 	}

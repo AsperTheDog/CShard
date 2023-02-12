@@ -18,7 +18,7 @@ public:
 		{
 			Engine::stopGame();
 		}
-		GFramework::imGuiSize = {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
+		GFramework::windowSize = {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
 		ImGui::Image(
 			(ImTextureID)(uint64_t)GFramework::getImGuiTexture(), 
 			ImGui::GetContentRegionAvail(), 
