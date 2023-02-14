@@ -21,7 +21,7 @@ public:
 	void commit(const std::string& filepath);
 	void render(bool culling);
 
-	void renderAsCollider();
+	void renderAsSelection();
 	
 	std::string name;
 private:

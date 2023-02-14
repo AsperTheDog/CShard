@@ -32,6 +32,7 @@ public:
 
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
+	void renderSelection(PhysicalData& pData, Camera& cam);
 
 	int tempMeshID{}, tempTexID{};
 	PhysicalData data;

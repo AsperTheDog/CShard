@@ -98,3 +98,12 @@ void Model::deserialize(std::ifstream& wf)
 	tempTexID = textureID;
 	data.changed = true;
 }
+
+void Model::renderSelection(PhysicalData& pData, Camera& cam)
+{
+	GFramework::prepareShader(SHADER_WIRE);
+	GFramework::loadModelUniforms(cam, *this, pData, false);
+
+	if (ResourceManager::isValidMesh(meshID))
+		ResourceManager::getMesh(meshID)->renderAsSelection();
+}

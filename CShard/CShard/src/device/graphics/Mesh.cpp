@@ -56,7 +56,7 @@ void Mesh::render(bool culling)
 	if (!culling) glEnable(GL_CULL_FACE);
 }
 
-void Mesh::renderAsCollider()
+void Mesh::renderAsSelection()
 {
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	GLboolean depth = false;

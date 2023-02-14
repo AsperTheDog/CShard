@@ -85,6 +85,7 @@
     <None Include="pak\resources\scripts\onexit.lua" />
     <None Include="pak\resources\scripts\onframe.lua" />
     <None Include="pak\resources\scripts\oninit.lua" />
+    <None Include="pak\shaders\wire.frag" />
     <None Include="shaders\back.frag" />
     <None Include="shaders\back.vert" />
     <None Include="shaders\base.frag" />

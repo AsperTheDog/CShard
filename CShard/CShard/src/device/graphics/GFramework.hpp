@@ -17,7 +17,8 @@ class Camera;
 enum ShaderType
 {
 	SHADER_BASE,
-	SHADER_BACK
+	SHADER_BACK,
+	SHADER_WIRE
 };
 
 class GFramework
@@ -48,6 +49,7 @@ public:
 
 	inline static Shader baseShader{};
 	inline static Shader backgroundShader{};
+	inline static Shader wireframeShader{};
 
 	inline static Texture defaultTex{};
 

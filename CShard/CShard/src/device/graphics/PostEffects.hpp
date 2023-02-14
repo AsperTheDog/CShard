@@ -117,7 +117,7 @@ struct Atmospheric final : PostEffect
 		ImGui::Checkbox(("Active##Atmos" + uniqueCode).c_str(), &doRender);
 		ImGui::Separator();
 		ImGui::ColorPicker3(("Color##Fog" + uniqueCode).c_str(), &color.x);
-		ImGui::DragFloat(("Density##Fog" + uniqueCode).c_str(), &density, 0.01f, 0.f, 1.f);
+		ImGui::DragFloat(("Density##Fog" + uniqueCode).c_str(), &density, 0.0001f, 0.f, 1.f);
 	}
 
 	const char* getName() override

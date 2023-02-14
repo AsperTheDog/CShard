@@ -74,6 +74,11 @@ void Component::deserialize(std::ifstream& wf)
 	}
 }
 
+void Component::renderWireframe(PhysicalData& pData, Camera& cam)
+{
+	if (type == COMPONENT_MODEL) value.mod.renderSelection(pData, cam);
+}
+
 GameObject::GameObject(const std::string& name)
 {
 	strcpy_s(this->name, sizeof(this->name), name.c_str());

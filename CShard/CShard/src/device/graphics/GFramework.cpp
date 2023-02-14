@@ -169,6 +169,7 @@ void GFramework::create()
 
 	baseShader.commit(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	backgroundShader.commit(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
+	wireframeShader.commit(BASE_VERTEX_LOCATION, FRAME_FRAGMENT_LOCATION);
 	
 	FilmGrain::commitShader();
 	Atmospheric::commitShader();
@@ -318,6 +319,10 @@ void GFramework::prepareShader(ShaderType type)
 		activeShader = baseShader.id;
 		baseFB.bind();
 		break;
+	case SHADER_WIRE:
+		glUseProgram(wireframeShader.id);
+		activeShader = wireframeShader.id;
+		postPingPong.first->bind();
 	}
 }
 

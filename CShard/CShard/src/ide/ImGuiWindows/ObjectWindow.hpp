@@ -41,6 +41,10 @@ public:
             if (ImGui::Selectable(buf, (uint32_t)selectedObject == objElem.first))
             {
 	            selectedObject = objElem.first;
+				GameObject* selObj = ResourceManager::getObject(selectedObject);
+				if (selObj != ResourceManager::selectedComponent.first)
+					ResourceManager::selectedComponent.second = nullptr;
+				ResourceManager::selectedComponent.first = selObj;
 			}
 			if (objElem.second.hasBackground || objElem.second.lightCount != 0)
 				ImGui::PopStyleColor();

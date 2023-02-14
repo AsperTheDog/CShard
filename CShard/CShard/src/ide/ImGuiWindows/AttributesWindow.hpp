@@ -52,6 +52,13 @@ public:
 		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
 		ImGui::EndDisabled();
 		ImGui::Separator();
+		ImGui::BeginDisabled(!ResourceManager::selectedComponent.second);
+		if (ImGui::Button("Clear selection"))
+		{
+			ResourceManager::selectedComponent.second = nullptr;
+		}
+		ImGui::EndDisabled();
+		ImGui::Separator();
 		ImGui::Separator();
 		ImGui::Separator();
 		uint32_t setToRemove = 0;
@@ -65,36 +72,37 @@ public:
 				doRemove = true;
 			}
 			ImGui::SameLine();
+			bool isSelected = ResourceManager::selectedComponent.second == &comp.second;
 			switch(comp.second.type)
 			{
 			case COMPONENT_CAMERA:
-				if (ImGui::Selectable((uniqueID + ": Camera Component").c_str(), selectedAttr == comp.first))
-					selectedAttr = (int)(comp.first);
+				if (ImGui::Selectable((uniqueID + ": Camera Component").c_str(), isSelected))
+					ResourceManager::selectedComponent.second = &comp.second;
 				showCamera(comp.second.value.cam, uniqueID);
 				break;
 			case COMPONENT_COLLIDER:
-				if (ImGui::Selectable((uniqueID + ": Collider Component").c_str(), selectedAttr == comp.first))
-					selectedAttr = (int)(comp.first);
+				if (ImGui::Selectable((uniqueID + ": Collider Component").c_str(), isSelected))
+					ResourceManager::selectedComponent.second = &comp.second;
 				showCollider(comp.second.value.coll, uniqueID);
 				break;
 			case COMPONENT_MODEL:
-				if (ImGui::Selectable((uniqueID + ": Model Component").c_str(), selectedAttr == comp.first))
-					selectedAttr = (int)(comp.first);
+				if (ImGui::Selectable((uniqueID + ": Model Component").c_str(), isSelected))
+					ResourceManager::selectedComponent.second = &comp.second;
 				showModel(comp.second.value.mod, uniqueID);
 				break;
 			case COMPONENT_SCRIPT:
-				if (ImGui::Selectable((uniqueID + ": Script Component").c_str(), selectedAttr == comp.first))
-					selectedAttr = (int)(comp.first);
+				if (ImGui::Selectable((uniqueID + ": Script Component").c_str(), isSelected))
+					ResourceManager::selectedComponent.second = &comp.second;
 				showScript(comp.second.value.scr, uniqueID);
 				break;
 			case COMPONENT_BACKGROUND:
-				if (ImGui::Selectable((uniqueID + ": Background Component").c_str(), selectedAttr == comp.first))
-					selectedAttr = (int)(comp.first);
+				if (ImGui::Selectable((uniqueID + ": Background Component").c_str(), isSelected))
+					ResourceManager::selectedComponent.second = &comp.second;
 				showBackground(comp.second.value.back, uniqueID);
 				break;
 			case COMPONENT_LIGHT:
-				if (ImGui::Selectable((uniqueID + ": LightSource Component").c_str(), selectedAttr == comp.first))
-					selectedAttr = (int)(comp.first);
+				if (ImGui::Selectable((uniqueID + ": LightSource Component").c_str(), isSelected))
+					ResourceManager::selectedComponent.second = &comp.second;
 				showLightSource(comp.second.value.li, uniqueID);
 				break;
 			}
@@ -106,15 +114,14 @@ public:
 			obj->removeComponent(setToRemove);
 		}
 
-		if (ImGui::IsWindowFocused() && ImGuiManager::copied && selectedAttr >= 0U)
+		if (ImGui::IsWindowFocused() && ImGuiManager::copied && ResourceManager::selectedComponent.second != nullptr)
 		{
-			copiedAttr = selectedAttr;
+			copiedAttr = ResourceManager::selectedComponent.second;
 			ObjectWindow::copiedObj = -1;
 		}
-		if (ImGui::IsWindowFocused() && ImGuiManager::pasted && copiedAttr >= 0U)
+		if (ImGui::IsWindowFocused() && ImGuiManager::pasted && copiedAttr != nullptr)
 		{
-			Component& comp = obj->components.at(copiedAttr);
-			obj->insertComponent(comp);
+			obj->insertComponent(*copiedAttr);
 		}
 		ImGui::End();
 	}
@@ -234,7 +241,7 @@ private:
 	static void showLightSource(Light& li, std::string& uniqueID)
 	{
 		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li.position.x, 0.1f, 10000.f, 10000.f);
-		ImGui::DragFloat3(("Color##li" + uniqueID).c_str(), &li.color.x, 0.01f, 0, 1);
+		ImGui::ColorPicker3(("Color##li" + uniqueID).c_str(), &li.color.x);
 		ImGui::Separator();
 		ImGui::DragFloat(("Constant##li" + uniqueID).c_str(), &li.constant, 0.01f, 0, 1);
 		ImGui::DragFloat(("Linear##li" + uniqueID).c_str(), &li.linear, 0.01f, 0, 1);
@@ -276,7 +283,6 @@ private:
 		SCRIPT_COLLISION_EXIT,
 		SCRIPT_COLLISION_OUT
 	};
-
-	inline static uint32_t selectedAttr = 0;
-	inline static uint32_t copiedAttr = 0;
+	
+	inline static Component* copiedAttr = 0;
 };

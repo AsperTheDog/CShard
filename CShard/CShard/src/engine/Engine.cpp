@@ -168,6 +168,8 @@ void Engine::render()
 	ResourceManager::lightPass();
 	ResourceManager::modelPass(*activeCam);
 	ResourceManager::postPass();
+	if (ResourceManager::selectedComponent.second != nullptr && !isGameRunning) 
+		ResourceManager::selectedComponent.second->renderWireframe(ResourceManager::selectedComponent.first->modelData, *activeCam);
 
 	GFramework::endRender();
 	if (Engine::isIDE) ImGuiManager::render();

@@ -49,6 +49,7 @@ struct Component
 
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
+	void renderWireframe(PhysicalData& pData, Camera& cam);
 };
 
 class GameObject

@@ -49,6 +49,8 @@ public:
 	inline static std::map<uint32_t, LuaScript> scripts{};
 	inline static std::vector<PostEffect*> posts{};
 
+	inline static std::pair<GameObject*, Component*> selectedComponent{nullptr, nullptr};
+
 private:
 	inline static uint32_t meshIDCount = 0;
 	inline static uint32_t texIDCount = 0;
