@@ -45,3 +45,6 @@ In the CShard folder you will find the solution file for Visual Studio 2022.
 
 The system needs a GPU capable of running OpenGL 4.6.  
 Visual Studio 2022 must be installed.
+
+# Screenshots
+![image](https://github.com/AsperTheDog/CShard/blob/main/wiki/example1.png?raw=true)
