@@ -53,6 +53,8 @@
 
 !CShard/dependencies/sdl/lib/x64/SDL2.lib
 !CShard/dependencies/sdl/lib/Win32/SDL2.lib
+!CShard/dependencies/sdl/lib/x64/SDL2.dll
+!CShard/dependencies/sdl/lib/Win32/SDL2.dll
 !CShard/dependencies/glew/lib/Release/x64/glew32s.lib
 !CShard/dependencies/glew/lib/Release/Win32/glew32s.lib
 !CShard/dependencies/lua/lib/lua54.lib
