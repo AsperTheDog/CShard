@@ -26,6 +26,7 @@ public:
 			ImGui::End();
 			return;
 		}
+		ImGui::PushItemWidth(180);
 		ImGui::InputText(("Object name##" + std::to_string(ObjectWindow::selectedObject)).c_str(), obj->name, MAX_PATH_NAME_LENGTH);
 		glm::vec3 pos{obj->modelData.pos};
 		glm::vec3 rot{obj->modelData.rot};
@@ -38,15 +39,23 @@ public:
 		if (rot != obj->modelData.rot) obj->changeRotation(rot);
 		ImGui::Separator();
 		ImGui::BeginDisabled(obj->hasBackground);
-		ImGui::Combo("Input type", &tempCompype, componentNames, !obj->components.empty() ? 5 : 6);
-		ImGui::SameLine();
-		ImGui::EndDisabled();
-		ImGui::BeginDisabled(obj->hasBackground || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempCompype] == COMPONENT_LIGHT));
 		if (ImGui::Button("Create"))
 		{
-			Component comp = Component(compTypes[tempCompype]);
+			Component comp = Component(compTypes[tempCompType]);
+			if (compTypes[tempCompType] == COMPONENT_COLLIDER)
+			{
+				comp.value.coll.type = colliderTypes[tempCollType];
+			}
 			obj->addComponent(comp);
 		}
+		ImGui::Combo("Input type", &tempCompType, componentNames, !obj->components.empty() ? 5 : 6);
+		ImGui::EndDisabled();
+		ImGui::BeginDisabled(obj->hasBackground  || (GFramework::lightSourceCount == MAX_LIGHTS && compTypes[tempCompType] == COMPONENT_LIGHT));
+		if (compTypes[tempCompType] == COMPONENT_COLLIDER)
+		{
+			ImGui::Combo("Collider type", &tempCollType, colliderNames, 3);
+		}
+		ImGui::PopItemWidth();
 		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,40,40,255));
 		ImGui::Text("Lights left: %d", MAX_LIGHTS - GFramework::lightSourceCount);
 		if (GFramework::lightSourceCount == MAX_LIGHTS) ImGui::PopStyleColor();
@@ -78,31 +87,37 @@ public:
 			case COMPONENT_CAMERA:
 				if (ImGui::Selectable((uniqueID + ": Camera Component").c_str(), isSelected))
 					ResourceManager::selectedComponent.second = &comp.second;
+				ImGui::Separator();
 				showCamera(comp.second.value.cam, uniqueID);
 				break;
 			case COMPONENT_COLLIDER:
 				if (ImGui::Selectable((uniqueID + ": Collider Component").c_str(), isSelected))
 					ResourceManager::selectedComponent.second = &comp.second;
+				ImGui::Separator();
 				showCollider(comp.second.value.coll, uniqueID);
 				break;
 			case COMPONENT_MODEL:
 				if (ImGui::Selectable((uniqueID + ": Model Component").c_str(), isSelected))
 					ResourceManager::selectedComponent.second = &comp.second;
+				ImGui::Separator();
 				showModel(comp.second.value.mod, uniqueID);
 				break;
 			case COMPONENT_SCRIPT:
 				if (ImGui::Selectable((uniqueID + ": Script Component").c_str(), isSelected))
 					ResourceManager::selectedComponent.second = &comp.second;
+				ImGui::Separator();
 				showScript(comp.second.value.scr, uniqueID);
 				break;
 			case COMPONENT_BACKGROUND:
 				if (ImGui::Selectable((uniqueID + ": Background Component").c_str(), isSelected))
 					ResourceManager::selectedComponent.second = &comp.second;
+				ImGui::Separator();
 				showBackground(comp.second.value.back, uniqueID);
 				break;
 			case COMPONENT_LIGHT:
 				if (ImGui::Selectable((uniqueID + ": LightSource Component").c_str(), isSelected))
 					ResourceManager::selectedComponent.second = &comp.second;
+				ImGui::Separator();
 				showLightSource(comp.second.value.li, uniqueID);
 				break;
 			}
@@ -129,65 +144,66 @@ public:
 private:
 	static void showCamera(Camera& cam, std::string& uniqueID)
 	{
+		ImGui::PushItemWidth(180);
 		glm::vec3 tempVec = cam.pos;
 		ImGui::InputFloat3(("Position##cam" + uniqueID).c_str(), &tempVec.x);
 		if (tempVec != cam.pos) 
 			cam.move(tempVec);
-
 		tempVec = cam.dir;
 		ImGui::InputFloat3(("Direction##cam" + uniqueID).c_str(), &tempVec.x);
 		if (tempVec != cam.dir) 
 			cam.lookAt(tempVec);
-		ImGui::SameLine();
-		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
-			cam.lookAt(glm::normalize(cam.dir));
-
 		tempVec = cam.worldUp;
 		ImGui::InputFloat3(("WorldUp##cam" + uniqueID).c_str(), &tempVec.x);
 		if (tempVec != cam.worldUp)
 			cam.changeWorldUp(tempVec);
-		ImGui::SameLine();
-		if (ImGui::Button(("Normalize##cam" + uniqueID).c_str())) 
-			cam.changeWorldUp(glm::normalize(cam.worldUp));
-
+		ImGui::PopItemWidth();
 		ImGui::Separator();
+		ImGui::PushItemWidth(118);
 		float tempFOV = cam.FOV, tempNP = cam.nearPlane, tempFP = cam.farPlane;
 		ImGui::DragFloat(("FOVy##cam" + uniqueID).c_str(), &tempFOV, 1.f, 1, 179);
 		ImGui::DragFloat(("Near Plane##cam" + uniqueID).c_str(), &tempNP, 0.01f, 0.01f, 1);
 		ImGui::DragFloat(("Far Plane##cam" + uniqueID).c_str(), &tempFP, 100.f, 10.f, 1000000.f);
 		if (tempFOV != cam.FOV || tempNP != cam.nearPlane || tempFP != cam.farPlane)
 			cam.changeLense(tempFOV, tempNP, tempFP);
+		ImGui::PopItemWidth();
 	}
 
 	static void showCollider(Collider& coll, std::string& uniqueID)
 	{
+		ImGui::PushItemWidth(180);
 		ImGui::InputFloat3(("Position##coll" + uniqueID).c_str(), &coll.position.x);
-		ImGui::InputInt(("On enter script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_ENTER], 1);
-		coll.tempScripts[SCRIPT_COLLISION_ENTER] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_ENTER]);
-		ImGui::SameLine();
+		ImGui::PopItemWidth();
+		ImGui::Separator();
+		ImGui::PushItemWidth(122);
 		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
 			coll.scripts[SCRIPT_COLLISION_ENTER] = coll.tempScripts[SCRIPT_COLLISION_ENTER];
-		ImGui::InputInt(("On exit script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_EXIT], 1);
-		coll.tempScripts[SCRIPT_COLLISION_EXIT] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_EXIT]);
 		ImGui::SameLine();
+		ImGui::InputInt(("On enter script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_ENTER], 1);
+		coll.tempScripts[SCRIPT_COLLISION_ENTER] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_ENTER]);
 		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
 			coll.scripts[SCRIPT_COLLISION_EXIT] = coll.tempScripts[SCRIPT_COLLISION_EXIT];
-		ImGui::InputInt(("On inside script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_IN], 1);
-		coll.tempScripts[SCRIPT_COLLISION_IN] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_IN]);
 		ImGui::SameLine();
+		ImGui::InputInt(("On exit script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_EXIT], 1);
+		coll.tempScripts[SCRIPT_COLLISION_EXIT] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_EXIT]);
 		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
 			coll.scripts[SCRIPT_COLLISION_IN] = coll.tempScripts[SCRIPT_COLLISION_IN];
-		ImGui::InputInt(("On outside script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_OUT], 1);
-		coll.tempScripts[SCRIPT_COLLISION_OUT] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_OUT]);
 		ImGui::SameLine();
+		ImGui::InputInt(("On inside script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_IN], 1);
+		coll.tempScripts[SCRIPT_COLLISION_IN] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_IN]);
 		if (ImGui::Button(("Reload##coll" + uniqueID).c_str()))
 			coll.scripts[SCRIPT_COLLISION_OUT] = coll.tempScripts[SCRIPT_COLLISION_OUT];
+		ImGui::SameLine();
+		ImGui::InputInt(("On outside script##coll" + uniqueID).c_str(), &coll.tempScripts[SCRIPT_COLLISION_OUT], 1);
+		coll.tempScripts[SCRIPT_COLLISION_OUT] = std::max(0, coll.tempScripts[SCRIPT_COLLISION_OUT]);
 		ImGui::Checkbox(("Static##coll" + uniqueID).c_str(), &coll.isStatic);
 		ImGui::Checkbox(("Show##coll" + uniqueID).c_str(), &coll.draw);
+		ImGui::PopItemWidth();
 	}
 
 	static void showModel(Model& mod, std::string& uniqueID)
 	{
+		ImGui::PushItemWidth(180);
 		glm::vec3 tempVec = mod.data.pos;
 		ImGui::DragFloat3(("Position##mod" + uniqueID).c_str(), &tempVec.x, 0.1f, 10000.f, 10000.f);
 		if (tempVec != mod.data.pos) mod.changePosition(tempVec);
@@ -199,56 +215,79 @@ private:
 		tempVec = mod.data.rot;
 		ImGui::DragFloat3(("Rotation##mod" + uniqueID).c_str(), &tempVec.x, 1.f, -180.f, 180.f);
 		if (tempVec != mod.data.rot) mod.changeRotation(tempVec);
+		ImGui::PopItemWidth();
 		ImGui::Separator();
+		ImGui::PushItemWidth(118);
 		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod.mat.shininess, 0.2f, 1.f, 60.f);
 		ImGui::DragFloat(("Emission##mod" + uniqueID).c_str(), &mod.mat.emission, 0.01f, 0, 1);
+		ImGui::PopItemWidth();
 		ImGui::Separator();
-		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod.tempMeshID, 1);
-		mod.tempMeshID = std::max(0, mod.tempMeshID);
-		ImGui::SameLine();
+		ImGui::PushItemWidth(122);
 		if (ImGui::Button(("Reload##Meshmod" + uniqueID).c_str()))
 			mod.changeMesh();
-		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &mod.tempTexID, 1);
-		mod.tempTexID = std::max(0, mod.tempTexID);
 		ImGui::SameLine();
+		ImGui::InputInt(("Model##mod" + uniqueID).c_str(), &mod.tempMeshID, 1);
+		mod.tempMeshID = std::max(0, mod.tempMeshID);
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
 			mod.changeTexture();
-
+		ImGui::SameLine();
+		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &mod.tempTexID, 1);
+		mod.tempTexID = std::max(0, mod.tempTexID);
+		ImGui::PopItemWidth();
 		ImGui::Checkbox(("Cull backface##mod" + uniqueID).c_str(), &mod.cullFace);
 		//ImGui::Checkbox(("Cast shadows##mod" + uniqueID).c_str(), &mod.castShadows);
 	}
 
 	static void showScript(Script& scr, std::string& uniqueID)
 	{
+		ImGui::PushItemWidth(180);
 		ImGui::Combo(("Script type##scr" + uniqueID).c_str(), &scr.tempScrType, scriptTypes, 3);
 		scr.type = scrTypes[scr.tempScrType];
-		ImGui::InputInt(("Script##scr" + uniqueID).c_str(), &scr.tempScrID, 1);
-		scr.tempScrID = std::max(0, scr.tempScrID);
-		ImGui::SameLine();
+		ImGui::PopItemWidth();
+		ImGui::PushItemWidth(122);
 		if (ImGui::Button(("Reload##scr" + uniqueID).c_str()))
 			scr.setScript();
+		ImGui::SameLine();
+		ImGui::InputInt(("Script##scr" + uniqueID).c_str(), &scr.tempScrID, 1);
+		scr.tempScrID = std::max(0, scr.tempScrID);
+		ImGui::PopItemWidth();
 	}
 
 	static void showBackground(Background& back, std::string& uniqueID)
 	{
-		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &back.tempTexID, 1);
-		back.tempTexID = std::max(0, back.tempTexID);
-		ImGui::SameLine();
 		if (ImGui::Button(("Reload##Texmod" + uniqueID).c_str()))
 			back.setTexture();
+		ImGui::SameLine();
+		ImGui::PushItemWidth(122);
+		ImGui::InputInt(("Texture##mod" + uniqueID).c_str(), &back.tempTexID, 1);
+		back.tempTexID = std::max(0, back.tempTexID);
+		ImGui::PopItemWidth();
 	}
 
 	static void showLightSource(Light& li, std::string& uniqueID)
 	{
+		ImGui::PushItemWidth(180);
 		ImGui::DragFloat3(("Position##li" + uniqueID).c_str(), &li.position.x, 0.1f, 10000.f, 10000.f);
-		ImGui::ColorPicker3(("Color##li" + uniqueID).c_str(), &li.color.x);
+		ImGui::PopItemWidth();
 		ImGui::Separator();
+		ImGui::Text("Color");
+		ImGui::SameLine();
+		if (ImGui::ColorButton(("Select Color##li" + uniqueID).c_str(), ImVec4(li.color.x, li.color.y, li.color.z, 1.0f)))
+		    ImGui::OpenPopup("Select Color");
+		if (ImGui::BeginPopup("Select Color"))
+		{
+		    ImGui::ColorPicker3(("Color##li" + uniqueID).c_str(), &li.color.x);
+		    ImGui::EndPopup();
+		}
+		ImGui::Separator();
+		ImGui::PushItemWidth(118);
 		ImGui::DragFloat(("Constant##li" + uniqueID).c_str(), &li.constant, 0.01f, 0, 1);
 		ImGui::DragFloat(("Linear##li" + uniqueID).c_str(), &li.linear, 0.01f, 0, 1);
 		ImGui::DragFloat(("Quadratic##li" + uniqueID).c_str(), &li.quadratic, 0.01f, 0, 1);
+		ImGui::PopItemWidth();
 	}
 
-	inline static int tempCompype = 0;
+	inline static int tempCompType = 0;
 	inline static const char* componentNames[6] = {
 		"Camera",
 		"Collider",
@@ -284,5 +323,16 @@ private:
 		SCRIPT_COLLISION_OUT
 	};
 	
-	inline static Component* copiedAttr = 0;
+	inline static Component* copiedAttr = nullptr;
+	inline static int tempCollType;
+	inline static const char* colliderNames[] = {
+		"Sphere",
+		"Bounding Box",
+		"Capsule"
+	};
+	inline static constexpr ColliderType colliderTypes[] = {
+		COLLIDER_SPHERE,
+		COLLIDER_AABB,
+		COLLIDER_CAPSULE
+	};
 };

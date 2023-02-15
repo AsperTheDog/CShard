@@ -146,13 +146,24 @@ void GameObject::insertComponent(uint32_t id, Component& comp)
 	else if (comp.type == COMPONENT_BACKGROUND) 
 		hasBackground = true;
 	else if (comp.type == COMPONENT_COLLIDER)
-		CollisionStructure::removeCollider(&comp);
+		CollisionStructure::addCollider(this, &comp);
 
 	this->components.emplace(id, comp);
 }
 
 void GameObject::removeComponent(uint32_t id)
 {
+	Component& comp = components.at(id);
+	if (comp.type == COMPONENT_LIGHT)
+	{
+		lightCount--;
+		GFramework::lightSourceCount--;
+	}
+	else if (comp.type == COMPONENT_BACKGROUND) 
+		hasBackground = false;
+	else if (comp.type == COMPONENT_COLLIDER)
+		CollisionStructure::removeCollider(&comp);
+
 	components.erase(id);
 }
 
@@ -173,7 +184,7 @@ void GameObject::processBackground()
 {
 	if (!show || !hasBackground) return;
 	GFramework::prepareShader(SHADER_BACK);
-	components[0].value.back.render(this->modelData);
+	for(auto& comp : components | std::views::values) comp.value.back.render(this->modelData);
 }
 
 void GameObject::processLights()
