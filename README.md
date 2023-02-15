@@ -41,6 +41,8 @@ git clone https://github.com/AsperTheDog/CShard --recursive
 Notice the `--recursive`. This is important, that way all of the necessary dependencies are properly downloaded.  
 In the CShard folder you will find the solution file for Visual Studio 2022.
 
+**If the project fails because SDL2.dll is required, simply copy it from CShard/dependencies/sdl/lib and paste it beside the project executable (e.g. CShard/x64/release for 64bit release build)**
+
 # Prerequisites
 
 The system needs a GPU capable of running OpenGL 4.6.  
