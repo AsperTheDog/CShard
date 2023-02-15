@@ -69,6 +69,8 @@ private:
 	static void showSaveModal();
 	static void showExitModal();
 
+	static void setImGuiColors();
+
 	inline static char nameBuff[MAX_PATH_NAME_LENGTH];
 	inline static bool showSaveWin = false;
 	inline static bool showLoadWin = false;

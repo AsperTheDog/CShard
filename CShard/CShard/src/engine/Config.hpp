@@ -8,6 +8,8 @@
 #define GRID_TEX_LOCATION "pak/resources/tex/__grid.png"
 #define GRID_MESH_LOCATION "pak/resources/obj/__grid.obj"
 
+#define FONT_LOCATION "pak/resources/fonts/OpenSans-Regular.ttf"
+
 #define POST_VERTEX_LOCATION "pak/shaders/quad.vert"
 #define GRAIN_FRAGMENT_LOCATION "pak/shaders/grain.frag"
 #define BLACK_FRAGMENT_LOCATION "pak/shaders/black.frag"
