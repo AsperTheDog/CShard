@@ -149,6 +149,8 @@ void GFramework::create()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 	glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, 0, nullptr, false);
 
+	SDL_GL_SetSwapInterval(0);
+
 #ifndef NDEBUG
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -280,6 +282,7 @@ void GFramework::loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pDa
 	{
 		glUniform1f(glGetUniformLocation(activeShader, "mat.shininess"), mod.mat.shininess);
 		glUniform1f(glGetUniformLocation(activeShader, "mat.emission"), mod.mat.emission);
+		glUniform3fv(glGetUniformLocation(activeShader, "mat.albedo"), 1, &mod.mat.albedo.x);
 	}
 }
 

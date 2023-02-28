@@ -49,6 +49,14 @@ void CapsuleCollider::deserialize(std::ifstream& wf)
 	wf.read((char*) &radius, sizeof(radius));
 }
 
+void Collider::init()
+{
+	sphereMesh.commit(SPHERE_MESH_LOCATION);
+	cubeMesh.commit(CUBE_MESH_LOCATION);
+	meshCyl.commit(CAPSULE_CYL_MESH_LOCATION);
+	meshSph.commit(CAPSULE_SPH_MESH_LOCATION);
+}
+
 Collider::Collider(): type(COLLIDER_SPHERE), data{}
 {
 

@@ -59,12 +59,14 @@ void Mesh::render(bool culling)
 void Mesh::renderAsSelection()
 {
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glDisable(GL_CULL_FACE);
 	GLboolean depth = false;
 	glGetBooleanv(GL_DEPTH_TEST, &depth);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, this->indexNum, GL_UNSIGNED_INT, nullptr);
 	if (depth) glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 }
 

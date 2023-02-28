@@ -6,7 +6,12 @@
 
 #define DEFAULT_TEX_LOCATION "pak/resources/tex/__noTex.png"
 #define GRID_TEX_LOCATION "pak/resources/tex/__grid.png"
+
 #define GRID_MESH_LOCATION "pak/resources/obj/__grid.obj"
+#define SPHERE_MESH_LOCATION "pak/resources/obj/sphere.obj"
+#define CUBE_MESH_LOCATION "pak/resources/obj/fcube.obj"
+#define CAPSULE_CYL_MESH_LOCATION "pak/resources/obj/capsuleCyl.obj"
+#define CAPSULE_SPH_MESH_LOCATION "pak/resources/obj/capsuleSph.obj"
 
 #define FONT_LOCATION "pak/resources/fonts/OpenSans-Regular.ttf"
 

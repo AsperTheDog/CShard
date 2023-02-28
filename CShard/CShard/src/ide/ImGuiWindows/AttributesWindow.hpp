@@ -209,7 +209,7 @@ private:
 		if (tempVec != mod.data.pos) mod.changePosition(tempVec);
 
 		tempVec = mod.data.scale;
-		ImGui::DragFloat3(("scale##mod" + uniqueID).c_str(), &tempVec.x, 0.1f, 0.f, 1000.f);
+		ImGui::DragFloat3(("Scale##mod" + uniqueID).c_str(), &tempVec.x, 0.1f, 0.f, 1000.f);
 		if (tempVec != mod.data.scale) mod.changeScale(tempVec);
 
 		tempVec = mod.data.rot;
@@ -221,6 +221,15 @@ private:
 		ImGui::DragFloat(("Shininess##mod" + uniqueID).c_str(), &mod.mat.shininess, 0.2f, 1.f, 60.f);
 		ImGui::DragFloat(("Emission##mod" + uniqueID).c_str(), &mod.mat.emission, 0.01f, 0, 1);
 		ImGui::PopItemWidth();
+		ImGui::Text("Albedo");
+		ImGui::SameLine();
+		if (ImGui::ColorButton(("Albedo##mod" + uniqueID).c_str(), ImVec4(mod.mat.albedo.x, mod.mat.albedo.y, mod.mat.albedo.z, 1.0f)))
+		    ImGui::OpenPopup(("Albedo##Popmod" + uniqueID).c_str());
+		if (ImGui::BeginPopup(("Albedo##Popmod" + uniqueID).c_str()))
+		{
+		    ImGui::ColorPicker3(("Albedo##Colmod" + uniqueID).c_str(), &mod.mat.albedo.x);
+		    ImGui::EndPopup();
+		}
 		ImGui::Separator();
 		ImGui::PushItemWidth(122);
 		if (ImGui::Button(("Reload##Meshmod" + uniqueID).c_str()))
