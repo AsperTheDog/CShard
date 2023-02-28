@@ -3,8 +3,11 @@
 #include <unordered_set>
 #include <vec3.hpp>
 
+#include "../../engine/Config.hpp"
+
 #include "Script.hpp"
 #include "../PhysicalData.hpp"
+#include "../../device/graphics/Mesh.hpp"
 
 struct Component;
 class GameObject;
@@ -66,12 +69,18 @@ struct Collider
 	glm::vec3 position{ 0 };
 	CollData data;
 
+	static void init();
 
 	Collider();
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
 
 	bool testCollision(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
+
+	inline static Mesh sphereMesh{};
+	inline static Mesh cubeMesh{};
+	inline static Mesh meshCyl{};
+	inline static Mesh meshSph{};
 };
 
 class CollisionNode

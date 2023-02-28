@@ -23,6 +23,7 @@ struct Camera {
 };
 
 struct Material {
+    vec3 albedo;
     float emission;
     float shininess;
 }; 
@@ -46,7 +47,7 @@ vec3 CalcPointLight(uint index, vec3 normal, vec3 camDir)
     float distance = length(light.position - pos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     
-    vec3 color = texture(tex, texCoords).xyz;
+    vec3 color = texture(tex, texCoords).xyz * mat.albedo;
     
     vec3 ambient = (light.color * amb * color) * attenuation;
     vec3 diffuse = (light.color * diff * color) * attenuation;
@@ -61,7 +62,7 @@ void main() {
 
     float alpha = texture(tex, texCoords).a;
     vec3 result = vec3(0.0, 0.0, 0.0);
-    vec4 amb = texture(tex, texCoords) * mat.emission;
+    vec4 amb = texture(tex, texCoords) * vec4(mat.albedo, 1.0) * mat.emission;
 
     for(uint i = 0; i < lightNum; i++)
         result += CalcPointLight(i, norm, viewDir);

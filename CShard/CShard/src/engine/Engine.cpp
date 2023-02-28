@@ -30,6 +30,8 @@ void Engine::init(bool isIDE, char* initFileName)
 		ImGuiManager::init();
 		ImGuiManager::addImGuiWindows();
 		activeCam = &ImGuiManager::navigationCam;
+
+		Collider::init();
 	}
 	if (initFileName) Engine::loadProject(initFileName);
 	if (!activeCam)

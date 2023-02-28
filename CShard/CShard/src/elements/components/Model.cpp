@@ -6,7 +6,7 @@
 #include "../../device/graphics/GFramework.hpp"
 
 Model::Model()
-	: meshID(0), textureID(0), mat{0, 1}
+	: meshID(0), textureID(0), mat{0, 1, glm::vec3(1, 1, 1)}
 {
 }
 

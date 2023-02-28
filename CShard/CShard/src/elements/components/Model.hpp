@@ -9,6 +9,7 @@ struct Material
 {
 	float emission;
     float shininess;
+	glm::vec3 albedo;
 };
 
 class Model
