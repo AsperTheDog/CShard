@@ -14,7 +14,7 @@ elseif (newxC < 0.0) then
     bouncing = false
 end
 newColor.x = newxC
-fade.intensity = newxC
+fade.intensity = newxC 
 grain.intensity = (1 - newxC) * 0.5
 newPos.z = newxP
 li.color = newColor

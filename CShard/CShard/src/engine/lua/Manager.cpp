@@ -10,6 +10,8 @@
 #include "components/LuaObj.hpp"
 #include "../../input/InputManager.hpp"
 #include "components/LuaPost.hpp"
+#include <FileWatch.hpp>
+#include <filesystem>
 
 namespace CSLua
 {
@@ -54,6 +56,13 @@ namespace CSLua
 		lua_setglobal(L, "getdt");
 		lua_pushcfunction(L, lua_getPost);
 		lua_setglobal(L, "getPost");
+
+		//filewatch::FileWatch<std::filesystem::path> watch(
+		//	"./pak/", 
+		//	[](const std::filesystem::path& path, const filewatch::Event change_type) {
+		//		std::wcout << std::filesystem::absolute(path) << L"\n";		
+		//	}
+		//);
 	}
 
 	void Manager::reset()

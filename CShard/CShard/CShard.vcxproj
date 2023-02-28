@@ -152,7 +152,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/luacpp/luacppinterface/LuaCppInterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/filewatch;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -171,7 +171,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/luacpp/luacppinterface/LuaCppInterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/filewatch;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -189,7 +189,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/filewatch;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -208,7 +208,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies/filewatch;$(SolutionDir)dependencies/glew/include;$(SolutionDir)dependencies/ImGui/src;$(SolutionDir)dependencies/glm/glm;$(SolutionDir)dependencies/tinyObjLoader;$(SolutionDir)dependencies/sdl/include;$(SolutionDir)dependencies/stb;$(SolutionDir)dependencies/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>

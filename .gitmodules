@@ -11,3 +11,6 @@
 [submodule "CShard/dependencies/stb"]
 	path = CShard/dependencies/stb
 	url = https://github.com/nothings/stb
+[submodule "CShard/dependencies/filewatch"]
+	path = CShard/dependencies/filewatch
+	url = https://github.com/ThomasMonkman/filewatch
