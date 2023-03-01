@@ -18,7 +18,6 @@ Reimplementation in C++ of the closed source Shard engine for the course Introdu
   - Sound component to produce sound with spatial options
   - directional, spot and area lights
   - Shadows
-  - Hot reload of assets from disk
   - Removing assets from project
   - Loading screen, preventing the app from freezing
   - Customizable post processing shaders
