@@ -98,8 +98,10 @@ public:
 						}
 					}
 					ImGui::Separator();
-					ImGui::BeginTable("Script##Tex", 3, flags);
+					ImGui::BeginTable("Script##Tex", 4, flags);
 					ImGui::TableSetupColumn("ID##Tex", ImGuiTableColumnFlags_WidthFixed);
+				    ImGui::TableSetupColumn("Name##Tex", ImGuiTableColumnFlags_WidthStretch);
+				    ImGui::TableSetupColumn("Tracked##Tex", ImGuiTableColumnFlags_WidthFixed);
 				    ImGui::TableSetupColumn("Path##Tex", ImGuiTableColumnFlags_WidthStretch);
 				    ImGui::TableHeadersRow();
 				    for (auto& scr : ResourceManager::scripts)
@@ -109,6 +111,10 @@ public:
 						ImGui::Text("%d", scr.first);
 						ImGui::TableSetColumnIndex(1);
 						ImGui::Text(scr.second.name.c_str());
+						ImGui::TableSetColumnIndex(2);
+						ImGui::Text(scr.second.isTracked ? "True" : "False");
+						ImGui::TableSetColumnIndex(3);
+						ImGui::Text(scr.second.source.string().c_str());
 				    }
 				    ImGui::EndTable();
 					ImGui::EndTabItem();

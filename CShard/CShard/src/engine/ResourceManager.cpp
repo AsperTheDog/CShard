@@ -38,7 +38,7 @@ void ResourceManager::load(std::ifstream& wf)
 	for (uint32_t i = 0; i < num; i++)
 	{
 		PostType type;
-		wf.read((char*) &type, sizeof(type));
+		wf.read((char*)&type, sizeof(type));
 		PostEffect* ptr;
 		switch (type)
 		{
@@ -104,7 +104,7 @@ void ResourceManager::load(std::ifstream& wf)
 		scrIDCount = std::max(elem->first, scrIDCount);
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
 		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem->second.commit(buff);
+		elem->second.commit(getPath(AssetPath::SCRIPT, buff));
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)
@@ -154,7 +154,7 @@ void ResourceManager::save(std::ofstream& wf)
 		uint32_t id = mesh.first;
 		wf.write((char*)&id, sizeof(id));
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
-		strcpy_s(buff,  sizeof(buff), mesh.second.name.c_str());
+		strcpy_s(buff, sizeof(buff), mesh.second.name.c_str());
 		wf.write(buff, MAX_ASSET_NAME_LENGTH);
 	}
 	uint32_t texNum = (uint32_t)ResourceManager::textures.size();
@@ -187,7 +187,7 @@ void ResourceManager::save(std::ofstream& wf)
 		uint32_t components = (uint32_t)obj.second.components.size();
 		wf.write((char*)&components, sizeof(components));
 		for (auto& comp : obj.second.components) {
-			wf.write((char*) &comp.first, sizeof(comp.first));
+			wf.write((char*)&comp.first, sizeof(comp.first));
 			comp.second.serialize(wf);
 		}
 	}
@@ -232,7 +232,7 @@ uint32_t ResourceManager::addMesh(std::string& filepath)
 	{
 		elem->second.commit(filepath);
 	}
-	catch(std::runtime_error)
+	catch (std::runtime_error)
 	{
 		meshes.erase(meshIDCount);
 		meshIDCount--;
@@ -249,7 +249,7 @@ uint32_t ResourceManager::addTexture(std::string& filepath)
 	{
 		elem->second.commit(filepath);
 	}
-	catch(std::runtime_error)
+	catch (std::runtime_error)
 	{
 		textures.erase(texIDCount);
 		texIDCount--;
@@ -264,9 +264,9 @@ uint32_t ResourceManager::addScript(std::string& filepath)
 	auto elem = scripts.emplace(scrIDCount, LuaScript()).first;
 	try
 	{
-		elem->second.commit(filepath);
+		elem->second.commit(ResourceManager::getPath(AssetPath::AssetType::SCRIPT, filepath));
 	}
-	catch(std::runtime_error&)
+	catch (std::runtime_error&)
 	{
 		scripts.erase(scrIDCount);
 		scrIDCount--;
@@ -329,7 +329,7 @@ void ResourceManager::clone(uint32_t index)
 {
 	if (!sceneObjects.contains(index)) return;
 	GameObject objToCopy = sceneObjects.at(index);
-	GameObject newObj{objToCopy.name};
+	GameObject newObj{ objToCopy.name };
 	newObj.modelData = objToCopy.modelData;
 	for (auto& comp : objToCopy.components | std::views::values)
 	{
@@ -396,4 +396,44 @@ PostEffect* ResourceManager::getPost(uint32_t pst)
 {
 	if (pst >= posts.size()) return nullptr;
 	return posts.at(pst);
+}
+
+AssetPath ResourceManager::getPath(AssetPath::AssetType home, const std::string& source)
+{
+	AssetPath ret;
+	ret.isTracked = false;
+	std::filesystem::path defPath = AssetPath::getDefaultPath(home);
+	auto defExt = AssetPath::getDefaultExt(home);
+
+	std::filesystem::path path(source);
+	path.make_preferred();
+	ret.path = path;
+	auto desiredPath = std::filesystem::current_path();
+	if (path.is_relative())
+	{
+		std::ifstream test(source);
+		if (!test)
+		{
+			std::string name = source;
+			if (source.size() < defExt.size() || 0 != source.compare(source.length() - defExt.size(), defExt.size(), defExt))
+			{
+				name = source + defExt;
+			}
+			ret.path = defPath / std::filesystem::path(name);
+			ret.path.make_preferred();
+		}
+	}
+	else
+	{
+		if (source.rfind(desiredPath.string(), 0) == 0)
+		{
+			ret.path = std::filesystem::relative(ret.path, std::filesystem::current_path());
+		}
+	}
+	auto pakPath = desiredPath / "pak";
+	if (!pakPath.lexically_relative(std::filesystem::absolute(ret.path)).empty())
+	{
+		ret.isTracked = true;
+	}
+	return ret;
 }

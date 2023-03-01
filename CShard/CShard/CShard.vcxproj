@@ -39,6 +39,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\AssetPath.hpp" />
     <ClInclude Include="src\device\graphics\FrameBuffer.hpp" />
     <ClInclude Include="src\device\graphics\PostEffectTypes.hpp" />
     <ClInclude Include="src\device\graphics\Shader.hpp" />

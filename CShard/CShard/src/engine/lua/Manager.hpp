@@ -15,7 +15,6 @@ namespace CSLua
 
 		static void runObjScript(uint32_t obj, uint32_t script);
 		static void runCollideScript(GameObject* obj, Component* coll, GameObject* receiverObj, Component* receiverColl, uint32_t script);
-
 	private:
 		static int lua_getObject(lua_State* L);
 		static int lua_getPost(lua_State* L);

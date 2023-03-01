@@ -10,8 +10,6 @@
 #include "components/LuaObj.hpp"
 #include "../../input/InputManager.hpp"
 #include "components/LuaPost.hpp"
-#include <FileWatch.hpp>
-#include <filesystem>
 
 namespace CSLua
 {
@@ -56,13 +54,6 @@ namespace CSLua
 		lua_setglobal(L, "getdt");
 		lua_pushcfunction(L, lua_getPost);
 		lua_setglobal(L, "getPost");
-
-		//filewatch::FileWatch<std::filesystem::path> watch(
-		//	"./pak/", 
-		//	[](const std::filesystem::path& path, const filewatch::Event change_type) {
-		//		std::wcout << std::filesystem::absolute(path) << L"\n";		
-		//	}
-		//);
 	}
 
 	void Manager::reset()
@@ -93,15 +84,15 @@ namespace CSLua
 		lua_getglobal(L, "obj");
 		GameObject** ud = (GameObject**)lua_touserdata(L, -1);
 		*ud = obj;
-		
+
 		lua_getglobal(L, "coll");
 		Component** ud2 = (Component**)lua_touserdata(L, -1);
 		*ud2 = coll;
-		
+
 		lua_getglobal(L, "obj2");
 		GameObject** ud3 = (GameObject**)lua_touserdata(L, -1);
 		*ud3 = receiverObj;
-		
+
 		lua_getglobal(L, "coll2");
 		Component** ud4 = (Component**)lua_touserdata(L, -1);
 		*ud4 = receiverColl;

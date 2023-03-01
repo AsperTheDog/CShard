@@ -1,11 +1,14 @@
 #pragma once
 #include <map>
+#include <FileWatch.hpp>
+#include <filesystem>
 
 #include "../device/graphics/Mesh.hpp"
 #include "../device/graphics/Texture.hpp"
 #include "../elements/GameObject.hpp"
 #include "lua/LuaScript.hpp"
 #include "../device/graphics/PostEffectTypes.hpp"
+#include "AssetPath.hpp"
 
 class PostEffect;
 
@@ -42,6 +45,7 @@ public:
 	static void removePostEffect(uint32_t elem);
 	static void postPass();
 	static PostEffect* getPost(uint32_t pst);
+	static AssetPath getPath(AssetPath::AssetType home, const std::string& source);
 
 	inline static std::map<uint32_t, GameObject> sceneObjects{};
 	inline static std::map<uint32_t, Mesh> meshes{};
@@ -49,7 +53,15 @@ public:
 	inline static std::map<uint32_t, LuaScript> scripts{};
 	inline static std::vector<PostEffect*> posts{};
 
-	inline static std::pair<GameObject*, Component*> selectedComponent{nullptr, nullptr};
+	inline static std::pair<GameObject*, Component*> selectedComponent{ nullptr, nullptr };
+
+
+	inline static filewatch::FileWatch<std::string> watch{
+		"./pak/",
+		[](const std::string& path, const filewatch::Event event) {
+			  std::cout << path << ' ' << filewatch::event_to_string(event) << '\n';
+		}
+	};
 
 private:
 	inline static uint32_t meshIDCount = 0;
