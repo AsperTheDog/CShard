@@ -4,6 +4,8 @@
 #include <glm.hpp>
 #include <vector>
 
+#include "../../engine/AssetPath.hpp"
+
 struct Vertex
 {
 	glm::vec3 pos;
@@ -15,17 +17,23 @@ class Mesh final
 {
 public:
 	Mesh() = default;
-	explicit Mesh(const std::string& filepath);
+	explicit Mesh(const AssetPath& source);
 	~Mesh();
 
-	void commit(const std::string& filepath);
+	void commit(const AssetPath& source);
+	void commit();
 	void render(bool culling);
 
 	void renderAsSelection();
-	
+	void rename(std::filesystem::path& newName);
+	void reload();
+
 	std::string name;
+	std::filesystem::path source;
+	bool isTracked = false;
+
 private:
-	void extractData(const std::string& filename);
+	void extractData(const std::filesystem::path& filename);
 
 	uint32_t VAO{};
 	uint32_t VBO{};

@@ -37,6 +37,7 @@ public:
 	inline static bool shouldQuit = false;
 	inline static bool confirmQuit = false;
 	inline static bool isGameRunning = false;
+	inline static bool ready = false;
 
 	inline static PipelineElement pipelineOrder[3] = {
 		PIPELINE_INPUT,

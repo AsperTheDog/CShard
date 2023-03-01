@@ -1,7 +1,5 @@
 #pragma once
 #include <lua.hpp>
-#include <algorithm>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -12,27 +10,41 @@ class LuaScript
 public:
 	LuaScript() = default;
 
-	void commit(const AssetPath source)
+	void commit(const AssetPath& source)
 	{
+		this->isTracked = source.isTracked;
 		this->source = source.path;
 		this->name = source.path.filename().string();
-		this->isTracked = source.isTracked;
+		this->reload();
 	}
 
 	void execute(lua_State* L)
 	{
-		execLua(source, L);
+		execLua(code, L);
+	}
+
+	void reload()
+	{
+		std::ifstream file(this->source);
+		code = std::string(std::istreambuf_iterator(file), std::istreambuf_iterator<char>());
+	}
+
+	void rename(std::filesystem::path& newName)
+	{
+		this->source = newName;
+		this->name = newName.filename().string();
 	}
 
 	std::filesystem::path source;
 	std::string name;
 	bool isTracked = false;
+
+	std::string code{};
 private:
 
-	static bool execLua(const std::filesystem::path& filename, lua_State* st)
+	static bool execLua(const std::string& code, lua_State* st)
 	{
-		//int r = luaL_dostring(st, filename.c_str());
-		int r = luaL_dofile(st, filename.string().c_str());
+		int r = luaL_dostring(st, code.c_str());
 		if (r != LUA_OK)
 		{
 			throw std::runtime_error(lua_tostring(st, -1));

@@ -7,9 +7,9 @@
 #include "GFramework.hpp"
 #include "Shader.hpp"
 
-Mesh::Mesh(const std::string& filepath)
+Mesh::Mesh(const AssetPath& source)
 {
-	commit(filepath);
+	commit(source);
 }
 
 Mesh::~Mesh()
@@ -19,10 +19,9 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::commit(const std::string& filepath)
+void Mesh::commit(const AssetPath& source)
 {
-	extractData(filepath);
-	name = filepath;
+	extractData(source.path);
 	glCreateVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -46,6 +45,16 @@ void Mesh::commit(const std::string& filepath)
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(offsetof(Vertex, norm)));
 	glEnableVertexAttribArray(2);
 	this->indexNum = (uint32_t)indices.size();
+
+	this->source = source.path;
+	this->name = source.path.filename().string();
+	this->isTracked = source.isTracked;
+}
+
+void Mesh::commit()
+{
+	AssetPath path{this->source, this->isTracked};
+	this->commit(path);
 }
 
 void Mesh::render(bool culling)
@@ -70,15 +79,30 @@ void Mesh::renderAsSelection()
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 }
 
-void Mesh::extractData(const std::string& filename)
+void Mesh::rename(std::filesystem::path& newName)
+{
+	this->source = newName;
+	this->name = newName.filename().string();
+}
+
+void Mesh::reload()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	this->vertices.clear();
+	this->indices.clear();
+	this->commit();
+}
+
+void Mesh::extractData(const std::filesystem::path& filename)
 {
 	tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
-
-    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename.c_str())) {
-        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, ("pak/resources/obj/" + filename).c_str()))
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename.string().c_str())) {
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename.string().c_str()))
         {
 	        throw std::runtime_error("Could not load file");
         }

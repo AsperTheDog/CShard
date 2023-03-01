@@ -40,6 +40,8 @@ void Engine::init(bool isIDE, char* initFileName)
 	}
 
 	if (!Engine::isIDE) Engine::startGame();
+
+	ready = true;
 }
 
 void Engine::run()

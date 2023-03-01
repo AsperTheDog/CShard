@@ -2,6 +2,7 @@
 #include <string>
 
 #include "GraphicsHeader.hpp"
+#include "../../engine/AssetPath.hpp"
 
 struct PhysicalData;
 
@@ -26,7 +27,7 @@ class Texture final
 public:
 	Texture() = default;
 	explicit Texture(
-		const std::string& path,
+		const AssetPath& path,
 		TextureOptions min = MIPLINEAR,
 		TextureOptions mag = LINEAR,
 		TextureOptions wrapS = REPEAT,
@@ -34,16 +35,27 @@ public:
 	~Texture();
 
 	void commit(
-		const std::string& path,
+		const AssetPath& source,
 		TextureOptions min = MIPLINEAR,
 		TextureOptions mag = LINEAR,
 		TextureOptions wrapS = REPEAT,
 		TextureOptions wrapT = MREPEAT);
+	void commit();
 	void useTexture();
 	void renderAsBackground(PhysicalData& parent);
+	void rename(std::filesystem::path& newName);
+	void reload();
 
 	uint32_t texture{};
+
 	std::string name;
+	std::filesystem::path source;
+	bool isTracked = false;
+
+	TextureOptions min = MIPLINEAR;
+	TextureOptions mag = LINEAR;
+	TextureOptions wrapS = REPEAT;
+	TextureOptions wrapT = MREPEAT;
 };
 
 class EmptyTexture final

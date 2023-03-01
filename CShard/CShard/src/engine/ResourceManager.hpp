@@ -8,12 +8,26 @@
 #include "../elements/GameObject.hpp"
 #include "lua/LuaScript.hpp"
 #include "../device/graphics/PostEffectTypes.hpp"
-#include "AssetPath.hpp"
 
 class PostEffect;
 
 class ResourceManager
 {
+	struct AssetRef
+	{
+		union AssetPointer
+		{
+			Mesh* mesh;
+			Texture* tex;
+			LuaScript* scr;
+		};
+		AssetPath::AssetType type;
+		uint32_t id;
+		AssetPointer ptr;
+	};
+
+	static void watcherCallback(const std::string& path, const filewatch::Event event);
+
 public:
 	static void init();
 	static void reset();
@@ -45,7 +59,7 @@ public:
 	static void removePostEffect(uint32_t elem);
 	static void postPass();
 	static PostEffect* getPost(uint32_t pst);
-	static AssetPath getPath(AssetPath::AssetType home, const std::string& source);
+	static AssetRef getFileFromPath(std::filesystem::path& path);
 
 	inline static std::map<uint32_t, GameObject> sceneObjects{};
 	inline static std::map<uint32_t, Mesh> meshes{};
@@ -54,16 +68,13 @@ public:
 	inline static std::vector<PostEffect*> posts{};
 
 	inline static std::pair<GameObject*, Component*> selectedComponent{ nullptr, nullptr };
-
-
-	inline static filewatch::FileWatch<std::string> watch{
-		"./pak/",
-		[](const std::string& path, const filewatch::Event event) {
-			  std::cout << path << ' ' << filewatch::event_to_string(event) << '\n';
-		}
-	};
+	
+	inline static AssetRef toReload{AssetPath::AssetType::ERR};
+	inline static filewatch::FileWatch<std::string> watch{"./pak/", watcherCallback};
 
 private:
+	
+	inline static AssetRef renamed{AssetPath::AssetType::ERR};
 	inline static uint32_t meshIDCount = 0;
 	inline static uint32_t texIDCount = 0;
 	inline static uint32_t objIDCount = 0;

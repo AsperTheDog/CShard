@@ -179,7 +179,7 @@ void GFramework::create()
 	DepthEffect::commitShader();
 	Pixelate::commitShader();
 
-	defaultTex.commit(DEFAULT_TEX_LOCATION);
+	defaultTex.commit(AssetPath::getPath(AssetPath::TEXTURE, DEFAULT_TEX_LOCATION));
 	PostQuad::init();
 
 	baseFB.commit();

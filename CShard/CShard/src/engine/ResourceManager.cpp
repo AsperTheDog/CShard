@@ -8,6 +8,7 @@
 
 #include "../device/graphics/GFramework.hpp"
 #include "../device/graphics/PostEffects.hpp"
+#include "AssetPath.hpp"
 
 
 void ResourceManager::init()
@@ -16,6 +17,8 @@ void ResourceManager::init()
 	meshes = std::map<uint32_t, Mesh>();
 	textures = std::map<uint32_t, Texture>();
 	scripts = std::map<uint32_t, LuaScript>();
+
+	renamed = {};
 }
 
 void ResourceManager::reset()
@@ -82,7 +85,7 @@ void ResourceManager::load(std::ifstream& wf)
 		meshIDCount = std::max(elem->first, meshIDCount);
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
 		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem->second.commit(buff);
+		elem->second.commit(AssetPath::getPath(AssetPath::AssetType::OBJ, buff));
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)
@@ -93,7 +96,7 @@ void ResourceManager::load(std::ifstream& wf)
 		texIDCount = std::max(elem->first, texIDCount);
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
 		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem->second.commit(buff);
+		elem->second.commit(AssetPath::getPath(AssetPath::AssetType::TEXTURE, buff));
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)
@@ -104,7 +107,7 @@ void ResourceManager::load(std::ifstream& wf)
 		scrIDCount = std::max(elem->first, scrIDCount);
 		char buff[MAX_ASSET_NAME_LENGTH] = "";
 		wf.read(buff, MAX_ASSET_NAME_LENGTH);
-		elem->second.commit(getPath(AssetPath::SCRIPT, buff));
+		elem->second.commit(AssetPath::getPath(AssetPath::SCRIPT, buff));
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)
@@ -230,9 +233,9 @@ uint32_t ResourceManager::addMesh(std::string& filepath)
 	auto elem = meshes.emplace(meshIDCount, Mesh()).first;
 	try
 	{
-		elem->second.commit(filepath);
+		elem->second.commit(AssetPath::getPath(AssetPath::AssetType::OBJ, filepath));
 	}
-	catch (std::runtime_error)
+	catch (std::runtime_error&)
 	{
 		meshes.erase(meshIDCount);
 		meshIDCount--;
@@ -247,9 +250,9 @@ uint32_t ResourceManager::addTexture(std::string& filepath)
 	auto elem = textures.emplace(texIDCount, Texture()).first;
 	try
 	{
-		elem->second.commit(filepath);
+		elem->second.commit(AssetPath::getPath(AssetPath::AssetType::TEXTURE, filepath));
 	}
-	catch (std::runtime_error)
+	catch (std::runtime_error&)
 	{
 		textures.erase(texIDCount);
 		texIDCount--;
@@ -264,7 +267,7 @@ uint32_t ResourceManager::addScript(std::string& filepath)
 	auto elem = scripts.emplace(scrIDCount, LuaScript()).first;
 	try
 	{
-		elem->second.commit(ResourceManager::getPath(AssetPath::AssetType::SCRIPT, filepath));
+		elem->second.commit(AssetPath::getPath(AssetPath::AssetType::SCRIPT, filepath));
 	}
 	catch (std::runtime_error&)
 	{
@@ -398,42 +401,89 @@ PostEffect* ResourceManager::getPost(uint32_t pst)
 	return posts.at(pst);
 }
 
-AssetPath ResourceManager::getPath(AssetPath::AssetType home, const std::string& source)
+ResourceManager::AssetRef ResourceManager::getFileFromPath(std::filesystem::path& path)
 {
-	AssetPath ret;
-	ret.isTracked = false;
-	std::filesystem::path defPath = AssetPath::getDefaultPath(home);
-	auto defExt = AssetPath::getDefaultExt(home);
+	path = std::filesystem::path("pak") / path;
+	AssetRef ref{ AssetPath::AssetType::ERR, 0, {nullptr} };
+	for (auto& mesh : meshes)
+	{
+		if (mesh.second.source.compare(path) == 0)
+		{
+			ref.type = AssetPath::AssetType::OBJ;
+			ref.id = mesh.first;
+			ref.ptr.mesh = &mesh.second;
+			return ref;
+		}
+	}
+	for (auto& tex : textures)
+	{
+		if (tex.second.source.compare(path) == 0)
+		{
+			ref.type = AssetPath::AssetType::TEXTURE;
+			ref.id = tex.first;
+			ref.ptr.tex = &tex.second;
+			return ref;
+		}
+	}
+	for (auto& scr : scripts)
+	{
+		if (scr.second.source.compare(path) == 0)
+		{
+			ref.type = AssetPath::AssetType::SCRIPT;
+			ref.id = scr.first;
+			ref.ptr.scr = &scr.second;
+			return ref;
+		}
+	}
+	return ref;
+}
+void ResourceManager::watcherCallback(const std::string& path, const filewatch::Event event)
+{
+	if (!Engine::ready || event == filewatch::Event::added) return;
 
-	std::filesystem::path path(source);
-	path.make_preferred();
-	ret.path = path;
-	auto desiredPath = std::filesystem::current_path();
-	if (path.is_relative())
+	std::filesystem::path filepath{ path };
+	AssetRef ref = getFileFromPath(filepath);
+
+	switch (event)
 	{
-		std::ifstream test(source);
-		if (!test)
+	case filewatch::Event::removed:
+		switch (ref.type)
 		{
-			std::string name = source;
-			if (source.size() < defExt.size() || 0 != source.compare(source.length() - defExt.size(), defExt.size(), defExt))
-			{
-				name = source + defExt;
-			}
-			ret.path = defPath / std::filesystem::path(name);
-			ret.path.make_preferred();
+		case AssetPath::OBJ:
+			meshes.erase(ref.id);
+			break;
+		case AssetPath::SCRIPT:
+			scripts.erase(ref.id);
+			break;
+		case AssetPath::TEXTURE:
+			textures.erase(ref.id);
+			break;
+		case AssetPath::ERR: ;
 		}
-	}
-	else
-	{
-		if (source.rfind(desiredPath.string(), 0) == 0)
+		break;
+	case filewatch::Event::modified:
+		if (ref.type == AssetPath::SCRIPT) ref.ptr.scr->reload();
+		else toReload = ref;
+		break;
+	case filewatch::Event::renamed_old:
+		renamed = ref;
+		break;
+	case filewatch::Event::renamed_new:
+		if (renamed.type == AssetPath::ERR) break;
+		switch (renamed.type)
 		{
-			ret.path = std::filesystem::relative(ret.path, std::filesystem::current_path());
+		case AssetPath::OBJ:
+			renamed.ptr.mesh->rename(filepath);
+			break;
+		case AssetPath::SCRIPT:
+			renamed.ptr.scr->rename(filepath);
+			break;
+		case AssetPath::TEXTURE:
+			renamed.ptr.tex->rename(filepath);
+			break;
+		case AssetPath::ERR: ;
 		}
+		break;
+	case filewatch::Event::added: ;
 	}
-	auto pakPath = desiredPath / "pak";
-	if (!pakPath.lexically_relative(std::filesystem::absolute(ret.path)).empty())
-	{
-		ret.isTracked = true;
-	}
-	return ret;
 }

@@ -160,6 +160,9 @@ void ImGuiManager::render()
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		showExitModal();
 
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		showReloadModal();
+
 		ImGui::End();
 	}
 	ImGui::Render();
@@ -342,6 +345,59 @@ void ImGuiManager::showExitModal()
 		if (ImGui::Button("Cancel", ImVec2(90, 0)))
 		{
 			Engine::shouldQuit = false;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+void ImGuiManager::showReloadModal()
+{
+	if (ResourceManager::toReload.type != AssetPath::ERR) ImGui::OpenPopup("Confirm reload");
+
+	if (ImGui::BeginPopupModal("Confirm reload", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		std::string name{};
+		switch (ResourceManager::toReload.type)
+		{
+		case AssetPath::OBJ:
+			name = ResourceManager::toReload.ptr.mesh->name;
+			break;
+		case AssetPath::SCRIPT:
+			name = ResourceManager::toReload.ptr.scr->name;
+			break;
+		case AssetPath::TEXTURE:
+			name = ResourceManager::toReload.ptr.tex->name;
+			break;
+		case AssetPath::ERR:
+		default:;
+		}
+		ImGui::Text(("The file " + name + " has been changed. Reload?").c_str());
+		ImGui::Separator();
+		if (ImGui::Button("Reload", ImVec2(90, 0)))
+		{
+			switch (ResourceManager::toReload.type)
+			{
+			case AssetPath::OBJ:
+				ResourceManager::toReload.ptr.mesh->reload();
+				break;
+			case AssetPath::SCRIPT:
+				ResourceManager::toReload.ptr.scr->reload();
+				break;
+			case AssetPath::TEXTURE:
+				ResourceManager::toReload.ptr.tex->reload();
+				break;
+			case AssetPath::ERR:
+			default:;
+			}
+			ResourceManager::toReload.type = AssetPath::ERR;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		ImGui::SetItemDefaultFocus();
+		if (ImGui::Button("Don't Reload", ImVec2(90, 0)))
+		{
+			ResourceManager::toReload.type = AssetPath::ERR;
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();

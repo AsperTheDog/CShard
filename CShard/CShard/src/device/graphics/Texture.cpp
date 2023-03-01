@@ -12,12 +12,11 @@
 #include "Mesh.hpp"
 
 Texture::Texture(
-	const std::string& path, 
+	const AssetPath& path, 
 	TextureOptions min,
 	TextureOptions mag, 
 	TextureOptions wrapS, 
-	TextureOptions wrapT)
-	: name(path)
+	TextureOptions wrapT) : min(min), mag(mag), wrapS(wrapS), wrapT(wrapT)
 {
 	commit(path, min, mag, wrapS, wrapT);
 }
@@ -28,16 +27,24 @@ Texture::~Texture()
 }
 
 void Texture::commit(
-	const std::string& path, 
+	const AssetPath& source, 
 	TextureOptions min, 
 	TextureOptions mag, 
 	TextureOptions wrapS,
 	TextureOptions wrapT)
 {
-	this->name = path;
+	this->source = source.path;
+	this->name = source.path.filename().string();
+	this->isTracked = source.isTracked;
+
+	this->min = min;
+	this->mag = mag;
+	this->wrapS = wrapS;
+	this->wrapT = wrapT;
+
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 4);
+	unsigned char* data = stbi_load(source.path.string().c_str(), &width, &height, &nrChannels, 4);
 	if (!data)
 	{
 		throw std::runtime_error("Could not load texture");
@@ -52,6 +59,12 @@ void Texture::commit(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 	stbi_image_free(data);
+}
+
+void Texture::commit()
+{
+	AssetPath path{this->source, this->isTracked};
+	this->commit(path, min, mag, wrapS, wrapT);
 }
 
 void Texture::useTexture()
@@ -71,6 +84,18 @@ void Texture::renderAsBackground(PhysicalData& parent)
 	glUniform3fv(glGetUniformLocation(program, "camPos"), 1, &Engine::activeCam->pos.x);
 
 	PostQuad::render();
+}
+
+void Texture::rename(std::filesystem::path& newName)
+{
+	this->source = newName;
+	this->name = newName.filename().string();
+}
+
+void Texture::reload()
+{
+	glDeleteTextures(1, &texture);
+	this->commit();
 }
 
 void EmptyTexture::commit(

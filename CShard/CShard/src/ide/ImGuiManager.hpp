@@ -68,6 +68,7 @@ private:
 	static void showLoadModal();
 	static void showSaveModal();
 	static void showExitModal();
+	static void showReloadModal();
 
 	static void setImGuiColors();
 
