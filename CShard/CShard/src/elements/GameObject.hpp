@@ -72,6 +72,7 @@ public:
 	void changeScale(glm::vec3 scale);
 	void processLights();
 	void toggleActive();
+	void processColliders(Camera& cam);
 
 	char name[MAX_PATH_NAME_LENGTH]{};
 	std::map<uint32_t, Component> components{};

@@ -28,4 +28,5 @@
 #define BACK_VERTEX_LOCATION "pak/shaders/quad.vert"
 #define BACK_FRAGMENT_LOCATION "pak/shaders/back.frag"
 
+#define FRAME_VERTEX_LOCATION "pak/shaders/wire.vert"
 #define FRAME_FRAGMENT_LOCATION "pak/shaders/wire.frag"

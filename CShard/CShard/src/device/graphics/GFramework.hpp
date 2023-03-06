@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm.hpp>
+
 #include "FrameBuffer.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
@@ -42,6 +44,7 @@ public:
 	static void setDefaultTexture();
 	static void loadCamUniforms(Camera& camera);
 	static void loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pData, bool material);
+	static void loadWireframeUniforms(Camera& camera, glm::mat4& modelMat, PhysicalData& pData);
 	static uint32_t getImGuiTexture();
 	static void resizeFBs();
 	static void loadLightUniforms(Light& light, PhysicalData& parent);

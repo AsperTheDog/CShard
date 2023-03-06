@@ -86,6 +86,7 @@ void Engine::compileProject(const std::string& name)
 
 void Engine::loadProject(const std::string& filename)
 {
+	Engine::ready = false;
 	resetProject();
 	std::ifstream wf("pak/projects/" + filename + ".srdproj", std::ios::in | std::ios::binary);
 	if (!wf) {
@@ -97,6 +98,7 @@ void Engine::loadProject(const std::string& filename)
 	ResourceManager::load(wf);
 
 	wf.close();
+	Engine::ready = true;
 }
 
 void Engine::resetProject()
@@ -171,6 +173,7 @@ void Engine::render()
 	ResourceManager::backgroundPass();
 	ResourceManager::lightPass();
 	ResourceManager::modelPass(*activeCam);
+	ResourceManager::colliderPass(*activeCam);
 	ResourceManager::postPass();
 	if (ResourceManager::selectedComponent.second != nullptr && !isGameRunning) 
 		ResourceManager::selectedComponent.second->renderWireframe(ResourceManager::selectedComponent.first->modelData, *activeCam);

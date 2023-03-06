@@ -76,7 +76,18 @@ void Component::deserialize(std::ifstream& wf)
 
 void Component::renderWireframe(PhysicalData& pData, Camera& cam)
 {
-	if (type == COMPONENT_MODEL) value.mod.renderSelection(pData, cam);
+	GFramework::prepareShader(SHADER_WIRE);
+	if (type == COMPONENT_MODEL) {
+		glm::vec3 color{1.0, 0.6, 0.0};
+		glUniform3fv(1, 1, &color.x);
+		value.mod.renderSelection(pData, cam);
+	}
+	else if (type == COMPONENT_COLLIDER)
+	{
+		glm::vec3 color{0.0, 0.6, 1.0};
+		glUniform3fv(1, 1, &color.x);
+		value.coll.renderSelection(pData, cam);
+	}
 }
 
 GameObject::GameObject(const std::string& name)
@@ -92,7 +103,7 @@ void GameObject::addComponent(Component& comp)
 		comp.value.cam = Camera();
 		break;
 	case COMPONENT_COLLIDER: 
-		comp.value.coll = Collider();
+		comp.value.coll = Collider(comp.value.coll.type);
 		CollisionStructure::addCollider(this, &comp);
 		break;
 	case COMPONENT_MODEL: 
@@ -111,6 +122,7 @@ void GameObject::addComponent(Component& comp)
 		hasBackground = true;
 		break;
 	}
+	while (this->components.contains(compIdTracker)) compIdTracker++;
 	this->components.emplace(compIdTracker, comp);
 	compIdTracker++;
 }
@@ -236,4 +248,18 @@ void GameObject::toggleActive()
 {
 	show = !show;
 	GFramework::lightSourceCount += (show ? 1 : -1) * lightCount;
+}
+
+void GameObject::processColliders(Camera& cam)
+{
+	if (!show) return;
+	GFramework::prepareShader(SHADER_WIRE);
+	glm::vec3 color{0.6, 1.0, 0.0};
+	glUniform3fv(1, 1, &color.x);
+	for (auto& comp : components | std::views::values) 
+	{
+		if (comp.type != COMPONENT_COLLIDER || !comp.value.coll.draw) continue;
+		
+		comp.value.coll.renderSelection(modelData, cam);
+	}
 }

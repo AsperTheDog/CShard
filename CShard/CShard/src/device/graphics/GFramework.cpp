@@ -171,7 +171,7 @@ void GFramework::create()
 
 	baseShader.commit(BASE_VERTEX_LOCATION, BASE_FRAGMENT_LOCATION);
 	backgroundShader.commit(BACK_VERTEX_LOCATION, BACK_FRAGMENT_LOCATION);
-	wireframeShader.commit(BASE_VERTEX_LOCATION, FRAME_FRAGMENT_LOCATION);
+	wireframeShader.commit(FRAME_VERTEX_LOCATION, FRAME_FRAGMENT_LOCATION);
 	
 	FilmGrain::commitShader();
 	Atmospheric::commitShader();
@@ -284,6 +284,12 @@ void GFramework::loadModelUniforms(Camera& camera, Model& mod, PhysicalData& pDa
 		glUniform1f(glGetUniformLocation(activeShader, "mat.emission"), mod.mat.emission);
 		glUniform3fv(glGetUniformLocation(activeShader, "mat.albedo"), 1, &mod.mat.albedo.x);
 	}
+}
+
+void GFramework::loadWireframeUniforms(Camera& camera, glm::mat4& modelMat, PhysicalData& pData)
+{
+	glm::mat4 mvpMat = camera.getProjMatrix() * camera.getViewMatrix(pData) * modelMat;
+	glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVPmat"), 1, false, &mvpMat[0].x);
 }
 
 uint32_t GFramework::getImGuiTexture()

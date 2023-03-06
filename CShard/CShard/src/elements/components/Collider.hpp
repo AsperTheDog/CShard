@@ -1,12 +1,10 @@
 #pragma once
-#include <fstream>
 #include <unordered_set>
 #include <vec3.hpp>
 
-#include "../../engine/Config.hpp"
+#include "Camera.hpp"
 
 #include "Script.hpp"
-#include "../PhysicalData.hpp"
 #include "../../device/graphics/Mesh.hpp"
 
 struct Component;
@@ -26,6 +24,7 @@ public:
 	bool testCollisions(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
+	glm::mat4 getModelMatrix(PhysicalData& pData, glm::vec3& pos);
 
 	float radius{};
 };
@@ -36,6 +35,7 @@ public:
 	bool testCollisions(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
+	glm::mat4 getModelMatrix(PhysicalData& pData, glm::vec3& pos);
 
 	glm::vec3 size{};
 };
@@ -46,6 +46,7 @@ public:
 	bool testCollisions(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
+	std::tuple<glm::mat4, glm::mat4, glm::mat4> getModelMatrix(PhysicalData& pData, glm::vec3& pos);
 
 	float height{};
 	float radius{};
@@ -71,11 +72,13 @@ struct Collider
 
 	static void init();
 
-	Collider();
+	Collider(ColliderType type);
 	void serialize(std::ofstream& wf);
 	void deserialize(std::ifstream& wf);
 
+	void renderSelection(PhysicalData& pData, Camera& cam);
 	bool testCollision(PhysicalData& pData, Collider* other, PhysicalData& otherPData);
+	void renderImGuiFields(std::string id);
 
 	inline static Mesh sphereMesh{};
 	inline static Mesh cubeMesh{};

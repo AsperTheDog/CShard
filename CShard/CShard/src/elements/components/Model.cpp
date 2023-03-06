@@ -101,8 +101,8 @@ void Model::deserialize(std::ifstream& wf)
 
 void Model::renderSelection(PhysicalData& pData, Camera& cam)
 {
-	GFramework::prepareShader(SHADER_WIRE);
-	GFramework::loadModelUniforms(cam, *this, pData, false);
+	glm::mat4 modelMat = this->getModelMatrix(pData);
+	GFramework::loadWireframeUniforms(cam, modelMat, pData);
 
 	if (ResourceManager::isValidMesh(meshID))
 		ResourceManager::getMesh(meshID)->renderAsSelection();

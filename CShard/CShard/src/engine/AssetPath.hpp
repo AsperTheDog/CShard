@@ -26,9 +26,9 @@ struct AssetPath
 			return "pak/resources/scripts/";
 		case TEXTURE:
 			return "pak/resources/textures/";
-		default:
-			return "";
+		case ERR:;
 		}
+		return "";
 	}
 
 	static std::string getDefaultExt(AssetType def)
@@ -41,9 +41,9 @@ struct AssetPath
 			return ".lua";
 		case TEXTURE:
 			return ".png";
-		default:
-			return "";
+		case ERR:;
 		}
+		return "";
 	}
 
 	static AssetPath getPath(AssetPath::AssetType home, const std::string& source)

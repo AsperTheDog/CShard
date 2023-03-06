@@ -173,6 +173,7 @@ private:
 	{
 		ImGui::PushItemWidth(180);
 		ImGui::InputFloat3(("Position##coll" + uniqueID).c_str(), &coll.position.x);
+		coll.renderImGuiFields(uniqueID);
 		ImGui::PopItemWidth();
 		ImGui::Separator();
 		ImGui::PushItemWidth(122);

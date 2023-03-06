@@ -206,6 +206,5 @@
     <None Include="pak\resources\scripts\onframe.lua" />
     <None Include="pak\resources\scripts\onexit.lua" />
     <None Include="pak\resources\scripts\oninit.lua" />
-    <None Include="pak\shaders\wire.frag" />
   </ItemGroup>
 </Project>

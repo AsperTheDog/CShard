@@ -220,6 +220,14 @@ void ResourceManager::modelPass(Camera& cam)
 	}
 }
 
+void ResourceManager::colliderPass(Camera& cam)
+{
+	for (auto& obj : sceneObjects | std::views::values)
+	{
+		if (!obj.hasBackground) obj.processColliders(cam);
+	}
+}
+
 uint32_t ResourceManager::addObject()
 {
 	objIDCount++;
@@ -405,6 +413,16 @@ ResourceManager::AssetRef ResourceManager::getFileFromPath(std::filesystem::path
 {
 	path = std::filesystem::path("pak") / path;
 	AssetRef ref{ AssetPath::AssetType::ERR, 0, {nullptr} };
+	for (auto& scr : scripts)
+	{
+		if (scr.second.source.compare(path) == 0)
+		{
+			ref.type = AssetPath::AssetType::SCRIPT;
+			ref.id = scr.first;
+			ref.ptr.scr = &scr.second;
+			return ref;
+		}
+	}
 	for (auto& mesh : meshes)
 	{
 		if (mesh.second.source.compare(path) == 0)
@@ -422,16 +440,6 @@ ResourceManager::AssetRef ResourceManager::getFileFromPath(std::filesystem::path
 			ref.type = AssetPath::AssetType::TEXTURE;
 			ref.id = tex.first;
 			ref.ptr.tex = &tex.second;
-			return ref;
-		}
-	}
-	for (auto& scr : scripts)
-	{
-		if (scr.second.source.compare(path) == 0)
-		{
-			ref.type = AssetPath::AssetType::SCRIPT;
-			ref.id = scr.first;
-			ref.ptr.scr = &scr.second;
 			return ref;
 		}
 	}
