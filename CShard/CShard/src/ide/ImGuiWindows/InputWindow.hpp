@@ -13,8 +13,7 @@ public:
 		if (!*isOpen) return;
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
 		ImGui::Begin("Input Mapper", isOpen, windowFlags);
-		ImGui::InputInt("ID", &tempID);
-		tempID = std::max(0, tempID);
+		ImGui::InputText("ID##Inputs", tempID, MAX_INPUT_NAME_LENGTH);
 		ImGui::Combo("Input type", &tempType, InputManager::inputNames, 5);
 		bool validValue = true;
 		switch(tempType)
@@ -35,9 +34,13 @@ public:
 		default: 
 			validValue = false;
 		}
+		
+		std::string buffStr(tempID, strlen(tempID));
+		bool isIDInUse = InputManager::inputMappings.contains(buffStr);
 
-		bool isIDInUse = InputManager::inputMappings.contains(tempID);
-		if (isIDInUse) ImGui::Text("That ID already exists!");
+		if (buffStr.length() == 0) ImGui::Text("ID cannot be empty!");
+		else if (isIDInUse) ImGui::Text("That ID already exists!");
+
 		if (!validValue) ImGui::Text("Invalid keyboard key");
 
 		ImGui::BeginDisabled(isIDInUse || !validValue);
@@ -60,17 +63,17 @@ public:
 			default:
 				mapping.val.key = 0;
 			}
-			InputManager::addMapping(tempID, mapping);
-			tempID++;
+			InputManager::addMapping(buffStr, mapping);
 		}
 		ImGui::EndDisabled();
 
 		ImGui::Separator();
-		ImGui::InputInt("##DeleteID", &tempDeleteID);
+		ImGui::InputText("##DeleteID", tempDeleteID, MAX_INPUT_NAME_LENGTH);
 		ImGui::SameLine();
 		if (ImGui::Button("Delete ID"))
 		{
-			InputManager::removeMapping(tempDeleteID);
+			buffStr = std::string(tempDeleteID, strlen(tempDeleteID));
+			InputManager::removeMapping(buffStr);
 		}
 
 		ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
@@ -83,7 +86,7 @@ public:
 	    {
 	        ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("%d", map.first);
+			ImGui::Text(map.first.c_str());
 			ImGui::TableSetColumnIndex(1);
 			ImGui::Text(InputManager::inputTypeNames.at(map.second.type).c_str());
 			ImGui::TableSetColumnIndex(2);
@@ -99,8 +102,8 @@ public:
 	}
 
 private:
-	inline static int tempDeleteID = 0;
-	inline static int tempID = 0;
+	inline static char tempDeleteID[MAX_INPUT_NAME_LENGTH] = "";
+	inline static char tempID[MAX_INPUT_NAME_LENGTH] = "";
 	inline static int tempButton = 0;
 	inline static bool tempWheel = false;
 	inline static int tempType = 0;

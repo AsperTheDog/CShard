@@ -3,6 +3,20 @@
 #include <filesystem>
 #include <fstream>
 
+
+inline std::vector<std::string> strSplit(const std::string& str, char chr)
+{
+	std::stringstream test(str);
+	std::string segment;
+	std::vector<std::string> seglist;
+
+	while(std::getline(test, segment, chr))
+	{
+		seglist.push_back(segment);
+	}
+	return seglist;
+}
+
 struct AssetPath
 {
 	enum AssetType
@@ -25,22 +39,7 @@ struct AssetPath
 		case SCRIPT:
 			return "pak/resources/scripts/";
 		case TEXTURE:
-			return "pak/resources/textures/";
-		case ERR:;
-		}
-		return "";
-	}
-
-	static std::string getDefaultExt(AssetType def)
-	{
-		switch (def)
-		{
-		case OBJ:
-			return ".obj";
-		case SCRIPT:
-			return ".lua";
-		case TEXTURE:
-			return ".png";
+			return "pak/resources/tex/";
 		case ERR:;
 		}
 		return "";
@@ -51,7 +50,6 @@ struct AssetPath
 		AssetPath ret;
 		ret.isTracked = false;
 		std::filesystem::path defPath = getDefaultPath(home);
-		auto defExt = getDefaultExt(home);
 
 		std::filesystem::path path(source);
 		path.make_preferred();
@@ -62,12 +60,7 @@ struct AssetPath
 			std::ifstream test(source);
 			if (!test)
 			{
-				std::string name = source;
-				if (source.size() < defExt.size() || 0 != source.compare(source.length() - defExt.size(), defExt.size(), defExt))
-				{
-					name = source + defExt;
-				}
-				ret.path = defPath / std::filesystem::path(name);
+				ret.path = defPath / std::filesystem::path(source);
 				ret.path.make_preferred();
 			}
 		}

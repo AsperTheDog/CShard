@@ -39,19 +39,19 @@ public:
 
 	static void init();
 
-	static bool addMapping(uint32_t id, InputMapping value);
+	static bool addMapping(std::string id, InputMapping value);
 	static void triggeredEvents(bool* shouldClose, bool isIDE);
 
 	static void getMouseMovement(int32_t& x, int32_t& y);
 	static void subscribeToEvent(ShardEvent event);
 	static void unsubscribeFromEvent(ShardEvent event);
 
-	static void removeMapping(uint32_t id);
+	static void removeMapping(const std::string& id);
 	static void ImGuiWindowCall(bool* isOpen);
 
-	inline static std::unordered_map<uint32_t, InputMapping> inputMappings;
+	inline static std::unordered_map<std::string, InputMapping> inputMappings;
+	inline static std::unordered_set<std::string> triggeredThisFrame;
 	inline static std::unordered_set<uint32_t> subscribedTypes;
-	inline static std::unordered_set<uint32_t> triggeredThisFrame;
 	inline static int32_t x, y;
 	
 	inline static std::vector<ShardEvent> inputTypes;

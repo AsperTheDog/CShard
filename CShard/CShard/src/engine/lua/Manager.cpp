@@ -153,7 +153,7 @@ namespace CSLua
 
 	int Manager::lua_checkInput(lua_State* L)
 	{
-		uint32_t id = (uint32_t)lua_tonumber(L, -1);
+		const char* id = lua_tostring(L, -1);
 		lua_pushboolean(L, InputManager::triggeredThisFrame.contains(id));
 		return 1;
 	}

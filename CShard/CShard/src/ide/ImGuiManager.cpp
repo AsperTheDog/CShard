@@ -372,8 +372,7 @@ void ImGuiManager::showReloadModal()
 		case AssetPath::TEXTURE:
 			name = ResourceManager::toReload.ptr.tex->name;
 			break;
-		case AssetPath::ERR:
-		default:;
+		case AssetPath::ERR: ;
 		}
 		ImGui::Text(("The file " + name + " has been changed. Reload?").c_str());
 		ImGui::Separator();
@@ -390,8 +389,7 @@ void ImGuiManager::showReloadModal()
 			case AssetPath::TEXTURE:
 				ResourceManager::toReload.ptr.tex->reload();
 				break;
-			case AssetPath::ERR:
-			default:;
+			case AssetPath::ERR: ;
 			}
 			ResourceManager::toReload.type = AssetPath::ERR;
 			ImGui::CloseCurrentPopup();

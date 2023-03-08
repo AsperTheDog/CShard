@@ -19,71 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\lua\Manager.cpp" />
-    <ClCompile Include="src\engine\ResourceManager.cpp" />
-    <ClCompile Include="src\elements\components\Light.cpp" />
-    <ClCompile Include="src\elements\components\Background.cpp" />
-    <ClCompile Include="src\device\graphics\Texture.cpp" />
-    <ClCompile Include="src\device\graphics\Mesh.cpp" />
-    <ClCompile Include="src\elements\components\Script.cpp" />
-    <ClCompile Include="src\elements\components\Collider.cpp" />
-    <ClCompile Include="src\elements\components\Model.cpp" />
-    <ClCompile Include="src\device\graphics\GFramework.cpp" />
-    <ClCompile Include="src\device\window\SDLFramework.cpp" />
-    <ClCompile Include="src\engine\Engine.cpp" />
-    <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.cpp" />
-    <ClCompile Include="src\input\InputManager.cpp" />
-    <ClCompile Include="src\elements\GameObject.cpp" />
-    <ClCompile Include="src\elements\components\Camera.cpp" />
-    <ClCompile Include="src\ide\ImGuiManager.cpp" />
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\engine\lua\components\LuaSpline.hpp" />
-    <ClInclude Include="src\engine\AssetPath.hpp" />
-    <ClInclude Include="src\device\graphics\FrameBuffer.hpp" />
-    <ClInclude Include="src\device\graphics\PostEffectTypes.hpp" />
-    <ClInclude Include="src\device\graphics\Shader.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaCam.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaColl.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaLi.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaMod.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaObj.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaPhys.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaPost.hpp" />
-    <ClInclude Include="src\engine\lua\components\LuaVec3.hpp" />
-    <ClInclude Include="src\engine\lua\LuaScript.hpp" />
-    <ClInclude Include="src\engine\lua\Manager.hpp" />
-    <ClInclude Include="src\engine\ResourceManager.hpp" />
-    <ClInclude Include="src\engine\Config.hpp" />
-    <ClInclude Include="src\device\graphics\PostEffects.hpp" />
-    <ClInclude Include="src\elements\components\Light.hpp" />
-    <ClInclude Include="src\device\graphics\GraphicsHeader.hpp" />
-    <ClInclude Include="src\elements\PhysicalData.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\AssetWindow.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\GameOptionsWindow.hpp" />
-    <ClInclude Include="src\elements\components\Background.hpp" />
-    <ClInclude Include="src\device\graphics\Texture.hpp" />
-    <ClInclude Include="src\device\graphics\Mesh.hpp" />
-    <ClInclude Include="src\elements\components\Script.hpp" />
-    <ClInclude Include="src\elements\components\Collider.hpp" />
-    <ClInclude Include="src\elements\components\Model.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\AttributesWindow.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\PipelineWindow.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\SceneWindow.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp" />
-    <ClInclude Include="src\device\graphics\GFramework.hpp" />
-    <ClInclude Include="src\device\window\SDLFramework.hpp" />
-    <ClInclude Include="src\engine\Engine.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\PostEffectWindow.hpp" />
-    <ClInclude Include="src\input\InputManager.hpp" />
-    <ClInclude Include="src\elements\GameObject.hpp" />
-    <ClInclude Include="src\elements\components\Camera.hpp" />
-    <ClInclude Include="src\ide\ImGuiManager.hpp" />
-    <ClInclude Include="src\ide\ImGuiWindows\DiagnosticsWindow.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="pak\resources\scripts\onexit.lua" />
     <None Include="pak\resources\scripts\onframe.lua" />
     <None Include="pak\resources\scripts\oninit.lua" />
@@ -91,6 +26,71 @@
     <None Include="shaders\back.vert" />
     <None Include="shaders\base.frag" />
     <None Include="shaders\base.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\device\graphics\GFramework.cpp" />
+    <ClCompile Include="src\device\graphics\Mesh.cpp" />
+    <ClCompile Include="src\device\graphics\Texture.cpp" />
+    <ClCompile Include="src\device\window\SDLFramework.cpp" />
+    <ClCompile Include="src\elements\components\Background.cpp" />
+    <ClCompile Include="src\elements\components\Camera.cpp" />
+    <ClCompile Include="src\elements\components\Collider.cpp" />
+    <ClCompile Include="src\elements\components\Light.cpp" />
+    <ClCompile Include="src\elements\components\Model.cpp" />
+    <ClCompile Include="src\elements\components\Script.cpp" />
+    <ClCompile Include="src\elements\GameObject.cpp" />
+    <ClCompile Include="src\engine\Engine.cpp" />
+    <ClCompile Include="src\engine\lua\Manager.cpp" />
+    <ClCompile Include="src\engine\ResourceManager.cpp" />
+    <ClCompile Include="src\ide\imGuiBackends\imGuiBackendsLoader.cpp" />
+    <ClCompile Include="src\ide\ImGuiManager.cpp" />
+    <ClCompile Include="src\input\InputManager.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\device\graphics\FrameBuffer.hpp" />
+    <ClInclude Include="src\device\graphics\GFramework.hpp" />
+    <ClInclude Include="src\device\graphics\GraphicsHeader.hpp" />
+    <ClInclude Include="src\device\graphics\Mesh.hpp" />
+    <ClInclude Include="src\device\graphics\PostEffects.hpp" />
+    <ClInclude Include="src\device\graphics\PostEffectTypes.hpp" />
+    <ClInclude Include="src\device\graphics\Shader.hpp" />
+    <ClInclude Include="src\device\graphics\Texture.hpp" />
+    <ClInclude Include="src\device\window\SDLFramework.hpp" />
+    <ClInclude Include="src\elements\components\Background.hpp" />
+    <ClInclude Include="src\elements\components\Camera.hpp" />
+    <ClInclude Include="src\elements\components\Collider.hpp" />
+    <ClInclude Include="src\elements\components\Light.hpp" />
+    <ClInclude Include="src\elements\components\Model.hpp" />
+    <ClInclude Include="src\elements\components\Script.hpp" />
+    <ClInclude Include="src\elements\GameObject.hpp" />
+    <ClInclude Include="src\elements\PhysicalData.hpp" />
+    <ClInclude Include="src\engine\AssetPath.hpp" />
+    <ClInclude Include="src\engine\Config.hpp" />
+    <ClInclude Include="src\engine\Engine.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaCam.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaColl.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaLi.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaMod.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaObj.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaPhys.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaPost.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaSpline.hpp" />
+    <ClInclude Include="src\engine\lua\components\LuaVec3.hpp" />
+    <ClInclude Include="src\engine\lua\LuaScript.hpp" />
+    <ClInclude Include="src\engine\lua\Manager.hpp" />
+    <ClInclude Include="src\engine\ResourceManager.hpp" />
+    <ClInclude Include="src\ide\ImGuiManager.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\AssetWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\AttributesWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\DiagnosticsWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\GameOptionsWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\InputWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\ObjectWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\PipelineWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\PostEffectWindow.hpp" />
+    <ClInclude Include="src\ide\ImGuiWindows\SceneWindow.hpp" />
+    <ClInclude Include="src\input\InputManager.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -72,9 +72,11 @@ void ResourceManager::load(std::ifstream& wf)
 	InputManager::inputMappings.reserve(num);
 	for (uint32_t i = 0; i < num; i++)
 	{
-		std::pair<uint32_t, InputMapping> elem;
-		wf.read((char*)&elem.first, sizeof(elem));
-		InputManager::addMapping(elem.first, elem.second);
+		std::pair<std::string, InputMapping> elem;
+		char buff[MAX_INPUT_NAME_LENGTH] = "";
+		wf.read(buff, sizeof(buff));
+		wf.read((char*)&elem.second, sizeof(elem.second));
+		InputManager::addMapping(buff, elem.second);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)
@@ -146,8 +148,9 @@ void ResourceManager::save(std::ofstream& wf)
 	wf.write((char*)&mappingNum, sizeof(mappingNum));
 	for (auto& map : InputManager::inputMappings)
 	{
-		uint32_t id = map.first;
-		wf.write((char*)&id, sizeof(id));
+		char buff[MAX_INPUT_NAME_LENGTH];
+		strcpy_s(buff, 50, map.first.c_str());
+		wf.write(buff, sizeof(buff));
 		wf.write((char*)&map.second, sizeof(map.second));
 	}
 	uint32_t meshNum = (uint32_t)ResourceManager::meshes.size();

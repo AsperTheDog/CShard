@@ -1,7 +1,6 @@
 #include "engine/Engine.hpp"
-
 int main(int argc, char* argv[])
-{
+{ 
 	char* filename = nullptr;
 	bool isIDE = true;
 	if (argc >= 2) filename = argv[1];

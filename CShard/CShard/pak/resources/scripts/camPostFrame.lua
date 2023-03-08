@@ -9,9 +9,9 @@ elseif camPos.z <= 6 then
     end
 end
 
-if getInput(0) then
+if getInput("startFog") then
     activateFog = true
-elseif getInput(1) then
+elseif getInput("endFog") then
     activateFog = false
 end
 

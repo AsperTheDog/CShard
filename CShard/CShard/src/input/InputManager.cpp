@@ -2,7 +2,7 @@
 
 #include "../device/window/SDLFramework.hpp"
 
-bool InputManager::addMapping(uint32_t id, InputMapping value)
+bool InputManager::addMapping(std::string id, InputMapping value)
 {
 	if (InputManager::inputMappings.contains(id)) return false;
 	InputManager::subscribeToEvent((ShardEvent)value.type);
@@ -66,7 +66,7 @@ void InputManager::unsubscribeFromEvent(ShardEvent event)
 	InputManager::subscribedTypes.erase(event);
 }
 
-void InputManager::removeMapping(uint32_t id)
+void InputManager::removeMapping(const std::string& id)
 {
 	if (!InputManager::inputMappings.contains(id)) return;
 	InputManager::inputMappings.erase(id);
@@ -79,7 +79,7 @@ void InputManager::ImGuiWindowCall(bool* isOpen)
 
 void InputManager::init()
 {
-	inputMappings = std::unordered_map<uint32_t, InputMapping>();
+	inputMappings = std::unordered_map<std::string, InputMapping>();
 	subscribedTypes = std::unordered_set<uint32_t>();
 	x = 0;
 	y = 0;
