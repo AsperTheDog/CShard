@@ -83,7 +83,6 @@ namespace CSLua
 			glm::vec3* ptr = (glm::vec3*)lua_newuserdata(L, sizeof(glm::vec3));
 			*ptr = elem;
 			luaL_getmetatable(L, "Vec3MT");
-			assert(lua_istable(L, -1));
 			lua_setmetatable(L, -2);
 		}
 

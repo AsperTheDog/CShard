@@ -76,9 +76,15 @@ namespace CSLua
 				LuaVec3::createUD(L, orig->albedo);
 				return 1;
 			}
-			lua_getglobal(L, "Transform");
-			lua_pushstring(L, index);
-			lua_rawget(L, -2);
+			lua_getuservalue(L, 1);
+			lua_pushvalue(L, 2);
+			lua_gettable(L, -2);
+			if (lua_isnil(L, -1))
+			{
+				lua_getglobal(L, "Transform");
+				lua_pushstring(L, index);
+				lua_rawget(L, -2);
+			}
 			return 1;
 		}
 		static int newindex(lua_State* L)
@@ -107,7 +113,10 @@ namespace CSLua
 				orig->albedo = *set;
 				return 1;
 			}
-			throw std::runtime_error("Tried to modify non existant or protected LuaPhys element");
+			lua_getuservalue(L, 1);	//1
+			lua_pushvalue(L, 2);	//2
+			lua_pushvalue(L, 3);	//3
+			lua_settable(L, -3);	//1[2] = 3
 		}
 	};
 }

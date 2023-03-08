@@ -41,7 +41,7 @@ namespace CSLua
 		{
 			Camera* orig = *(Camera**)lua_touserdata(L, -2);
 			glm::vec3* newVec = (glm::vec3*)lua_touserdata(L, -1);
-			orig->pos += *newVec;
+			orig->move(orig->pos + *newVec);
 			return 1;
 		}
 		static int anchor(lua_State* L)
@@ -97,19 +97,19 @@ namespace CSLua
 			const char* index = lua_tostring(L, -2);
 			if (strcmp(index, "pos") == 0)
 			{
-				glm::vec3* vec = *(glm::vec3**)lua_touserdata(L, -1);
+				glm::vec3* vec = (glm::vec3*)lua_touserdata(L, -1);
 				orig->move(*vec);
 				return 1;
 			}
 			if (strcmp(index, "dir") == 0)
 			{
-				glm::vec3* vec = *(glm::vec3**)lua_touserdata(L, -1);
+				glm::vec3* vec = (glm::vec3*)lua_touserdata(L, -1);
 				orig->lookAt(*vec);
 				return 1;
 			}
 			if (strcmp(index, "up") == 0)
 			{
-				glm::vec3* vec = *(glm::vec3**)lua_touserdata(L, -1);
+				glm::vec3* vec = (glm::vec3*)lua_touserdata(L, -1);
 				orig->changeWorldUp(*vec);
 				return 1;
 			}

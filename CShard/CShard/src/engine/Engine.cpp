@@ -148,7 +148,7 @@ void Engine::updateCollisions()
 {
 	if (isGameRunning)
 	{
-		CollisionStructure::testCollisions();
+		//TODO: CollisionStructure::testCollisions();
 	}
 }
 

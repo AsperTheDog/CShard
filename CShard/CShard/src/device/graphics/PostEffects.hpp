@@ -116,7 +116,15 @@ struct Atmospheric final : PostEffect
 		std::string uniqueCode = std::to_string(id);
 		ImGui::Checkbox(("Active##Atmos" + uniqueCode).c_str(), &doRender);
 		ImGui::Separator();
-		ImGui::ColorPicker3(("Color##Fog" + uniqueCode).c_str(), &color.x);
+		ImGui::Text("Color");
+		ImGui::SameLine();
+		if (ImGui::ColorButton(("Select Color##fog" + uniqueCode).c_str(), ImVec4(color.x, color.y, color.z, 1.0f)))
+		    ImGui::OpenPopup(("Select Color##fog" + uniqueCode).c_str());
+		if (ImGui::BeginPopup(("Select Color##fog" + uniqueCode).c_str()))
+		{
+		    ImGui::ColorPicker3(("Color##fog" + uniqueCode).c_str(), &color.x);
+		    ImGui::EndPopup();
+		}
 		ImGui::DragFloat(("Density##Fog" + uniqueCode).c_str(), &density, 0.0001f, 0.f, 1.f);
 	}
 
