@@ -177,9 +177,12 @@ void ImGuiManager::update()
 {
 	if (SceneWindow::isFocused)
 	{
-		if (SDLFramework::leftClick)
-			updateSceneCamDir();
-		updateSceneCamPos();
+		if (!Engine::isGameRunning)
+		{
+			if (SDLFramework::leftClick)
+				updateSceneCamDir();
+			updateSceneCamPos();
+		}
 	}
 }
 

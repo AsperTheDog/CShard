@@ -123,6 +123,7 @@ void Engine::startGame()
 
 void Engine::stopGame()
 {
+	if (!isGameRunning) return;
 	for (auto& comp : ResourceManager::sceneObjects)
 	{
 		comp.second.processScripts(comp.first, ScriptType::SCRIPT_DIE);

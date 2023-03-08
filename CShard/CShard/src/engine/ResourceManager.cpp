@@ -74,7 +74,7 @@ void ResourceManager::load(std::ifstream& wf)
 	{
 		std::pair<uint32_t, InputMapping> elem;
 		wf.read((char*)&elem.first, sizeof(elem));
-		InputManager::inputMappings.insert(elem);
+		InputManager::addMapping(elem.first, elem.second);
 	}
 	wf.read((char*)&num, sizeof(uint32_t));
 	for (uint32_t i = 0; i < num; i++)

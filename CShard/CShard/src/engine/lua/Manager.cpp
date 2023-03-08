@@ -54,6 +54,8 @@ namespace CSLua
 		lua_setglobal(L, "getdt");
 		lua_pushcfunction(L, lua_getPost);
 		lua_setglobal(L, "getPost");
+		lua_pushcfunction(L, lua_checkInput);
+		lua_setglobal(L, "getInput");
 	}
 
 	void Manager::reset()

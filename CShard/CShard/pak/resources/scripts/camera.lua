@@ -8,11 +8,11 @@ fade1 = getPost(0)
 fade2 = getPost(3)
 fade1.intensity = 0
 fade2.intensity = 0
+activateFog = false
 
 obelist = getObject(43)
 obTrans = obelist.transform
 obPos = obTrans.pos
-
 
 function clamp(x, min, max)
     if x < min then return min end
