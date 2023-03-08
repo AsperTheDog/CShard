@@ -303,3 +303,67 @@ struct Pixelate final : PostEffect
 private:
 	inline static Shader shader{};
 };
+
+struct ColorCorrection final : PostEffect
+{
+	static void commitShader()
+	{
+		shader.commit(POST_VERTEX_LOCATION, CORRECTION_FRAGMENT_LOCATION);
+	}
+
+	void render(FrameBuffer* from, FrameBuffer* to, EmptyTexture* depth) override
+	{
+		glUseProgram(shader.id);
+		glUniform1f(0, brightness);
+		glUniform1f(1, saturation);
+		glUniform1f(2, contrast);
+		glUniform1f(3, gamma);
+		PostEffect::render(from, to, depth);
+	}
+
+	void showImGuiWindow(uint32_t id) override
+	{
+		std::string uniqueCode = std::to_string(id);
+		ImGui::Checkbox(("Active##Pixel" + uniqueCode).c_str(), &doRender);
+		ImGui::Separator();
+		ImGui::DragFloat(("brightness##Pixel" + uniqueCode).c_str(), &brightness, 0.001f, -1, 1);
+		ImGui::DragFloat(("saturation##Pixel" + uniqueCode).c_str(), &saturation, 0.001f, -10, 10);
+		ImGui::DragFloat(("contrast##Pixel" + uniqueCode).c_str(), &contrast, 0.001f, 0, 1);
+		ImGui::DragFloat(("gamma##Pixel" + uniqueCode).c_str(), &gamma, 0.001f, 0, 4);
+	}
+
+	const char* getName() override
+	{
+		return "Color correction";
+	}
+
+	void serialize(std::ofstream& wf) override
+	{
+		PostType type = POST_PIXELATE;
+		wf.write((char*) &type, sizeof(type));
+		wf.write((char*) &brightness, sizeof(brightness));
+		wf.write((char*) &saturation, sizeof(saturation));
+		wf.write((char*) &contrast, sizeof(contrast));
+		wf.write((char*) &gamma, sizeof(gamma));
+		PostEffect::serialize(wf);
+	}
+
+	void deserialize(std::ifstream& wf) override
+	{
+		wf.read((char*) &brightness, sizeof(brightness));
+		wf.read((char*) &saturation, sizeof(saturation));
+		wf.read((char*) &contrast, sizeof(contrast));
+		wf.read((char*) &gamma, sizeof(gamma));
+		PostEffect::deserialize(wf);
+	}
+
+	PostType getType() override
+	{
+		return POST_PIXELATE;
+	}
+
+	float contrast{}, brightness{}, saturation{}, gamma{};
+
+private:
+	inline static Shader shader{};
+};

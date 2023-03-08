@@ -384,6 +384,9 @@ void ResourceManager::addPostEffect(PostType post)
 	case POST_PIXELATE:
 		posts.push_back(new Pixelate());
 		break;
+	case POST_CORRECTION:
+		posts.push_back(new ColorCorrection());
+		break;
 	}
 }
 

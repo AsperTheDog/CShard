@@ -22,6 +22,7 @@
 #define ATMOS_FRAGMENT_LOCATION "pak/shaders/atmos.frag"
 #define DEPTH_FRAGMENT_LOCATION "pak/shaders/depth.frag"
 #define PIXELATE_FRAGMENT_LOCATION "pak/shaders/pixelate.frag"
+#define CORRECTION_FRAGMENT_LOCATION "pak/shaders/correction.frag"
 
 #define BASE_VERTEX_LOCATION "pak/shaders/base.vert"
 #define BASE_FRAGMENT_LOCATION "pak/shaders/base.frag"

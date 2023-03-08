@@ -11,7 +11,7 @@ public:
 		if (!*isOpen) return;
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
 		ImGui::Begin("Post effects", isOpen, windowFlags);
-		ImGui::Combo("Input type", &tempEffect, names, 5);
+		ImGui::Combo("Input type", &tempEffect, names, 6);
 		if (ImGui::Button("Create"))
 		{
 			ResourceManager::addPostEffect(types[tempEffect]);
@@ -72,14 +72,16 @@ private:
 		"atmospheric fog",
 		"fade to black",
 		"depth buffer",
-		"pixelate"
+		"pixelate",
+		"color correction"
     };
 	inline static PostType types[] = {
         POST_FILMGRAIN,
 		POST_ATMOSPHERICFOG,
 		POST_FADETOBLACK,
 		POST_DEPTHBUFFER,
-		POST_PIXELATE
+		POST_PIXELATE,
+		POST_CORRECTION
     };
 
 	inline static int selected = 0;

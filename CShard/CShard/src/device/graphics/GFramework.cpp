@@ -178,6 +178,7 @@ void GFramework::create()
 	BlackFade::commitShader();
 	DepthEffect::commitShader();
 	Pixelate::commitShader();
+	ColorCorrection::commitShader();
 
 	defaultTex.commit(AssetPath::getPath(AssetPath::TEXTURE, DEFAULT_TEX_LOCATION));
 	PostQuad::init();
