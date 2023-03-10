@@ -22,6 +22,7 @@ Reimplementation in C++ of the closed source Shard engine for the course Introdu
   - Loading screen, preventing the app from freezing
   - Customizable post processing shaders
   - Particle system
+  - Cube skybox backgrounds
   - normal, height and bump mapping
   - In-Scene level editor
   - HUD component
