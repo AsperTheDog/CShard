@@ -1,5 +1,5 @@
 # CShard
-Reimplementation in C++ of the closed source Shard engine for the course Introduction To Game Engine Architecture
+3D game engine made in C++ for the course Introduction To Game Engine Architecture
 
 ### The engine offers the following functionality:
  - Basic object system that can have components:
